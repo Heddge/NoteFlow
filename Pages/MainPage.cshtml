@@ -9,6 +9,7 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <title>Пустая страница</title>
@@ -16,29 +17,122 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: rgb(0, 0, 0);  <!-- Можно поменять цвет фона -->
+            background-color: rgb(0, 0, 0);
+            font-family: Arial, sans-serif;
         }
-        .centered {
-        text-align: center;
-        margin: 20px 0;
-        font-family: 'Courier New', monospace;
+
+        .top-bar {
+            position: fixed;
+            width: 100%;
+            height: 20px;
+            top: 0;
+            left: 0;
+            background-color: rgb(43, 43, 43);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
-        .centered-button {
-            padding: 12px 40px;
-            background: #007bff;
-            color: white;
+
+        .logo {
+            height: 40px;
+            margin-right: 5px;
+        }
+
+        .icon-button {
+            background: none;
             border: none;
-            border-radius: 5px;">;
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .icon-button:hover {
+            background-color: rgba(60, 60, 60, 0.1);
+        }
+
+        .icon-button img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .content {
+            margin-top: 80px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .greeting-container {
+            position: relative;
+            width: 1561px;
+            height: 323px;
+            left: 342px;
+            top: 57px;
+        }
+
+        .rectangle-3 {
+            position: absolute;
+            width: 1561px;
+            height: 323px;
+            left: 0;
+            top: 0;
+            background: #303030;
+            border-radius: 30px;
+        }
+
+        .rectangle-4 {
+            position: absolute;
+            width: 1546px;
+            height: 113px;
+            left: 8px;
+            top: 203px;
+            background: #262626;
+            border-radius: 30px;
+        }
+
+        .welcome-text {
+            position: absolute;
+            width: 965px;
+            height: 107px;
+            left: 34px;
+            top: 210px;
+            font-family: 'Century Gothic', sans-serif;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 80px;
+            line-height: 98px;
+            letter-spacing: -0.05em;
+            color: #FFFFFF;
+            margin: 0;
         }
     </style>
 </head>
 
 <body>
-<h1 class=centered style="color: rgb(255, 255, 255);">Всем привет</h1>
-<button class=centered-button type=submit>Отправить</button>
-<div style="text-align: center; margin-top: 20px;">
-        <button type="submit" class=centered-button>Отправить</button>
-</div>
+    <nav class="top-bar">
+        <!-- Логотип, по нему есть вопросы, если я это не исправил то погляди че за хуета я не вкурил нихуяшеньки -->
+        <button class="icon-button" title="Меню">
+            <img src="/Images/x_warning_badged_outline_icon_142947.png" alt="Меню" />
+        </button>
+        <!-- Иконка-кнопка -->
+        <button class="icon-button" title="Меню">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M3 12h18M3 6h18M3 18h18" stroke-width="2" stroke-linecap="round" />
+            </svg>
+        </button>
+    </nav>
+
+    <div class="greeting-container">
+        <div class="rectangle-3"></div>
+        <div class="rectangle-4"></div>
+        <div class="welcome-text">Добро пожаловать!</div>
+    </div>
 </body>
 
 </html>
