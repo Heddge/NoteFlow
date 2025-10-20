@@ -1,0 +1,44 @@
+@page
+@model NoteFlow.Pages.MainPageModel;
+@{
+    ViewData["Title"] = "MainPage";
+    Layout = null;
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Пустая страница</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: rgb(0, 0, 0);  <!-- Можно поменять цвет фона -->
+        }
+        .centered {
+        text-align: center;
+        margin: 20px 0;
+        font-family: 'Courier New', monospace;
+        }
+        .centered-button {
+            padding: 12px 40px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;">;
+        }
+    </style>
+</head>
+
+<body>
+<h1 class=centered style="color: rgb(255, 255, 255);">Всем привет</h1>
+<button class=centered-button type=submit>Отправить</button>
+<div style="text-align: center; margin-top: 20px;">
+        <button type="submit" class=centered-button>Отправить</button>
+</div>
+</body>
+
+</html>

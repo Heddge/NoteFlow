@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using ElectronNET.API;
+using NoteFlow.Pages;
 
 namespace NoteFlow
 {
@@ -41,6 +42,12 @@ namespace NoteFlow
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
+
+
+                endpoints.MapGet("/", async context =>
+                    {
+                        context.Response.Redirect("/MainPage");
+                    });
             }
             );
 
