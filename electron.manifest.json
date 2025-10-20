@@ -1,15 +1,15 @@
 {
-  "executable": "ThirdTry",
+  "executable": "NoteFlow",
   "splashscreen": {
     "imageFile": ""
   },
-  "name": "ThirdTry",
+  "name": "NoteFlow",
   "author": "",
   "singleInstance": false,
   "environment": "Production",
   "build": {
-    "appId": "com.ThirdTry.app",
-    "productName": "ThirdTry",
+    "appId": "com.NoteFlow.app",
+    "productName": "NoteFlow",
     "copyright": "Copyright © 2020",
     "buildVersion": "1.0.0",
     "compression": "maximum",

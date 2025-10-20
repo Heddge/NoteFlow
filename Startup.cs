@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using ElectronNET.API;
 
-namespace ThirdTry
+namespace NoteFlow
 {
     public class Startup
     {
