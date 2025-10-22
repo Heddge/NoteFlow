@@ -1,4 +1,5 @@
 @page
+@using NoteFlow.Pages;
 @model NoteFlow.Pages.MainPageModel;
 @{
     ViewData["Title"] = "MainPage";
@@ -202,6 +203,9 @@
 </head>
 
 <body>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="" asp-page="/Message">Сохранить текст</a>
+    </li>
     <nav class="top-bar">
         <!-- Логотип -->
         <button class="icon-button" title="Меню">
@@ -220,18 +224,46 @@
         <div class="rectangle-4"></div>
         <div class="welcome-text">Добро пожаловать!</div>
     </div>
-
+    
     <div class="new-note">
         <div class="note-container"></div>
         <div class="note-input-area">
-            <textarea class="text-input" placeholder="Введите текст"></textarea>
+            <form method="post">
+                <textarea name="Text" class="text-input" placeholder="Введите текст">@Model.Text</textarea>
+                <button type="submit" style="
+                    position: absolute;
+                    bottom: 10px;
+                    right: 10px;
+                    background: #abb3ab;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 5px;
+                    cursor: pointer;">
+                    Сохранить
+                </button>
+            </form>
         </div>
         <input type="text" class="note-title-input" value="Новая заметка" maxlength="20">
         <div class="plus-icon">
             <div class="icon"></div>
         </div>
     </div>
-
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div style="
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 10000;">
+            @Model.Message
+        </div>
+    }
 </body>
 
 </html>

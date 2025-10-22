@@ -83,11 +83,10 @@ namespace NoteFlow
 
                 // Другие настройки (опционально)
                 Show = true,           // Не показывать сразу
-                Title = "NoteFlow",      // Заголовок окна
+                Title = "NoteFlow",
                 AutoHideMenuBar = true
             });
             
-            window.SetAutoHideMenuBar(true);
             window.OnClosed += () =>
             {
                 Electron.App.Quit();
