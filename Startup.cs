@@ -84,15 +84,36 @@ namespace NoteFlow
                 // Другие настройки (опционально)
                 Show = true,           // Не показывать сразу
                 Title = "NoteFlow",
-                AutoHideMenuBar = true
+                AutoHideMenuBar = true,
+                Frame = false
+            });
+
+            // Обработчики для кнопок
+            Electron.IpcMain.On("minimize-window", (args) =>
+            {
+                window.Minimize();
+            });
+
+            Electron.IpcMain.On("maximize-window", (args) =>
+            {
+                window.Maximize();  // Просто максимизируем каждый раз
+            });
+
+            Electron.IpcMain.On("unmaximize-window", (args) =>
+            {
+                window.Unmaximize();  // И отдельно для восстановления
             });
             
+            Electron.IpcMain.On("close-window", (args) =>
+            {
+                window.Close();
+            });
+
             window.OnClosed += () =>
             {
                 Electron.App.Quit();
-                Electron.App.Exit();
             };
         }
     }
-        
+
 }
