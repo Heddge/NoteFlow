@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Hosting;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
 using NoteFlow.Pages;
