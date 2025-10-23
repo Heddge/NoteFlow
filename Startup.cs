@@ -112,6 +112,7 @@ namespace NoteFlow
             window.OnClosed += () =>
             {
                 Electron.App.Quit();
+                Electron.App.Exit();
             };
         }
     }
