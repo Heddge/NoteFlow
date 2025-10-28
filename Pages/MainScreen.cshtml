@@ -1,0 +1,123 @@
+@page
+@using NoteFlow.Pages;
+@model NoteFlow.Pages.MainScreenModel;
+@{
+    ViewData["Title"] = "MainScreen";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <style>
+        /* Backplate settings */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #191919;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            width: 1920px;
+            height: 2000px;
+            overflow-y: visible;
+            overflow-x: hidden;
+        }
+
+        /* Topbar settings */
+        .top-bar {
+            position: fixed;
+            width: 100%;
+            height: 30px;
+            top: 0;
+            left: 0;
+            background-color: rgb(43, 43, 43);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 0;
+            box-sizing: border-box;
+            z-index: 10000;
+            border-bottom: 1px solid #555;
+            -webkit-app-region: drag;
+        }
+
+        .top-bar-actions {
+            weight: 50;
+            height: 40;
+            display: flex;
+            gap: 1px;
+            align-items: right;
+            -webkit-app-region: no-drag;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            allign: left;
+        }
+
+        .nav-buttons
+        {
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #aeaeae;
+            -webkit-app-region: no-drag;
+        }
+
+        .nav-buttons:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+        }
+
+        .close-btn:hover {
+            background-color: rgb(148, 0, 0);
+            color: #ffffff;
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <nav class="top-bar">
+        <div class="logo-container">
+            <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
+        </div>
+
+        <div class="top-bar-actions">
+            <button class = "nav-buttons" title="Свернуть" id="minimizeBtn">
+                <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+
+            <button class = "nav-buttons" title="Развернуть" id="maximizeBtn">
+                <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2" />
+                </svg>
+            </button>
+
+            <button class = "nav-buttons close-btn" title="Закрыть" id="closeBtn">
+                <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+        </div>
+    </nav>
+</body>
+
+<script>
+    /* Scripts for window-navigation buttons */
+    const { ipcRenderer } = require('electron');
+    document.getElementById('minimizeBtn').addEventListener('click', () => {
+    ipcRenderer.send('minimize-window');
+    });
+    document.getElementById('maximizeBtn').addEventListener('click', () => {
+    ipcRenderer.send('maximize-window');
+    });
+    document.getElementById('closeBtn').addEventListener('click', () => {
+    ipcRenderer.send('close-window');
+    });
+</script>

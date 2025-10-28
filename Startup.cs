@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Hosting;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
 using NoteFlow.Pages;
@@ -47,7 +48,7 @@ namespace NoteFlow
 
                 endpoints.MapGet("/", async context =>
                     {
-                        context.Response.Redirect("/MainPage");
+                        context.Response.Redirect("/MainScreen");
                     });
             }
             );
@@ -89,22 +90,22 @@ namespace NoteFlow
             });
 
             // Обработчики для кнопок
-            Electron.IpcMain.On("minimize-window", (args) =>
+            await Electron.IpcMain.On("minimize-window", (args) =>
             {
                 window.Minimize();
             });
 
-            Electron.IpcMain.On("maximize-window", (args) =>
+            await Electron.IpcMain.On("maximize-window", (args) =>
             {
                 window.Maximize();  // Просто максимизируем каждый раз
             });
 
-            Electron.IpcMain.On("unmaximize-window", (args) =>
+            await Electron.IpcMain.On("unmaximize-window", (args) =>
             {
                 window.Unmaximize();  // И отдельно для восстановления
             });
             
-            Electron.IpcMain.On("close-window", (args) =>
+            await Electron.IpcMain.On("close-window", (args) =>
             {
                 window.Close();
             });
