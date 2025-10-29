@@ -30,9 +30,9 @@ namespace NoteFlow.Pages
 
             try
             {
-                var filePath = StorageService.SaveNote(Text);
-                System.IO.File.WriteAllText(filePath, Text);
-                Message = $"Текст сохранен в {filePath}! Введено: {Text.Length} символов";
+                // var filePath = StorageService.SaveNote(Text);
+                // System.IO.File.WriteAllText(filePath, Text);
+                // Message = $"Текст сохранен в {filePath}! Введено: {Text.Length} символов";
             }
             catch (Exception ex)
             {

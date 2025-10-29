@@ -49,6 +49,7 @@ namespace NoteFlow
                 endpoints.MapGet("/", async context =>
                     {
                         context.Response.Redirect("/MainScreen");
+                        // context.Response.Redirect("/MainPage");
                     });
             }
             );

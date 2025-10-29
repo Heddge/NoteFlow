@@ -289,16 +289,16 @@
     @if (!string.IsNullOrEmpty(Model.Message))
     {
         <div data-auto-hide style="
-                            position: fixed;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
-                            background: rgba(0,0,0,0.8);
-                            color: white;
-                            padding: 20px;
-                            border-radius: 10px;
-                            z-index: 10000;
-                            transition: opacity 0.5s ease;">
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 10000;
+            transition: opacity 0.5s ease;">
             @Model.Message
         </div>
     }

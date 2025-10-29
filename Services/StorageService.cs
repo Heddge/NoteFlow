@@ -24,11 +24,11 @@ namespace NoteFlow.Services
             Console.WriteLine($"Storage initialized: {_notesPath}");
         }
 
-        public static string SaveNote(string content)
+        public static string SaveNote(string content, string title)
         {
             try
             {
-                var fileName = $"note_{DateTime.Now:ddMMyyyy_HHmmss}.txt";
+                var fileName = $"{title}.txt";
                 var filePath = Path.Combine(_notesPath, fileName);
                 
                 File.WriteAllText(filePath, content);
