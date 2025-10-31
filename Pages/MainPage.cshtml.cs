@@ -18,27 +18,24 @@ namespace NoteFlow.Pages
         public void OnGet()
         {
             // Показываем где сохраняются файлы
-            Message = StorageService.GetStorageInfo();
+            // Message = StorageService.GetStorageInfo();
         }
         public IActionResult OnPost()
         {
             if (string.IsNullOrWhiteSpace(Text))
             {
                 Message = "Введите текст перед сохранением!";
-                return Page();
             }
-
             try
             {
-                // var filePath = StorageService.SaveNote(Text);
-                // System.IO.File.WriteAllText(filePath, Text);
-                // Message = $"Текст сохранен в {filePath}! Введено: {Text.Length} символов";
+                var filePath = StorageService.SaveNote(Text, "привет");
+                System.IO.File.WriteAllText(filePath, Text);
+                Message = $"Текст сохранен в {filePath}! Введено: {Text.Length} символов";
             }
             catch (Exception ex)
             {
                 Message = $"Ошибка: {ex.Message}";
             }
-
             return Page();
         }
     }

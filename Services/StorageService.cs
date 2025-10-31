@@ -6,17 +6,16 @@ namespace NoteFlow.Services
 {
     public static class StorageService
     {
-        private static readonly string _appDataPath;
+        private static readonly string _myDocumentsPath;
         private static readonly string _notesPath;
 
         static StorageService()
         {
-            // ⭐ ГАРАНТИРОВАННЫЙ ПУТЬ В ПАПКЕ APP DATA ⭐
-            _appDataPath = Path.Combine(
+            _myDocumentsPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 "NoteFlow");
             
-            _notesPath = Path.Combine(_appDataPath, "Notes");
+            _notesPath = Path.Combine(_myDocumentsPath, "Notes");
             
             // Создаем папки при первом использовании
             Directory.CreateDirectory(_notesPath);
@@ -28,9 +27,14 @@ namespace NoteFlow.Services
         {
             try
             {
-                var fileName = $"{title}.txt";
-                var filePath = Path.Combine(_notesPath, fileName);
+                string fileName = "";
+
+                if (!string.IsNullOrEmpty(title) || !string.IsNullOrWhiteSpace(title))
+                    fileName = $"{title}";
+                else
+                    fileName = "Новая заметка";
                 
+                var filePath = Path.Combine(_notesPath, fileName);
                 File.WriteAllText(filePath, content);
                 return filePath;
             }
@@ -38,11 +42,6 @@ namespace NoteFlow.Services
             {
                 throw new Exception($"Ошибка сохранения: {ex.Message}");
             }
-        }
-
-        public static string GetStorageInfo()
-        {
-            return $"Файлы сохраняются в: {_notesPath}";
         }
     }
 }
