@@ -15,7 +15,7 @@ namespace NoteFlow.Pages
 
         public void OnGet()
         {
-
+            
         }
         
         public IActionResult OnPost()
@@ -25,7 +25,7 @@ namespace NoteFlow.Pages
                 NoteTitle = "Новая заметка";
             }
 
-            var filePath = StorageService.SaveNote(NoteContent, $"{NoteTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.txt");
+            var filePath = StorageService.SaveNote(NoteContent, $"{NoteTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
             System.IO.File.WriteAllText(filePath, NoteContent);
             NoteTitle = $"Текст сохранен в {filePath}! Введено: {NoteContent.Length} символов";
 

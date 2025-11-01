@@ -78,7 +78,7 @@
         .main-content {
             position: absolute;
             width: 80vw;
-            height: calc(100vh - 60px);
+            height: 100vh;
             left: 20vw;
             top: 60px;
             background: none;
@@ -92,7 +92,7 @@
         }
 
         .note-title-input {
-            width: 100%;
+            width: 85%;
             background: transparent;
             border: none;
             font-family: 'Century Gothic';
@@ -109,7 +109,7 @@
 
         .textarea-note-content {
             width: 100%;
-            height: 80%;
+            height: 450%;
             background: transparent;
             border: none;
             font-family: 'Century Gothic';
@@ -154,7 +154,7 @@
 
     <div class="main-content" style="overflow-y: visible">
         <form method="post">
-            <input type="Text" asp-for="NoteTitle" class="note-title-input" placeholder="Новая заметка" maxlength="50" />
+            <input type="Text" asp-for="NoteTitle" class="note-title-input" placeholder="Новая заметка" maxlength="35" />
             <textarea asp-for="NoteContent" class="textarea-note-content" placeholder="Введите ваш текст..."></textarea>
             <button type="submit" style="
                     position: absolute;
