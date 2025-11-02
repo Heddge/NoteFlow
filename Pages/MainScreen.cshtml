@@ -121,6 +121,16 @@
             border: none;
         }
 
+        .notes-list {
+            position: fixed;
+            left: 0;
+            top: 30px;
+            width: 20vw;
+            height: calc(100vh - 30px);
+            background: #2d2d2d;
+            padding: 20px;
+            overflow-y: auto;"
+        }
 
     </style>
 </head>
@@ -158,6 +168,29 @@
                 <strong><span style="text-allign: center; font-family:Calibri; font-size: 175%; color:white;">заметку</span></strong>
             </div>
         </button>
+
+        <div class=".notes-list">
+            <h3 style="color: white; margin-bottom: 15px;">Мои заметки</h3>
+            @if (Model.NoteTitles.Count() > 0)
+            @foreach (string title in Model.NoteTitles)
+            {
+                <div class="note-item" style="
+                color: #b9b9b9;
+                padding: 2px;
+                margin-bottom: 1px;
+                cursor: pointer;
+                border-radius: 5px;">
+                @title
+                </div>
+            }
+            else
+            {
+                <div style="color: #666; font-style: italic;">
+                Заметок пока нет
+                </div>
+            }
+        </div>
+
 </body>
 
 <script>

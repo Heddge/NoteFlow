@@ -7,7 +7,7 @@ namespace NoteFlow.Services
     public static class StorageService
     {
         private static readonly string _myDocumentsPath;
-        private static readonly string _notesPath;
+        public static readonly string _notesPath;
 
         static StorageService()
         {
