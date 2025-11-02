@@ -203,7 +203,16 @@
             text-align: center;
             color: #555554;
         }
-
+        .notes-list {
+            position: fixed;
+            left: 0;
+            top: 30px;
+            width: 20vw;
+            height: calc(100vh - 30px);
+            background: #2d2d2d;
+            padding: 20px;
+            overflow-y: auto;
+        }
         /* Карточка нового напоминания */
         .reminder-card {
             position: absolute;
@@ -284,13 +293,6 @@
     </button>
 
     <!-- Карточка заметки -->
-    <div class="note-card">
-        <div class="note-card-bg">
-            <div class="note-title">Моя заметка</div>
-            <div class="note-description">Описание заметки...</div>
-            <div class="note-timestamp">2 часа назад</div>
-        </div>
-    </div>
 
     <!-- Карточка нового напоминания -->
     <div class="reminder-card">
@@ -300,26 +302,34 @@
     </div>
 
     <div class=".notes-list">
-            <h3 style="color: white; margin-bottom: 15px;">Мои заметки</h3>
-            @if (Model.NoteTitles.Count() > 0)
-            @foreach (string title in Model.NoteTitles)
+        <h3 style="color: white; margin-bottom: 15px;">Мои заметки</h3>
+        @if (Model.NoteTitles.Count() > 0)
+            @for (int i = 0; i < Model.NoteTitles.Count(); i++)
             {
                 <div class="note-item" style="
-                color: #b9b9b9;
-                padding: 2px;
-                margin-bottom: 1px;
-                cursor: pointer;
-                border-radius: 5px;">
-                @title
+                    color: #b9b9b9;
+                    padding: 2px;
+                    margin-bottom: 2px; <!-- Для отсупа между эл-тами -->
+                    cursor: pointer;
+                    border-radius: 5px;">
+                    @Model.NoteTitles[i]
+                </div>
+
+                <div class="note-card" style="margin-left: @(i*240)px;">
+                    <div class="note-card-bg">
+                        <div class="note-title">@Model.NoteTitles[i]</div>
+                        <div class="note-description">Описание заметки...</div>
+                        <div class="note-timestamp">2 часа назад</div>
+                    </div>
                 </div>
             }
-            else
-            {
-                <div style="color: #666; font-style: italic;">
-                Заметок пока нет
-                </div>
-            }
-        </div>
+        else
+        {
+            <div style="color: #666; font-style: italic;">
+            Заметок пока нет
+            </div>
+        }
+    </div>
 </body>
 
 <script>
