@@ -14,16 +14,11 @@ namespace NoteFlow.Pages
 
         public void OnGet()
         {
-
-            
-            /*
-            List<string> temp = Directory.GetFiles(_notesPathReading, "*.md").ToList();
-
-            foreach (string s in temp)
+            foreach (string path in Directory.GetFiles(StorageService._notesPath, "*.md"))
             {
-                NoteTitles.Add(Regex.Match(s, @"(?<=Notes\\{1})(.*)(?=_\d{8}_\d{6}\.md)").ToString());
+                Notes.Add(new Note(path));
             }
-            */
+            Notes = Notes.OrderByDescending(s => s.NoteCreated).ToList();
         }
     }
 }
