@@ -1,19 +1,14 @@
 @page
-@using NoteFlow.Models
 @using NoteFlow.Pages;
-@using NoteFlow.Services
 @model NoteFlow.Pages.MainScreenModel;
 @{
     ViewData["Title"] = "MainScreen";
     Layout = null;
 }
 
-@{
-    
-}
-
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <style>
         body {
@@ -60,8 +55,7 @@
             allign: left;
         }
 
-        .nav-buttons
-        {
+        .nav-buttons {
             background: none;
             border: none;
             cursor: pointer;
@@ -80,51 +74,96 @@
             color: #ffffff;
         }
 
-        /* Карточка добавления заметки */
-        .card {
+        /* Контейнер для карточек с горизонтальным скроллом */
+        .cards-container-wrapper {
             position: absolute;
-            width: 225.05px;
+            width: 1345px;
             height: 245px;
             left: 287px;
             top: 150px;
-            transition: transform 0.3s ease;
+            overflow: hidden;
         }
-        
+
+        .cards-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            gap: 55px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 10px 0;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+
+            /* Блюр прямо с краев */
+            mask-image: linear-gradient(to right,
+                    transparent 0%,
+                    black 5px,
+                    black calc(100% - 5px),
+                    transparent 100%);
+        }
+
+        /* Полностью убираем скроллбар */
+        .cards-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cards-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Карточка добавления заметки */
+        .card {
+            width: 180px;
+            height: 200px;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
         .card:hover {
             transform: translateY(-5px);
         }
-        
+
         .card-bg {
             box-sizing: border-box;
-            width: 100%;
-            height: 100%;
+            width: 180px;
+            height: 200px;
             background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), rgba(30, 30, 30, 0.98);
             border-radius: 41px;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .card-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 41px;
+            padding: 1px;
+            background: radial-gradient(circle at 15% 20%, rgba(152, 249, 255, 0.3) 0%, rgba(255, 255, 255, 0.2) 30%, rgba(135, 38, 183, 0.1) 70%, transparent 100%);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
         }
 
         .card-button {
-            position:absolute;
-            width: 225.05px;
-            height: 245px;
-            left: 287px;
-            top: 150px;
             background: none;
             border: none;
-        }
-        .notes-list {
-            position: fixed;
-            left: 0;
-            top: 30px;
-            width: 20vw;
-            height: calc(100vh - 30px);
-            background: #2d2d2d;
-            padding: 20px;
-            overflow-y: auto;
+            padding: 0;
+            width: 180px;
+            height: 200px;
+            cursor: pointer;
+            flex-shrink: 0;
         }
 
         .add-note-text {
@@ -145,33 +184,49 @@
 
         /* Карточка заметки */
         .note-card {
-            position: absolute;
-            width: 225.05px;
-            height: 245px;
-            left: 567px;
-            top: 150px;
+            width: 180px;
+            height: 200px;
             transition: transform 0.3s ease;
+            flex-shrink: 0;
         }
-        
+
         .note-card:hover {
             transform: translateY(-5px);
         }
-        
+
         .note-card-bg {
             box-sizing: border-box;
-            width: 100%;
-            height: 100%;
+            width: 180px;
+            height: 200px;
             background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), rgba(30, 30, 30, 0.98);
             border-radius: 41px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .note-card-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 41px;
+            padding: 1px;
+            background: radial-gradient(circle at 15% 20%, rgba(152, 249, 255, 0.3) 0%, rgba(255, 255, 255, 0.2) 30%, rgba(135, 38, 183, 0.1) 70%, transparent 100%);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
         }
 
         .note-title {
             position: absolute;
-            width: 168px;
+            width: 150px;
             height: 22px;
-            left: 17px;
-            top: 93px;
+            left: 15px;
+            top: 30px;
             font-family: 'Inter';
             font-weight: 600;
             font-size: 18px;
@@ -183,23 +238,24 @@
 
         .note-description {
             position: absolute;
-            width: 194px;
-            height: 68.73px;
-            left: 16.63px;
-            top: 123.05px;
+            width: 170px;
+            height: 60px;
+            left: 15px;
+            top: 60px;
             font-family: 'Inter';
             font-weight: 600;
             font-size: 18px;
             line-height: 22px;
             color: #A9A49C;
+            overflow: hidden;
         }
 
         .note-timestamp {
             position: absolute;
             width: 101.99px;
             height: 17.74px;
-            left: 62.08px;
-            top: 208.42px;
+            left: 40px;
+            top: 150px;
             font-family: 'Inter';
             font-weight: 600;
             font-size: 13px;
@@ -209,40 +265,49 @@
             text-align: center;
             color: #555554;
         }
-        .notes-list {
-            position: fixed;
-            left: 0;
-            top: 30px;
-            width: 20vw;
-            height: calc(100vh - 30px);
-            background: #2d2d2d;
-            padding: 20px;
-            overflow-y: auto;
-        }
+
         /* Карточка нового напоминания */
         .reminder-card {
             position: absolute;
-            width: 225.05px;
-            height: 209px;
+            width: 180px;
+            height: 170px;
             left: 287px;
             top: 450px;
             transition: transform 0.3s ease;
         }
-        
+
         .reminder-card:hover {
             transform: translateY(-5px);
         }
-        
+
         .reminder-card-bg {
             box-sizing: border-box;
-            width: 100%;
-            height: 100%;
+            width: 180px;
+            height: 170px;
             background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), rgba(30, 30, 30, 0.98);
             border-radius: 41px;
             display: flex;
             justify-content: center;
             align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .reminder-card-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 41px;
+            padding: 1px;
+            background: radial-gradient(circle at 15% 20%, rgba(152, 249, 255, 0.3) 0%, rgba(255, 255, 255, 0.2) 30%, rgba(135, 38, 183, 0.1) 70%, transparent 100%);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
         }
 
         .reminder-icon {
@@ -260,7 +325,6 @@
             align-items: center;
             justify-content: center;
         }
-
     </style>
 </head>
 
@@ -271,34 +335,53 @@
         </div>
 
         <div class="top-bar-actions">
-            <button class = "nav-buttons" title="Свернуть" id="minimizeBtn">
+            <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
                 <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
                 </svg>
             </button>
 
-            <button class = "nav-buttons" title="Развернуть" id="maximizeBtn">
+            <button class="nav-buttons" title="Развернуть" id="maximizeBtn">
                 <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2" />
                 </svg>
             </button>
 
-            <button class = "nav-buttons close-btn" title="Закрыть" id="closeBtn">
+            <button class="nav-buttons close-btn" title="Закрыть" id="closeBtn">
                 <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" />
                 </svg>
             </button>
         </div>
     </nav>
-    
-    <!-- Карточка добавления заметки -->
-    <button class="card card-button" id="toEditNoteScreen">
-        <div class="card-bg">
-            <div class="add-note-text">Добавить заметку</div>
-        </div>
-    </button>
 
-    <!-- Карточка заметки -->
+    <!-- Обертка для контейнера с блюром -->
+    <div class="cards-container-wrapper">
+        <!-- Контейнер для карточек заметок -->
+        <div class="cards-container">
+            <!-- Карточка добавления заметки -->
+            <button class="card-button" id="toEditNoteScreen">
+                <div class="card-bg">
+                    <div class="add-note-text">Добавить заметку</div>
+                </div>
+            </button>
+
+            <!-- Карточки заметок -->
+            @if (Model.Notes.Count() > 0)
+            {
+                @for (int i = 0; i < Model.Notes.Count(); i++)
+                {
+                    <div class="note-card">
+                        <div class="note-card-bg">
+                            <div class="note-title">@Model.Notes[i].NoteTitle</div>
+                            <div class="note-description">@Model.Notes[i].NoteContent</div>
+                            <div class="note-timestamp">@Model.Notes[i].NoteCreated</div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
 
     <!-- Карточка нового напоминания -->
     <div class="reminder-card">
@@ -306,36 +389,18 @@
             <div class="reminder-icon">Новое напоминание</div>
         </div>
     </div>
-    
-    @if (Model.Notes.Count() > 0)
-        @for (int i = 0; i < Model.Notes.Count(); i++)
-        {
-            <div class="note-card" style="margin-left: @(i*240)px;">
-                <div class="note-card-bg">
-                    <div class="note-title">@Model.Notes[i].NoteTitle</div>
-                    <div class="note-description">@Model.Notes[i].NoteContent</div>
-                    <div class="note-timestamp">@Model.Notes[i].NoteCreated</div>
-                </div>
-            </div>
-        }
-    else
-    {
-        <div style="color: #666; font-style: italic;">
-        Заметок пока нет
-        </div>
-    }
 </body>
 
 <script>
     const { ipcRenderer } = require('electron');
     document.getElementById('minimizeBtn').addEventListener('click', () => {
-    ipcRenderer.send('minimize-window');
+        ipcRenderer.send('minimize-window');
     });
     document.getElementById('maximizeBtn').addEventListener('click', () => {
-    ipcRenderer.send('maximize-window');
+        ipcRenderer.send('maximize-window');
     });
     document.getElementById('closeBtn').addEventListener('click', () => {
-    ipcRenderer.send('close-window');
+        ipcRenderer.send('close-window');
     });
 
     document.getElementById('toEditNoteScreen').addEventListener('click', function () {
