@@ -1,9 +1,19 @@
 @page
+@using NoteFlow.Models
 @using NoteFlow.Pages;
-@model NoteFlow.Pages.MainScreenModel;
+@using NoteFlow.Services
+@model NoteFlow.Models.Note;
 @{
     ViewData["Title"] = "MainScreen";
     Layout = null;
+}
+
+@{
+    List<Note> notes = new List<Note>();
+    foreach (string path in Directory.GetFiles(StorageService._notesPath, "*.md").ToList())
+    {
+        notes.Add(new Note(path));
+    }
 }
 
 <!DOCTYPE html>
@@ -301,25 +311,14 @@
         </div>
     </div>
 
-    <div class=".notes-list">
-        <h3 style="color: white; margin-bottom: 15px;">Мои заметки</h3>
-        @if (Model.NoteTitles.Count() > 0)
-            @for (int i = 0; i < Model.NoteTitles.Count(); i++)
+        @if (notes.Count() > 0)
+            @for (int i = 0; i < notes.Count(); i++)
             {
-                <div class="note-item" style="
-                    color: #b9b9b9;
-                    padding: 2px;
-                    margin-bottom: 2px; <!-- Для отсупа между эл-тами -->
-                    cursor: pointer;
-                    border-radius: 5px;">
-                    @Model.NoteTitles[i]
-                </div>
-
                 <div class="note-card" style="margin-left: @(i*240)px;">
                     <div class="note-card-bg">
-                        <div class="note-title">@Model.NoteTitles[i]</div>
-                        <div class="note-description">Описание заметки...</div>
-                        <div class="note-timestamp">2 часа назад</div>
+                        <div class="note-title">@notes[i].NoteTitle</div>
+                        <div class="note-description">@notes[i].NoteContent</div>
+                        <div class="note-timestamp">@notes[i].NoteCreated</div>
                     </div>
                 </div>
             }
@@ -329,7 +328,6 @@
             Заметок пока нет
             </div>
         }
-    </div>
 </body>
 
 <script>
