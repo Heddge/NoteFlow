@@ -27,7 +27,6 @@ namespace NoteFlow.Pages
 
             var filePath = StorageService.SaveNote(NoteContent, $"{NoteTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
             System.IO.File.WriteAllText(filePath, NoteContent);
-            NoteTitle = $"Текст сохранен в {filePath}! Введено: {NoteContent.Length} символов";
 
             return Page();
         }
