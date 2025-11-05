@@ -163,7 +163,12 @@
             width: 180px;
             height: 200px;
             cursor: pointer;
+            transition: transform 0.3s ease;
             flex-shrink: 0;
+        }
+
+        .card-button:hover {
+            transform: translateY(-5px);
         }
 
         .add-note-text {
@@ -325,6 +330,12 @@
             align-items: center;
             justify-content: center;
         }
+        .card {
+            right: 0px;
+            top: 150px;
+            height:200px;
+            width: 200px;
+        }
     </style>
 </head>
 
@@ -360,7 +371,7 @@
         <!-- Контейнер для карточек заметок -->
         <div class="cards-container">
             <!-- Карточка добавления заметки -->
-            <button class="card-button" id="toEditNoteScreen">
+            <button class="card-button" id="toEditNoteScreen" >
                 <div class="card-bg">
                     <div class="add-note-text">Добавить заметку</div>
                 </div>
@@ -381,6 +392,10 @@
                 }
             }
         </div>
+    </div>
+    
+    <div class=".blur">
+        <img src="/Images/blue.png" alt="NoteFlow" />
     </div>
 
     <!-- Карточка нового напоминания -->
