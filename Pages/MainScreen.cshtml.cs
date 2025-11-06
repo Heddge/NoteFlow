@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc;
 using NoteFlow.Models;
 using NoteFlow.Services;
 using System.Text.RegularExpressions;
@@ -14,11 +15,21 @@ namespace NoteFlow.Pages
 
         public void OnGet()
         {
-            foreach (string path in Directory.GetFiles(StorageService._notesPath, "*.md"))
+            foreach (string path in Directory.GetFiles(_notesPathReading, "*.md"))
             {
                 Notes.Add(new Note(path));
             }
             Notes = Notes.OrderByDescending(s => s.NoteCreated).ToList();
+        }
+
+        public IActionResult OnPostToEditorForEdit(string path)
+        {
+            return RedirectToPage("NoteScreen", new { notePath = path });
+        }
+
+        public IActionResult OnPostToEditorForCreate()
+        {
+            return RedirectToPage("NoteScreen", new { notePath = "a" });
         }
     }
 }

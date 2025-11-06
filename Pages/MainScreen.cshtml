@@ -371,24 +371,29 @@
         <!-- Контейнер для карточек заметок -->
         <div class="cards-container">
             <!-- Карточка добавления заметки -->
-            <button class="card-button" id="toEditNoteScreen" >
-                <div class="card-bg">
-                    <div class="add-note-text">Добавить заметку</div>
-                </div>
-            </button>
+            <form method="post">
+                <button type="submit" asp-page-handler="ToEditorForCreate" class="card-button">
+                    <div class="card-bg">
+                        <div class="add-note-text">Добавить заметку</div>
+                    </div>
+                </button>
+            </form>
 
             <!-- Карточки заметок -->
             @if (Model.Notes.Count() > 0)
             {
                 @for (int i = 0; i < Model.Notes.Count(); i++)
                 {
-                    <div class="note-card">
-                        <div class="note-card-bg">
-                            <div class="note-title">@Model.Notes[i].NoteTitle</div>
-                            <div class="note-description">@Model.Notes[i].NoteContent</div>
-                            <div class="note-timestamp">@Model.Notes[i].NoteCreated</div>
-                        </div>
-                    </div>
+                    <form method="post" asp-page-handler="ToEditorForEdit">
+                        <input type="hidden" name="path" value="@Model.Notes[i].NotePath"/>
+                        <button type=submit class="note-card">
+                            <div class="note-card-bg">
+                                <div class="note-title">@Model.Notes[i].NoteTitle</div>
+                                <div class="note-description">@Model.Notes[i].NoteContent</div>
+                                <div class="note-timestamp">@Model.Notes[i].NoteCreated</div>
+                            </div>
+                        </button>
+                    </form>
                 }
             }
         </div>
@@ -418,7 +423,7 @@
         ipcRenderer.send('close-window');
     });
 
-    document.getElementById('toEditNoteScreen').addEventListener('click', function () {
+    @* document.getElementById('toEditNoteScreen').addEventListener('click', function () {
         window.location.href = '/NoteScreen';
-    });
+    }); *@
 </script>
