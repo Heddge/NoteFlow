@@ -59,5 +59,11 @@ namespace NoteFlow.Pages
             return Page();
 
         }
+
+        public IActionResult OnPostDeleteNote(string path)
+        {
+            System.IO.File.Delete(path);
+            return RedirectToPage("/MainScreen");
+        }
     }
 }

@@ -160,17 +160,32 @@
             <input type="Text" asp-for="NoteTitle" class="note-title-input" placeholder="Новая заметка" maxlength="35" />
             <textarea asp-for="NoteContent" class="textarea-note-content" placeholder="Введите ваш текст..." >@Model.NoteContent</textarea>
             <button asp-page-handler="CreateOrEditNote" type="submit" style="
-                    position: absolute;
-                    top: 20px;
-                    right: 20px;
-                    background: #d7dbd7;
-                    color: white;
-                    border: none;
-                    padding: 8px 16px;
-                    border-radius: 5px;
-                    cursor: pointer;">
-                    Сохранить
-                </button>
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                background: #d7dbd7;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 5px;
+                cursor: pointer;">
+                Сохранить
+            </button>
+        </form>
+        <form method="post">
+            <input type="hidden" name="path" value="@Model._path" />
+            <button asp-page-handler="DeleteNote" type="submit" style="
+                position: absolute;
+                top: 60px;
+                right: 20px;
+                background: #9d0000;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 5px;
+                cursor: pointer;">
+                Удалить
+            </button>
         </form>
     </div>
 </body>
