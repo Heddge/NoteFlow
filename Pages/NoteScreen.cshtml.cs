@@ -35,11 +35,6 @@ namespace NoteFlow.Pages
             }
         }
 
-        public IActionResult OnPost()
-        {
-            return Page();
-        }
-
         /// <summary>
         /// Function for saving new or editing old note.
         /// </summary>
@@ -48,40 +43,19 @@ namespace NoteFlow.Pages
         {
             _path = path;
 
-            // if user needs to edit note
-            if (System.IO.File.Exists(_path))
-            {
-                if (string.IsNullOrWhiteSpace(NoteTitle) || string.IsNullOrEmpty(NoteTitle))
-                {
-                    NoteTitle = "Новая заметка";
-                }
-
-                // new path with new (if user changed it) name
-                string newFilePath = Path.Combine(StorageService._notesPath, $"{NoteTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
-
-                // put content into the current note
-                System.IO.File.WriteAllText(_path, NoteContent);
-
-                // renaming file
-                System.IO.File.Move(_path, newFilePath);
-
-                // updating path from old to new (with new filename)
-                _path = newFilePath;
-
-                return Page();
-            }
-
-            // if user doesn`t need to edit note => create new note
             if (string.IsNullOrWhiteSpace(NoteTitle) || string.IsNullOrEmpty(NoteTitle))
             {
                 NoteTitle = "Новая заметка";
             }
 
-            // creating new filepath
-            var filePath = StorageService.SaveNote(NoteContent, $"{NoteTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
+            // if user needs to edit note
+            if (System.IO.File.Exists(_path))
+                // updating path from old to new (with new filename)
+                _path = StorageService.SaveEditedNote(NoteTitle, NoteContent, _path);
 
-            // put content into the current note
-            System.IO.File.WriteAllText(filePath, NoteContent);
+            // if user doesn`t need to edit note => create new note \/
+            StorageService.SaveNewNote(NoteTitle, NoteContent);
+
             return Page();
 
         }

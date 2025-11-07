@@ -8,28 +8,31 @@ namespace NoteFlow.Pages
 {
     public class MainScreenModel : PageModel
     {
-        public List<string> NoteTitles = new List<string>();
-        private static string _notesPathReading = StorageService._notesPath;
-
+        // list of all user`s notes
         public List<Note> Notes = new List<Note>();
+
+        // path for saving and parsing notes
+        private string _notesPathReading = StorageService._notesPath;
 
         public void OnGet()
         {
+            // parsing notes from path
             foreach (string path in Directory.GetFiles(_notesPathReading, "*.md"))
             {
                 Notes.Add(new Note(path));
             }
-            Notes = Notes.OrderByDescending(s => s.NoteCreated).ToList();
+            Notes = Notes.OrderByDescending(s => s.NoteEdited).ToList();
         }
 
-        public IActionResult OnPostToEditorForEdit(string path)
+        // method for redirecting to NoteScreen to create or edit note
+        public IActionResult OnPostToEditorForEditOrCreate(string path)
         {
+            // if user needs to CREATE note
+            if (string.IsNullOrEmpty(path))
+                return RedirectToPage("NoteScreen", new { notePath = "a" });
+
+            // if user needs to EDIT note
             return RedirectToPage("NoteScreen", new { notePath = path });
-        }
-
-        public IActionResult OnPostToEditorForCreate()
-        {
-            return RedirectToPage("NoteScreen", new { notePath = "a" });
         }
     }
 }

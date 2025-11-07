@@ -1,6 +1,7 @@
 // Services/StorageService.cs
 using System;
 using System.IO;
+using NoteFlow.Models;
 
 namespace NoteFlow.Services
 {
@@ -23,25 +24,30 @@ namespace NoteFlow.Services
             Console.WriteLine($"Storage initialized: {_notesPath}");
         }
 
-        public static string SaveNote(string content, string title)
+        private static string GetPath(string noteTitle)
+            => Path.Combine(_notesPath, $"{noteTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
+            
+        
+        public static void SaveNewNote(string title, string content)
         {
-            try
-            {
-                string fileName = "";
+            // creating new filepath
+            var filePath = GetPath(title);
 
-                if (!string.IsNullOrEmpty(title) || !string.IsNullOrWhiteSpace(title))
-                    fileName = $"{title}";
-                else
-                    fileName = "Новая заметка";
-                
-                var filePath = Path.Combine(_notesPath, fileName);
-                File.WriteAllText(filePath, content);
-                return filePath;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Ошибка сохранения: {ex.Message}");
-            }
+            // put content into the current note
+            System.IO.File.WriteAllText(filePath, content);
         }
+
+        public static string SaveEditedNote(string title, string content, string path)
+        {
+            // new path with new (if user changed it) name
+            string newFilePath = GetPath(title);
+
+            // put content into the current note and renaming file
+            System.IO.File.WriteAllText(path, content);
+            System.IO.File.Move(path, newFilePath);
+
+            return newFilePath;
+        }
+
     }
 }
