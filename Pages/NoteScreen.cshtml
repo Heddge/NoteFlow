@@ -158,7 +158,7 @@
         <form method="post">
             <input type="hidden" name="path" value="@Model._path" />
             <input type="Text" asp-for="NoteTitle" class="note-title-input" placeholder="Новая заметка" maxlength="35" />
-            <textarea asp-for="NoteContent" class="textarea-note-content" placeholder="Введите ваш текст..." >@Model.NoteContent</textarea>
+            <textarea asp-for="NoteContent" id="textareaContent" class="textarea-note-content" placeholder="Введите ваш текст..." oninput="formatMarkdown()">@Model.NoteContent</textarea>
             <button asp-page-handler="CreateOrEditNote" type="submit" style="
                 position: absolute;
                 top: 20px;
@@ -207,6 +207,55 @@
             @Model.NoteContent
         </div>
 }
+
+<script>
+function formatMarkdown() {
+    const textarea = document.getElementById('textareaContent');
+    const cursorPos = textarea.selectionStart;
+    const textBefore = textarea.value.substring(0, cursorPos);
+    
+    // Определяем, нажал ли пользователь Enter
+    const linesBefore = textBefore.split('\n');
+    const currentLine = linesBefore[linesBefore.length - 1];
+    
+    // Если это новая строка после заголовка - не форматируем
+    if (currentLine === '' && linesBefore.length > 1) {
+        const previousLine = linesBefore[linesBefore.length - 2];
+        if (previousLine.trim().startsWith('#')) {
+            return; // Не мешаем переходу на новую строку
+        }
+    }
+    
+    // Остальная логика форматирования...
+}
+
+// Используем с задержкой чтобы не мешать немедленному вводу
+let formatTimeout;
+document.getElementById('textareaContent').addEventListener('input', function() {
+    clearTimeout(formatTimeout);
+    formatTimeout = setTimeout(formatMarkdown, 1000); // Через 1 секунду
+});
+</script>
+
+
+<script>
+
+</script>
+
+<script>
+/*
+    const forContent = document.getElementById("noteContent");
+
+    forContent.addEventListener("keydown", logKey);
+
+    function logKey(evt) {
+        if (!evt) evt = event;
+        if (evt.ctrlKey && evt.keyCode == 83)
+            @@Model.OnPostCreateOrEditNote(Model._path);
+    }
+*/
+
+</script>
 
 <script>
     /* Scripts for window-navigation buttons */

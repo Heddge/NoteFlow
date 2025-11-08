@@ -5,10 +5,12 @@ using NoteFlow.Models;
 
 namespace NoteFlow.Services
 {
-    public static class StorageService
+    public class StorageService
     {
         private static readonly string _myDocumentsPath;
         public static readonly string _notesPath;
+
+        public static readonly char[] _bannedChars = { '?', '<', '>', ':', '"', '|', '*', '\\', '/' };
 
         static StorageService()
         {
@@ -31,7 +33,7 @@ namespace NoteFlow.Services
         public static void SaveNewNote(string title, string content)
         {
             // creating new filepath
-            var filePath = GetPath(title);
+            var filePath = GetPath(ToSafetyName(title));
 
             // put content into the current note
             System.IO.File.WriteAllText(filePath, content);
@@ -40,7 +42,7 @@ namespace NoteFlow.Services
         public static string SaveEditedNote(string title, string content, string path)
         {
             // new path with new (if user changed it) name
-            string newFilePath = GetPath(title);
+            string newFilePath = GetPath(ToSafetyName(title));
 
             // put content into the current note and renaming file
             System.IO.File.WriteAllText(path, content);
@@ -49,5 +51,10 @@ namespace NoteFlow.Services
             return newFilePath;
         }
 
+        private static string ToSafetyName(string oldName)
+        {
+            string safetyName = new string(oldName.Select(x => _bannedChars.Contains(x) ? ' ' : x).ToArray());
+            return string.IsNullOrEmpty(safetyName) ? "Новая заметка" : safetyName;
+        }
     }
 }
