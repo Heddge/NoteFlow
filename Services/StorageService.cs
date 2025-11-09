@@ -9,7 +9,6 @@ namespace NoteFlow.Services
     {
         private static readonly string _myDocumentsPath;
         public static readonly string _notesPath;
-
         public static readonly char[] _bannedChars = { '?', '<', '>', ':', '"', '|', '*', '\\', '/' };
 
         static StorageService()
@@ -53,8 +52,12 @@ namespace NoteFlow.Services
 
         private static string ToSafetyName(string oldName)
         {
+            if (string.IsNullOrEmpty(oldName) || string.IsNullOrWhiteSpace(oldName))
+                return "Новая заметка";
+
             string safetyName = new string(oldName.Select(x => _bannedChars.Contains(x) ? ' ' : x).ToArray());
-            return string.IsNullOrEmpty(safetyName) ? "Новая заметка" : safetyName;
+            
+            return string.IsNullOrEmpty(safetyName) || string.IsNullOrWhiteSpace(safetyName) ? "Новая заметка" : safetyName;
         }
     }
 }

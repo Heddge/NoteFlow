@@ -44,8 +44,8 @@ namespace NoteFlow.Pages
             _path = path;
 
             // if user tried to save full empty note
-            if (string.IsNullOrWhiteSpace(NoteTitle) || string.IsNullOrEmpty(NoteTitle)
-            && string.IsNullOrWhiteSpace(NoteContent) || string.IsNullOrEmpty(NoteContent))
+            if ((string.IsNullOrWhiteSpace(NoteTitle) || string.IsNullOrEmpty(NoteTitle))
+            && (string.IsNullOrWhiteSpace(NoteContent) || string.IsNullOrEmpty(NoteContent)))
                 return Page();
 
             if (string.IsNullOrWhiteSpace(NoteTitle) || string.IsNullOrEmpty(NoteTitle))

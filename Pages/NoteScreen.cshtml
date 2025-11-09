@@ -209,32 +209,6 @@
 }
 
 <script>
-function formatMarkdown() {
-    const textarea = document.getElementById('textareaContent');
-    const cursorPos = textarea.selectionStart;
-    const textBefore = textarea.value.substring(0, cursorPos);
-    
-    // Определяем, нажал ли пользователь Enter
-    const linesBefore = textBefore.split('\n');
-    const currentLine = linesBefore[linesBefore.length - 1];
-    
-    // Если это новая строка после заголовка - не форматируем
-    if (currentLine === '' && linesBefore.length > 1) {
-        const previousLine = linesBefore[linesBefore.length - 2];
-        if (previousLine.trim().startsWith('#')) {
-            return; // Не мешаем переходу на новую строку
-        }
-    }
-    
-    // Остальная логика форматирования...
-}
-
-// Используем с задержкой чтобы не мешать немедленному вводу
-let formatTimeout;
-document.getElementById('textareaContent').addEventListener('input', function() {
-    clearTimeout(formatTimeout);
-    formatTimeout = setTimeout(formatMarkdown, 1000); // Через 1 секунду
-});
 </script>
 
 
