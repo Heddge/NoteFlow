@@ -16,12 +16,13 @@ namespace NoteFlow.Services
             _myDocumentsPath = Path.Combine(
                 Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                 "NoteFlow");
-            
+
             _notesPath = Path.Combine(_myDocumentsPath, "Notes");
-            
+
             // Создаем папки при первом использовании
-            Directory.CreateDirectory(_notesPath);
-            
+            if (!Directory.Exists(_notesPath))
+                Directory.CreateDirectory(_notesPath);
+
             Console.WriteLine($"Storage initialized: {_notesPath}");
         }
 
@@ -43,12 +44,35 @@ namespace NoteFlow.Services
             // new path with new (if user changed it) name
             string newFilePath = GetPath(ToSafetyName(title));
 
-            // put content into the current note and renaming file
-            System.IO.File.WriteAllText(path, content);
-            System.IO.File.Move(path, newFilePath);
+            try
+            {
+                // put content into the current note and renaming file
+                System.IO.File.WriteAllText(path, content);
+                System.IO.File.Move(path, newFilePath);
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            catch (NotSupportedException e)
+            {
+                Console.WriteLine(e.Message);
+            }
 
             return newFilePath;
-        }
+            }
 
         private static string ToSafetyName(string oldName)
         {
@@ -56,7 +80,7 @@ namespace NoteFlow.Services
                 return "Новая заметка";
 
             string safetyName = new string(oldName.Select(x => _bannedChars.Contains(x) ? ' ' : x).ToArray());
-            
+
             return string.IsNullOrEmpty(safetyName) || string.IsNullOrWhiteSpace(safetyName) ? "Новая заметка" : safetyName;
         }
     }
