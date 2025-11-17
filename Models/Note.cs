@@ -18,4 +18,23 @@ public class Note
         NoteEdited = File.GetLastWriteTime(path);
         NotePath = path;
     }
+    // => Path.Combine(_notesPath, $"{noteTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
+
+
+    public string BeatifulCreationDate()
+    {
+        if (NoteCreated.Day == DateTime.Now.Day)
+            return $"сегодня {NoteCreated:HH:mm}";
+
+        if (NoteCreated.Day == DateTime.Now.AddDays(-1).Day)
+            return $"вчера {NoteCreated:HH:mm}";
+
+        if (NoteCreated.Year == DateTime.Now.Year)
+            return $"{NoteCreated:dd.MM_HHmm}";
+
+        if (NoteCreated.Year != DateTime.Now.Year)
+            return $"{NoteCreated:dd.MM.yy HH:mm}";
+        
+        return NoteCreated.ToString();
+    }
 }
