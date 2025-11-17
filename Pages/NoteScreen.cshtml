@@ -9,6 +9,7 @@
 
 
 <!DOCTYPE html>
+
 <head>
     <style>
         /* Backplate settings */
@@ -57,8 +58,7 @@
             allign: left;
         }
 
-        .nav-buttons
-        {
+        .nav-buttons {
             background: none;
             border: none;
             cursor: pointer;
@@ -124,6 +124,96 @@
             margin-top: 10vh;
             margin-left: 2vw;
         }
+
+        /* Стили для контекстного меню */
+        .context-menu {
+            position: fixed;
+            background: #2d2d2d;
+            border: 1px solid #555;
+            border-radius: 8px;
+            padding: 8px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 10001;
+            display: none;
+        }
+
+        .context-menu-item {
+            padding: 8px 16px;
+            color: #fff;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter';
+            font-size: 14px;
+        }
+
+        .context-menu-item:hover {
+            background: #404040;
+        }
+
+        /* Стили для редактора с нумерацией строк */
+        .editor-container {
+            display: flex;
+            width: 100%;
+            height: 450%;
+            margin-top: 10vh;
+            margin-left: 2vw;
+            background: transparent;
+        }
+
+        .line-numbers {
+            background: transparent;
+            color: #666;
+            font-family: 'Courier New', monospace;
+            font-size: 1.5vw;
+            line-height: 1.5;
+            padding-right: 15px;
+            text-align: right;
+            user-select: none;
+            border-right: 1px solid #444;
+            min-width: 50px;
+        }
+
+        .text-editor {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-weight: 400;
+            font-size: 1.5vw;
+            color: #ffffff;
+            resize: none;
+            outline: none;
+            line-height: 1.5;
+            padding-left: 15px;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+        }
+
+        /* Стили для цветного текста */
+        .color-red {
+            color: #ff6b6b;
+        }
+
+        .color-blue {
+            color: #74b9ff;
+        }
+
+        .color-green {
+            color: #55efc4;
+        }
+
+        .color-yellow {
+            color: #fdcb6e;
+        }
+
+        .color-purple {
+            color: #a29bfe;
+        }
     </style>
 </head>
 
@@ -134,19 +224,19 @@
         </div>
 
         <div class="top-bar-actions">
-            <button class = "nav-buttons" title="Свернуть" id="minimizeBtn">
+            <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
                 <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
                 </svg>
             </button>
 
-            <button class = "nav-buttons" title="Развернуть" id="maximizeBtn">
+            <button class="nav-buttons" title="Развернуть" id="maximizeBtn">
                 <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2" />
                 </svg>
             </button>
 
-            <button class = "nav-buttons close-btn" title="Закрыть" id="closeBtn">
+            <button class="nav-buttons close-btn" title="Закрыть" id="closeBtn">
                 <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" />
                 </svg>
@@ -154,11 +244,27 @@
         </div>
     </nav>
 
+    <!-- Контекстное меню(нажатие ПКМ) -->
+    <div id="contextMenu" class="context-menu" <button class="context-menu-item" onclick="changeTextColor('red')">
+        Красный</button>
+        <button class="context-menu-item" onclick="changeTextColor('blue')">Синий</button>
+        <button class="context-menu-item" onclick="changeTextColor('green')">Зеленый</button>
+        <button class="context-menu-item" onclick="changeTextColor('yellow')">Желтый</button>
+        <button class="context-menu-item" onclick="changeTextColor('purple')">Фиолетовый</button>
+        <button class="context-menu-item" onclick="changeTextColor('white')">Белый(сброс)</button>
+    </div>
+
     <div class="main-content" style="overflow-y: visible">
         <form method="post">
             <input type="hidden" name="path" value="@Model._path" />
-            <input type="Text" asp-for="NoteTitle" class="note-title-input" placeholder="Новая заметка" maxlength="35" />
-            <textarea asp-for="NoteContent" id="textareaContent" class="textarea-note-content" placeholder="Введите ваш текст..." oninput="formatMarkdown()">@Model.NoteContent</textarea>
+            <input type="Text" asp-for="NoteTitle" class="note-title-input" placeholder="Новая заметка"
+                maxlength="35" />
+            <!-- Контейнер для текста заметки с нумерацией строк -->
+            <div class="editor-container">
+                <div id="lineNumbers" class="line-numbers">1</div>
+                <textarea asp-for="NoteContent" id="textEditor" class="text-editor" placeholder="Введите ваш текст..."
+                    oninput="updateLineNumbers()">@Model.NoteContent</textarea>
+            </div>
             <button asp-page-handler="CreateOrEditNote" type="submit" style="
                 position: absolute;
                 top: 20px;
@@ -194,30 +300,60 @@
 @if (!string.IsNullOrEmpty(Model.NoteContent))
 {
     <div data-auto-hide style="
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            z-index: 10000;
-            transition: opacity 0.5s ease;">
-            @Model.NoteContent
-        </div>
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(0,0,0,0.8);
+                    color: white;
+                    padding: 20px;
+                    border-radius: 10px;
+                    z-index: 10000;
+                    transition: opacity 0.5s ease;">
+        @Model.NoteContent
+    </div>
 }
 
 <script>
     /* Scripts for window-navigation buttons */
     const { ipcRenderer } = require('electron');
     document.getElementById('minimizeBtn').addEventListener('click', () => {
-    ipcRenderer.send('minimize-window');
+        ipcRenderer.send('minimize-window');
     });
     document.getElementById('maximizeBtn').addEventListener('click', () => {
-    ipcRenderer.send('maximize-window');
+        ipcRenderer.send('maximize-window');
     });
     document.getElementById('closeBtn').addEventListener('click', () => {
-    ipcRenderer.send('close-window');
+        ipcRenderer.send('close-window');
     });
+
+    /*Контекстное меню(нажатие ПКМ)*/
+    let currentSelection = null;
+
+    //Открытие
+    document.getElementById('textEditor').addEventListener('contextmenu',function(e) {
+        e.preventDefault();
+        currentSelection = {
+            start: this.selectionStart,
+            end: this.selectionEnd,
+            text: this.value.substring(this.selectionStart,this.selectionEnd)
+        };
+
+        const contextMenu = document.getElementById('contextMenu');
+        contextMenu.style.display = 'block';
+        contextMenu.style.left = e.pageX + 'px';
+        contextMenu.style.top = e.pageY + 'px';
+    });
+    
+    //Закрытие контекстного меню
+    document.addEventListener('click',functio() {
+        document.getElementById('contextMenu').style.display = 'none';
+    });
+
+    //Смена цвета текста
+    function changeTextColor(color) {
+        
+    }
+
+
 </script>
