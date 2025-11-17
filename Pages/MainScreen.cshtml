@@ -340,10 +340,13 @@
         }
 
         .blur {
-            top: 0px;
-            left:0px;
+            position: fixed;
+            top: 0;
+            right:0;
             height: 100vh;
-            width: 100vw;
+            width: auto;
+            z-index: 9999;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -375,8 +378,12 @@
         </div>
     </nav>
 
+    
     <!-- Обертка для контейнера с блюром -->
     <div class="cards-container-wrapper">
+        <div class="blur">
+            <img src="/Images/blur.png" alt="NoteFlow" />
+        </div>
         <!-- Контейнер для карточек заметок -->
         <div class="cards-container">
             <!-- Карточка добавления заметки -->
@@ -408,9 +415,6 @@
         </div>
     </div>
     
-    <div class=".blur">
-        <img src="/Images/blue.png" alt="NoteFlow" />
-    </div>
 
     <!-- Карточка нового напоминания -->
     <div class="reminder-card">
