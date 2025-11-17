@@ -352,8 +352,35 @@
 
     //Смена цвета текста
     function changeTextColor(color) {
-        
+        if (!currentSelection || currentSelection.start == currentSelection.end) return;
+
+        const editor = document.getElementById('textEditor');
+        const before = editor.value.substring(0,currentSelection.start);
+        const selected = editor.value.substring(currentSelection.start, currentSelection.end);
+        const after = editor,value.substring(currentSelection.end);
+
+        const colorClass = 'color-${color}';
+        const coloredText = '<span class="${colorClass}">${selected}</span>';
+
+        editor.value = before + coloredText + after;
+        updateLineNumbers();
     }
 
+    //Обновление нумерации строк
+    function updateLineNumbers(){
+        const editor = document.getElementById('textEditor');
+        const lineNumbers = document.getElementById('lineNumbers');
+        const lines = editor.value.split('/n').length;
 
+        let numbers = '';
+        for (let i = 1;i <= lines;i++){
+            numbers += i + '/n';
+        }
+        lineNumbers.textContent = numbers;
+    }
+
+    //Инициализация
+    document.addEventListener('DOMContentLoaded', function() {
+        updateLineNumbers();
+    });
 </script>
