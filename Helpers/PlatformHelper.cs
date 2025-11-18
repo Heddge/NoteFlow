@@ -12,22 +12,16 @@ namespace NoteFlow.Helpers
                 try
                 {
                     bool isOSX = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-                    Console.WriteLine($"IsOSPlatform(OSX): {isOSX}");
                     
                     // Альтернативные проверки
                     var osDesc = RuntimeInformation.OSDescription ?? "";
                     var isDarwin = osDesc.ToLower().Contains("darwin");
                     var isMacInDescription = osDesc.ToLower().Contains("mac");
                     
-                    Console.WriteLine($"OSDescription: {osDesc}");
-                    Console.WriteLine($"Contains 'darwin': {isDarwin}");
-                    Console.WriteLine($"Contains 'mac': {isMacInDescription}");
-                    
                     return isOSX || isDarwin || isMacInDescription;
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Platform check error: {ex.Message}");
                     return false;
                 }
             }
