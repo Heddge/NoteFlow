@@ -229,7 +229,6 @@
             <input type="hidden" id="NoteContent" name="NoteContent" value="@Model.NoteContent" />
             
             <div class="editor-container">
-                <div id="lineNumbers" class="line-numbers">1</div>
                 <div id="richTextEditor" contenteditable="true" class="text-editor" placeholder="Введите ваш текст...">@Html.Raw(Model.NoteContent)</div>
             </div>
             
@@ -296,6 +295,7 @@
     });
 
     // Нумерация строк
+    /*
     function updateLineNumbers() {
         const editor = document.getElementById('richTextEditor');
         const lineNumbers = document.getElementById('lineNumbers');
@@ -307,7 +307,7 @@
             numbers += i + '\n';
         }
         lineNumbers.textContent = numbers;
-    }
+    }*/
 
     // Синхронизация скролла
     document.getElementById('richTextEditor').addEventListener('scroll', function() {
