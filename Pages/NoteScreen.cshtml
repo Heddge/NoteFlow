@@ -31,14 +31,14 @@
             height: 30px;
             top: 0;
             left: 0;
-            background-color: rgb(43, 43, 43);
+            background-color: #141414;
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 0 0;
             box-sizing: border-box;
             z-index: 10000;
-            border-bottom: 1px solid #555;
+            border-bottom: none;
             -webkit-app-region: drag;
         }
 
@@ -97,7 +97,7 @@
             width: 85%;
             background: transparent;
             border: none;
-            font-family: 'Century Gothic';
+            font-family: 'Inter';
             font-weight: 700;
             font-size: 3vw;
             color: #ffffff;
@@ -116,30 +116,17 @@
             height: 80vh;
             margin-top: 10vh;
             margin-left: 2vw;
-            background: #1a1a1a;
-            border: 1px solid #444;
+            background: #141414;
+            border: none;
             border-radius: 5px;
             overflow: auto;
-        }
-
-        .line-numbers {
-            background: #1a1a1a;
-            color: #666;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 20px;
-            padding: 10px 5px;
-            text-align: right;
-            user-select: none;
-            border-right: 1px solid #444;
-            min-width: 40px;
         }
 
         #richTextEditor {
             flex: 1;
             background: transparent;
             border: none;
-            font-family: 'Courier New', monospace;
+            font-family: 'Inter', monospace;
             font-size: 14px;
             color: #ffffff;
             line-height: 20px;
@@ -147,6 +134,18 @@
             outline: none;
             white-space: pre-wrap;
             overflow-wrap: break-word;
+        }
+
+        /* Плейсхолдер для contenteditable */
+        #richTextEditor:empty:before {
+            content: attr(data-placeholder);
+            color: #666;
+            font-style: italic;
+        }
+
+        #richTextEditor:focus:empty:before {
+            content: attr(data-placeholder);
+            color: #888;
         }
 
         /* Контекстное меню */
@@ -229,7 +228,12 @@
             <input type="hidden" id="NoteContent" name="NoteContent" value="@Model.NoteContent" />
             
             <div class="editor-container">
-                <div id="richTextEditor" contenteditable="true" class="text-editor" placeholder="Введите ваш текст...">@Html.Raw(Model.NoteContent)</div>
+                <div id="richTextEditor" 
+                     contenteditable="true" 
+                     class="text-editor" 
+                     data-placeholder="Введите ваш текст...">
+                    @Html.Raw(Model.NoteContent)
+                </div>
             </div>
             
             <button type="button" onclick="saveNote()" style="
@@ -294,26 +298,6 @@
     ipcRenderer.send('close-window');
     });
 
-    // Нумерация строк
-    /*
-    function updateLineNumbers() {
-        const editor = document.getElementById('richTextEditor');
-        const lineNumbers = document.getElementById('lineNumbers');
-        const text = editor.innerText || editor.textContent;
-        const lines = text.split('\n').length;
-        
-        let numbers = '';
-        for (let i = 1; i <= lines; i++) {
-            numbers += i + '\n';
-        }
-        lineNumbers.textContent = numbers;
-    }*/
-
-    // Синхронизация скролла
-    document.getElementById('richTextEditor').addEventListener('scroll', function() {
-        document.getElementById('lineNumbers').scrollTop = this.scrollTop;
-    });
-
     // Контекстное меню
     document.getElementById('richTextEditor').addEventListener('contextmenu', function(e) {
         e.preventDefault();
@@ -350,7 +334,6 @@
         range.insertNode(span);
         
         document.getElementById('contextMenu').style.display = 'none';
-        updateLineNumbers();
     }
 
     // Сохранение заметки
@@ -364,9 +347,6 @@
 
     // Инициализация
     document.addEventListener('DOMContentLoaded', function() {
-        updateLineNumbers();
-        document.getElementById('richTextEditor').addEventListener('input', updateLineNumbers);
-        
         // Load existing colored text
         const existingContent = document.getElementById('NoteContent').value;
         if (existingContent) {
