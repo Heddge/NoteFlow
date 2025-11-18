@@ -43,18 +43,23 @@
         }
 
         .top-bar-actions {
-            weight: 50;
-            height: 40;
             display: flex;
             gap: 1px;
-            align-items: right;
+            align-items: center;
             -webkit-app-region: no-drag;
+            margin-left: auto; /* Перемещает кнопки вправо */
+        }
+
+        .logo-container {
+            position: absolute;
+            left: 20px;
+            top: 50px; /* Опускаем логотип ниже */
+            z-index: 1000;
         }
 
         .logo {
-            width: 40px;
-            height: 40px;
-            allign: left;
+            width: 60px; /* Увеличиваем размер */
+            height: 60px; /* Увеличиваем размер */
         }
 
         .nav-buttons
@@ -65,6 +70,11 @@
             transition: all 0.2s;
             color: #aeaeae;
             -webkit-app-region: no-drag;
+            width: 32px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .nav-buttons:hover {
@@ -185,10 +195,7 @@
 
 <body>
     <nav class="top-bar">
-        <div class="logo-container">
-            <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
-        </div>
-
+        <!-- Кнопки управления окном теперь справа -->
         <div class="top-bar-actions">
             <button class = "nav-buttons" title="Свернуть" id="minimizeBtn">
                 <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -209,6 +216,11 @@
             </button>
         </div>
     </nav>
+
+    <!-- Логотип вынесен отдельно -->
+    <div class="logo-container">
+        <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
+    </div>
 
     <!-- Контекстное меню -->
     <div id="contextMenu" class="context-menu">

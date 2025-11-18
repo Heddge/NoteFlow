@@ -32,7 +32,7 @@
             background-color: #191919;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: space-between; /* Это важно - распределяет пространство между элементами */
             padding: 0 0;
             box-sizing: border-box;
             z-index: 10000;
@@ -41,18 +41,23 @@
         }
 
         .top-bar-actions {
-            weight: 50;
-            height: 40;
             display: flex;
             gap: 1px;
-            align-items: right;
+            align-items: center;
             -webkit-app-region: no-drag;
+            margin-left: auto; /* Это перемещает кнопки вправо */
+        }
+
+        .logo-container {
+            position: absolute;
+            left: 20px;
+            top: 50px;
+            z-index: 1000;
         }
 
         .logo {
-            width: 40px;
-            height: 40px;
-            allign: left;
+            width: 60px;
+            height: 60px;
         }
 
         .nav-buttons {
@@ -62,6 +67,11 @@
             transition: all 0.2s;
             color: #aeaeae;
             -webkit-app-region: no-drag;
+            width: 32px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .nav-buttons:hover {
@@ -74,7 +84,7 @@
             color: #ffffff;
         }
 
-        /* Контейнер для карточек с горизонтальным скроллом */
+        /* Остальные стили остаются без изменений */
         .cards-container-wrapper {
             position: absolute;
             width: 1345px;
@@ -94,8 +104,6 @@
             padding: 10px 0;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
-
-            /* Блюр прямо с краев */
             mask-image: linear-gradient(to right,
                     transparent 0%,
                     black 5px,
@@ -103,7 +111,6 @@
                     transparent 100%);
         }
 
-        /* Полностью убираем скроллбар */
         .cards-container::-webkit-scrollbar {
             display: none;
         }
@@ -113,7 +120,6 @@
             scrollbar-width: none;
         }
 
-        /* Карточка добавления заметки */
         .card {
             width: 200px;
             height: 200px;
@@ -187,12 +193,14 @@
             justify-content: center;
         }
 
-        /* Карточка заметки */
         .note-card {
             width: 180px;
             height: 200px;
             transition: transform 0.3s ease;
             flex-shrink: 0;
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
         }
 
         .note-card:hover {
@@ -203,7 +211,7 @@
             box-sizing: border-box;
             width: 180px;
             height: 200px;
-            background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), rgba(30, 30, 30, 0.98);
+            background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), rgba(30, 30, 30, 0.98) !important;
             border-radius: 41px;
             position: relative;
         }
@@ -271,7 +279,6 @@
             color: #555554;
         }
 
-        /* Карточка нового напоминания */
         .reminder-card {
             position: absolute;
             width: 180px;
@@ -330,21 +337,22 @@
             align-items: center;
             justify-content: center;
         }
-        .card {
-            right: 0px;
-            top: 150px;
-            height:200px;
-            width: 200px;
+
+        button {
+            background: none !important;
+            border: none !important;
+        }
+
+        form {
+            background: none !important;
+            border: none !important;
         }
     </style>
 </head>
 
 <body>
     <nav class="top-bar">
-        <div class="logo-container">
-            <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
-        </div>
-
+        <!-- Кнопки теперь будут справа благодаря margin-left: auto -->
         <div class="top-bar-actions">
             <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
                 <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -366,13 +374,18 @@
         </div>
     </nav>
 
+    <!-- Логотип вынесен отдельно -->
+    <div class="logo-container">
+        <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
+    </div>
+
     <!-- Обертка для контейнера с блюром -->
     <div class="cards-container-wrapper">
         <!-- Контейнер для карточек заметок -->
         <div class="cards-container">
             <!-- Карточка добавления заметки -->
             <form method="post">
-                <button type="submit" asp-page-handler="ToEditorForEditOrCreate" class="card-button">
+                <button type="submit" asp-page-handler="ToEditorForEditOrCreate" name="path" value="" class="card-button">
                     <div class="card-bg">
                         <div class="add-note-text">Добавить заметку</div>
                     </div>
@@ -386,7 +399,7 @@
                 {
                     <form method="post" asp-page-handler="ToEditorForEditOrCreate">
                         <input type="hidden" name="path" value="@Model.Notes[i].NotePath"/>
-                        <button type=submit class="note-card">
+                        <button type="submit" class="note-card">
                             <div class="note-card-bg">
                                 <div class="note-title">@Model.Notes[i].NoteTitle</div>
                                 <div class="note-description">@Model.Notes[i].NoteContent</div>
@@ -419,8 +432,4 @@
     document.getElementById('closeBtn').addEventListener('click', () => {
         ipcRenderer.send('close-window');
     });
-
-    @* document.getElementById('toEditNoteScreen').addEventListener('click', function () {
-        window.location.href = '/NoteScreen';
-    }); *@
 </script>
