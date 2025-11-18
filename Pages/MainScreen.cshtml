@@ -1,5 +1,7 @@
 @page
 @using NoteFlow.Pages;
+@using NoteFlow.Services;
+@using NoteFlow.Helpers;
 @model NoteFlow.Pages.MainScreenModel;
 @{
     ViewData["Title"] = "MainScreen";
@@ -32,7 +34,8 @@
             background-color: #191919;
             display: flex;
             align-items: center;
-            justify-content: space-between; /* Это важно - распределяет пространство между элементами */
+            justify-content: space-between;
+            /* Это важно - распределяет пространство между элементами */
             padding: 0 0;
             box-sizing: border-box;
             z-index: 10000;
@@ -45,7 +48,8 @@
             gap: 1px;
             align-items: center;
             -webkit-app-region: no-drag;
-            margin-left: auto; /* Это перемещает кнопки вправо */
+            margin-left: auto;
+            /* Это перемещает кнопки вправо */
         }
 
         .logo-container {
@@ -347,34 +351,98 @@
             background: none !important;
             border: none !important;
         }
+
+        /* Стили для macOS кнопок */
+        .macos-buttons {
+            position: absolute !important;
+            left: 15px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            gap: 8px;
+            display: flex !important;
+        }
+
+        .macos-buttons .nav-buttons {
+            width: 12px !important;
+            height: 12px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
+            min-width: 12px !important;
+            min-height: 12px !important;
+        }
+
+        .macos-buttons .nav-buttons:hover {
+            transform: scale(1.1);
+        }
+
+        .macos-buttons .nav-buttons svg {
+            display: block !important;
+            visibility: visible !important;
+        }
+
+        /* Стили для Windows кнопок */
+        .windows-buttons {
+            margin-left: auto !important;
+            gap: 1px;
+            display: flex !important;
+            position: relative !important;
+            right: 0 !important;
+        }
     </style>
 </head>
 
 <body>
     <nav class="top-bar">
-        <!-- Кнопки теперь будут справа благодаря margin-left: auto -->
         <div class="top-bar-actions">
-            <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
-                <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
-                </svg>
-            </button>
-
-            <button class="nav-buttons" title="Развернуть" id="maximizeBtn">
-                <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2" />
-                </svg>
-            </button>
-
-            <button class="nav-buttons close-btn" title="Закрыть" id="closeBtn">
-                <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" />
-                </svg>
-            </button>
+            @if (PlatformHelper.IsMacOS)
+            {
+                <!-- macOS стиль - кнопки слева -->
+                <div class="top-bar-actions macos-buttons">
+                    <button class="nav-buttons close-btn" title="Закрыть" id="closeBtn">
+                        <svg width="12" height="12" viewBox="0 0 12 12">
+                            <circle cx="6" cy="6" r="6" fill="#FF5F57" />
+                        </svg>
+                    </button>
+                    <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
+                        <svg width="12" height="12" viewBox="0 0 12 12">
+                            <circle cx="6" cy="6" r="6" fill="#FFBD2E" />
+                        </svg>
+                    </button>
+                    <button class="nav-buttons" title="Развернуть" id="maximizeBtn">
+                        <svg width="12" height="12" viewBox="0 0 12 12">
+                            <circle cx="6" cy="6" r="6" fill="#28CA42" />
+                        </svg>
+                    </button>
+                </div>
+            }
+            else
+            {
+                <div class="top-bar-actions windows-buttons">
+                    <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
+                        <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </button>
+                    <button class="nav-buttons" title="Развернуть" id="maximizeBtn">
+                        <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2" />
+                        </svg>
+                    </button>
+                    <button class="nav-buttons close-btn" title="Закрыть" id="closeBtn">
+                        <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                    </button>
+                </div>
+            }
         </div>
     </nav>
 
-    <!-- Логотип вынесен отдельно -->
     <div class="logo-container">
         <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
     </div>
@@ -385,7 +453,8 @@
         <div class="cards-container">
             <!-- Карточка добавления заметки -->
             <form method="post">
-                <button type="submit" asp-page-handler="ToEditorForEditOrCreate" name="path" value="" class="card-button">
+                <button type="submit" asp-page-handler="ToEditorForEditOrCreate" name="path" value=""
+                    class="card-button">
                     <div class="card-bg">
                         <div class="add-note-text">Добавить заметку</div>
                     </div>
@@ -398,7 +467,7 @@
                 @for (int i = 0; i < Model.Notes.Count(); i++)
                 {
                     <form method="post" asp-page-handler="ToEditorForEditOrCreate">
-                        <input type="hidden" name="path" value="@Model.Notes[i].NotePath"/>
+                        <input type="hidden" name="path" value="@Model.Notes[i].NotePath" />
                         <button type="submit" class="note-card">
                             <div class="note-card-bg">
                                 <div class="note-title">@Model.Notes[i].NoteTitle</div>
@@ -411,7 +480,7 @@
             }
         </div>
     </div>
-    
+
 
     <!-- Карточка нового напоминания -->
     <div class="reminder-card">
@@ -419,17 +488,21 @@
             <div class="reminder-icon">Новое напоминание</div>
         </div>
     </div>
-</body>
 
-<script>
-    const { ipcRenderer } = require('electron');
-    document.getElementById('minimizeBtn').addEventListener('click', () => {
-        ipcRenderer.send('minimize-window');
-    });
-    document.getElementById('maximizeBtn').addEventListener('click', () => {
-        ipcRenderer.send('maximize-window');
-    });
-    document.getElementById('closeBtn').addEventListener('click', () => {
-        ipcRenderer.send('close-window');
-    });
-</script>
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        document.getElementById('minimizeBtn')?.addEventListener('click', () => {
+            ipcRenderer.send('minimize-window');
+        });
+
+        document.getElementById('maximizeBtn')?.addEventListener('click', () => {
+            ipcRenderer.send('maximize-window');
+        });
+
+        document.getElementById('closeBtn')?.addEventListener('click', () => {
+            ipcRenderer.send('close-window');
+        });
+    </script>
+
+</body>

@@ -1,12 +1,12 @@
 @page "{notePath}"
 @using NoteFlow.Models
 @using NoteFlow.Pages;
+@using NoteFlow.Helpers;
 @model NoteFlow.Pages.NoteScreenModel;
 @{
     ViewData["Title"] = "NoteScreen";
     Layout = null;
 }
-
 
 <!DOCTYPE html>
 <head>
@@ -47,23 +47,21 @@
             gap: 1px;
             align-items: center;
             -webkit-app-region: no-drag;
-            margin-left: auto; /* Перемещает кнопки вправо */
         }
 
         .logo-container {
             position: absolute;
             left: 20px;
-            top: 50px; /* Опускаем логотип ниже */
+            top: 50px;
             z-index: 1000;
         }
 
         .logo {
-            width: 60px; /* Увеличиваем размер */
-            height: 60px; /* Увеличиваем размер */
+            width: 60px;
+            height: 60px;
         }
 
-        .nav-buttons
-        {
+        .nav-buttons {
             background: none;
             border: none;
             cursor: pointer;
@@ -85,6 +83,46 @@
         .close-btn:hover {
             background-color: rgb(148, 0, 0);
             color: #ffffff;
+        }
+
+        /* Стили для macOS кнопок */
+        .macos-buttons {
+            margin-left: 15px !important;
+            margin-right: auto !important;
+            gap: 8px;
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        .macos-buttons .nav-buttons {
+            width: 12px !important;
+            height: 12px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
+            min-width: 12px !important;
+            min-height: 12px !important;
+        }
+
+        .macos-buttons .nav-buttons:hover {
+            transform: scale(1.1);
+        }
+
+        .macos-buttons .nav-buttons svg {
+            display: block !important;
+            visibility: visible !important;
+        }
+
+        /* Стили для Windows кнопок */
+        .windows-buttons {
+            margin-left: auto !important;
+            gap: 1px;
+            display: flex !important;
         }
 
         .main-content {
@@ -195,26 +233,48 @@
 
 <body>
     <nav class="top-bar">
-        <!-- Кнопки управления окном теперь справа -->
-        <div class="top-bar-actions">
-            <button class = "nav-buttons" title="Свернуть" id="minimizeBtn">
-                <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
-                </svg>
-            </button>
-
-            <button class = "nav-buttons" title="Развернуть" id="maximizeBtn">
-                <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2" />
-                </svg>
-            </button>
-
-            <button class = "nav-buttons close-btn" title="Закрыть" id="closeBtn">
-                <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" />
-                </svg>
-            </button>
-        </div>
+        @if (PlatformHelper.IsMacOS)
+        {
+            <!-- macOS стиль - кнопки слева -->
+            <div class="top-bar-actions macos-buttons">
+                <button class="nav-buttons close-btn" title="Закрыть" id="closeBtn">
+                    <svg width="12" height="12" viewBox="0 0 12 12">
+                        <circle cx="6" cy="6" r="6" fill="#FF5F57"/>
+                    </svg>
+                </button>
+                <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
+                    <svg width="12" height="12" viewBox="0 0 12 12">
+                        <circle cx="6" cy="6" r="6" fill="#FFBD2E"/>
+                    </svg>
+                </button>
+                <button class="nav-buttons" title="Развернуть" id="maximizeBtn">
+                    <svg width="12" height="12" viewBox="0 0 12 12">
+                        <circle cx="6" cy="6" r="6" fill="#28CA42"/>
+                    </svg>
+                </button>
+            </div>
+        }
+        else
+        {
+            <!-- Windows/Linux стиль - кнопки справа -->
+            <div class="top-bar-actions windows-buttons">
+                <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
+                    <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M5 12h14" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <button class="nav-buttons" title="Развернуть" id="maximizeBtn">
+                    <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/>
+                    </svg>
+                </button>
+                <button class="nav-buttons close-btn" title="Закрыть" id="closeBtn">
+                    <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+        }
     </nav>
 
     <!-- Логотип вынесен отдельно -->
@@ -298,16 +358,18 @@
 }
 
 <script>
-    /* Scripts for window-navigation buttons */
     const { ipcRenderer } = require('electron');
-    document.getElementById('minimizeBtn').addEventListener('click', () => {
-    ipcRenderer.send('minimize-window');
+    
+    document.getElementById('minimizeBtn')?.addEventListener('click', () => {
+        ipcRenderer.send('minimize-window');
     });
-    document.getElementById('maximizeBtn').addEventListener('click', () => {
-    ipcRenderer.send('maximize-window');
+    
+    document.getElementById('maximizeBtn')?.addEventListener('click', () => {
+        ipcRenderer.send('maximize-window');
     });
-    document.getElementById('closeBtn').addEventListener('click', () => {
-    ipcRenderer.send('close-window');
+    
+    document.getElementById('closeBtn')?.addEventListener('click', () => {
+        ipcRenderer.send('close-window');
     });
 
     // Контекстное меню
