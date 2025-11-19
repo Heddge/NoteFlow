@@ -30,7 +30,7 @@ public class Note
             return $"вчера {NoteCreated:HH:mm}";
 
         if (NoteCreated.Year == DateTime.Now.Year)
-            return $"{NoteCreated:dd.MM_HHmm}";
+            return $"{NoteCreated:dd.MM HH:mm}";
 
         if (NoteCreated.Year != DateTime.Now.Year)
             return $"{NoteCreated:dd.MM.yy HH:mm}";
