@@ -531,7 +531,7 @@
                         <button type="submit" class="note-card">
                             <div class="note-card-bg">
                                 <div class="note-title">@Model.Notes[i].NoteTitle</div>
-                                <div class="note-description">@Model.Notes[i].NoteContent</div>
+                                <div class="note-description">@Html.Raw(Model.Notes[i].NoteContent)</div>
                                 <div class="note-timestamp">@Model.Notes[i].BeatifulCreationDate()</div>
                             </div>
                         </button>

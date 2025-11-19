@@ -16,7 +16,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: #141414;
+            background: #191919;
             font-family: 'Inter', sans-serif;
             position: relative;
             width: 1920px;
@@ -32,7 +32,7 @@
             height: 30px;
             top: 0;
             left: 0;
-            background-color: #141414;
+            background-color: #191919;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -165,7 +165,7 @@
             height: 80vh;
             margin-top: 10vh;
             margin-left: 2vw;
-            background: #141414;
+            background: #191919;
             border: none;
             border-radius: 5px;
             overflow: auto;
@@ -244,6 +244,8 @@
         .purple {
             color: #a29bfe;
         }
+
+        
     </style>
 </head>
 
@@ -308,22 +310,22 @@
     </div>
 
     <div class="main-content" style="overflow-y: visible">
-        <form method="post">
+        <form method="post" asp-page-handler="CreateOrEditNote">
             <input type="hidden" name="path" value="@Model._path" />
             <input type="Text" asp-for="NoteTitle" class="note-title-input" placeholder="Новая заметка"
                 maxlength="35" />
 
             <!-- Hidden field for raw text -->
-            <input type="hidden" id="NoteContent" name="NoteContent" value="@Model.NoteContent" />
+            <input asp-for="NoteContent" type="hidden" id="NoteContent" name="NoteContent" value="@Model.NoteContent" />
 
             <div class="editor-container">
                 <div id="richTextEditor" contenteditable="true" class="text-editor"
-                    data-placeholder="Введите ваш текст...">
+                    data-placeholder="Введите ваш текст..." value="@Model.NoteContent">
                     @Html.Raw(Model.NoteContent)
                 </div>
             </div>
 
-            <button type="button" onclick="saveNote()" style="
+            <button type="button"onclick="saveNote()" asp-page-handler="CreateOrEditNote" style="
                 position: absolute;
                 top: 20px;
                 right: 20px;
@@ -443,6 +445,6 @@
                     border-radius: 10px;
                     z-index: 10000;
                     transition: opacity 0.5s ease;">
-        @Model.NoteContent
+        Успешно!
     </div>
 }
