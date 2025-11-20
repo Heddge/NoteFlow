@@ -38,7 +38,7 @@ namespace NoteFlow.Services
 
             // put content into the current note
             System.IO.File.WriteAllText(filePath, content);
-            CurrentStorage.AddNoteToCurrentNotes(filePath);
+            CacheService.AddNoteToCurrentNotes(filePath);
 
         }
 
@@ -52,7 +52,7 @@ namespace NoteFlow.Services
                 // put content into the current note and renaming file
                 System.IO.File.WriteAllText(path, content);
 
-                CurrentStorage.UpdateNoteInCurrentNotes(title, content,newFilePath, path);
+                CacheService.UpdateNoteInCurrentNotes(title, content,newFilePath, path);
 
                 System.IO.File.Move(path, newFilePath);
 

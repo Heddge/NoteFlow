@@ -59,7 +59,7 @@ namespace NoteFlow.Pages
 
         public IActionResult OnPostDeleteNote(string path)
         {
-            CurrentStorage.DeleteNoteFromCurrentNotes(path);
+            CacheService.DeleteNoteFromCurrentNotes(path);
             System.IO.File.Delete(path);
             return RedirectToPage("/MainScreen");
         }
