@@ -11,9 +11,9 @@ namespace NoteFlow.Pages
     {
 
         [BindProperty]
-        public string NoteContent { get; set; }
+        public string NoteContent { get; set; } = "";
         [BindProperty]
-        public string NoteTitle { get; set; }
+        public string NoteTitle { get; set; } = "";
 
         public string _path;
 
@@ -27,11 +27,6 @@ namespace NoteFlow.Pages
                 _currNote = new Note(_path);
                 NoteTitle = _currNote.NoteTitle;
                 NoteContent = _currNote.NoteContent;
-            }
-            else
-            {
-                NoteTitle = "";
-                NoteContent = "";
             }
         }
 
@@ -67,6 +62,7 @@ namespace NoteFlow.Pages
 
         public IActionResult OnPostDeleteNote(string path)
         {
+            CurrentStorage.DeleteNoteFromCurrentNote(path);
             System.IO.File.Delete(path);
             return RedirectToPage("/MainScreen");
         }

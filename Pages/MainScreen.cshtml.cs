@@ -16,12 +16,7 @@ namespace NoteFlow.Pages
 
         public void OnGet()
         {
-            // parsing notes from path
-            foreach (string path in Directory.GetFiles(_notesPathReading, "*.md"))
-            {
-                Notes.Add(new Note(path));
-            }
-            Notes = Notes.OrderByDescending(s => s.NoteEdited).ToList();
+            Notes = CurrentStorage.currNotes;
         }
 
         // method for redirecting to NoteScreen to create or edit note

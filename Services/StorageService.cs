@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using NoteFlow.Models;
+using NoteFlow.Pages;
 
 namespace NoteFlow.Services
 {
@@ -37,6 +38,8 @@ namespace NoteFlow.Services
 
             // put content into the current note
             System.IO.File.WriteAllText(filePath, content);
+            CurrentStorage.AddNoteToCurrentNotes(filePath);
+
         }
 
         public static string SaveEditedNote(string title, string content, string path)
@@ -48,7 +51,12 @@ namespace NoteFlow.Services
             {
                 // put content into the current note and renaming file
                 System.IO.File.WriteAllText(path, content);
+
+                CurrentStorage.UpdateNoteInCurrentNotes(title, content,newFilePath, path);
+
                 System.IO.File.Move(path, newFilePath);
+
+
             }
             catch (IOException e)
             {

@@ -18,7 +18,6 @@ public class Note
         NoteEdited = File.GetLastWriteTime(path);
         NotePath = path;
     }
-    // => Path.Combine(_notesPath, $"{noteTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
 
 
     public string BeatifulCreationDate()
