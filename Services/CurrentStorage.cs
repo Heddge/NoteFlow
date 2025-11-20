@@ -9,7 +9,6 @@ public class CurrentStorage
 
     static CurrentStorage()
     {
-        Console.WriteLine("PARSING PARSING PARSING PARSING PARSING");
         // parsing notes from path
         foreach (string path in Directory.GetFiles(path, "*.md"))
         {
@@ -20,19 +19,22 @@ public class CurrentStorage
 
     public static void UpdateNoteInCurrentNotes(string title, string content, string newPath, string Path)
     {
-        if (currNotes.FindIndex(x => x.NotePath == Path) != -1)
+        int neededNote = currNotes.FindIndex(x => x.NotePath == Path);
+
+        if (neededNote != -1)
             try
             {
-                currNotes.Find(x => x.NotePath == Path).NoteContent = content;
-                currNotes.Find(x => x.NotePath == Path).NoteTitle = title;
-                currNotes.Find(x => x.NotePath == Path).NoteEdited = DateTime.Now;
-                currNotes.Find(x => x.NotePath == Path).NotePath = newPath;
+                Note temp = currNotes[neededNote];
+                temp.NoteContent = content;
+                temp.NoteTitle = title;
+                temp.NoteEdited = DateTime.Now;
+                temp.NotePath = newPath;
+                currNotes[neededNote] = temp;
                 currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
-                return;
             }
             catch (NullReferenceException ee)
             {
-                Console.WriteLine("Something went wrong.");
+                Console.WriteLine($"Something went wrong: {ee.Message}");
             }
     }
 
@@ -50,7 +52,7 @@ public class CurrentStorage
         }
         catch (IOException eee)
         {
-            Console.WriteLine("Something went wrong.");
+            Console.WriteLine($"Something went wrong: {eee.Message}");
         }
     }
 }
