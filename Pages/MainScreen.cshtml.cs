@@ -16,7 +16,7 @@ namespace NoteFlow.Pages
 
         public void OnGet()
         {
-            Notes = CurrentStorage.currNotes;
+            Notes = CacheService.currNotes;
         }
 
         // method for redirecting to NoteScreen to create or edit note
