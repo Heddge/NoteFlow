@@ -11,12 +11,18 @@ namespace NoteFlow.Pages
         // list of all user`s notes
         public List<Note> Notes = new List<Note>();
 
-        // path for saving and parsing notes
-        private string _notesPathReading = StorageService._notesPath;
-
         public void OnGet()
         {
+            if (System.IO.File.ReadAllLines(Path.Combine(StorageService._notesPath, "notesdb.txt")).Count() != StorageService.CountFilesInDirectory() - 1)
+                CacheService.UpdateMissedNotesInDirToCurrentNotes();
+            
             Notes = CacheService.currNotes;
+
+            // foreach (string s in System.IO.File.ReadAllLines(Path.Combine(StorageService._notesPath, "notesdb.txt")).ToArray())
+            // {
+            //     Notes.Add(new Note());
+            //     Notes[Notes.Count()-1].NoteContent = 
+            // }
         }
 
         // method for redirecting to NoteScreen to create or edit note

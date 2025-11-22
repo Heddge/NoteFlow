@@ -9,12 +9,18 @@ public class CacheService
 
     static CacheService()
     {
+
         // parsing notes from path
         foreach (string path in Directory.GetFiles(path, "*.md"))
         {
             currNotes.Add(new Note(path));
         }
         currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
+        
+        if (!File.Exists(Path.Combine(path, "notesdb.txt")))
+        {
+            StorageService.GenerateNotesDB();
+        }
     }
 
     public static void UpdateNoteInCurrentNotes(string title, string content, string newPath, string Path)
@@ -55,4 +61,19 @@ public class CacheService
             Console.WriteLine($"Something went wrong: {eee.Message}");
         }
     }
+
+    private static string[] getNotesTitles() =>
+        currNotes.Select(x => x.NoteTitle).ToArray();
+
+    public static void UpdateMissedNotesInDirToCurrentNotes()
+    {
+        Console.WriteLine("USING METHOD UPDATEMISSEDNOTESINDIRTOCURRENTNOTES  !!!!!!!!!!!!");
+
+        string[] paths = Directory.GetFiles(path, "*.md").Where(x => !getNotesTitles().Contains(x)).ToArray();
+
+        foreach (string path in paths)
+            AddNoteToCurrentNotes(path);
+    }
+
+
 }
