@@ -245,7 +245,29 @@
             color: #a29bfe;
         }
 
-        
+        /* Размер шрифта текста */
+        .font-small {
+            font-size: 14px !important;
+        }
+
+        .font-plain {
+            font-size: 18px !important;
+        }
+
+        .font-big {
+            font-size: 24px !important;
+        }
+
+        .font-very-big {
+            font-size: 32px !important;
+        }
+
+        /* Разделитель в контекстном меню */
+        .context-menu-div {
+            margin: 5px 0;
+            border: none;
+            border-top: 1px solid #555;
+        }
     </style>
 </head>
 
@@ -307,6 +329,11 @@
         <button onclick="colorText('green')">Зеленый</button>
         <button onclick="colorText('yellow')">Желтый</button>
         <button onclick="colorText('purple')">Фиолетовый</button>
+        <hr style="margin: 5px 0; border-color: #555;">
+        <button onclick="changeFontSize('small')">Маленький</button>
+        <button onclick="changeFontSize('medium')">Средний</button>
+        <button onclick="changeFontSize('large')">Большой</button>
+        <button onclick="changeFontSize('xlarge')">Очень большой</button>
     </div>
 
     <div class="main-content" style="overflow-y: visible">
@@ -325,7 +352,7 @@
                 </div>
             </div>
 
-            <button type="button"onclick="saveNote()" asp-page-handler="CreateOrEditNote" style="
+            <button type="button" onclick="saveNote()" asp-page-handler="CreateOrEditNote" style="
                 position: absolute;
                 top: 20px;
                 right: 20px;
@@ -388,6 +415,26 @@
             document.getElementById('contextMenu').style.display = 'none';
         });
 
+        //Изменение размера шрифта
+        function changeFontSize(size) {
+            const selection = window.getSelection();
+            if (selection.rangeCount == 0) return;
+
+            const range = selection.getRangeAt(0);
+            const selectedText = range.toString();
+
+            if (selectedText.length == 0) return;
+
+            const span = document.createElement('span');
+            span.className = 'font-${size}';
+            span.textContent = selectedText;
+
+            range.deleteContents();
+            range.insertNode(span);
+
+            document.getElementById('context-menu').style.display = 'none';
+        }
+
         // Окрашивание текста
         function colorText(color) {
             const selection = window.getSelection();
@@ -435,16 +482,16 @@
 @if (!string.IsNullOrEmpty(Model.NoteContent))
 {
     <div data-auto-hide style="
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    background: rgba(0,0,0,0.8);
-                    color: white;
-                    padding: 20px;
-                    border-radius: 10px;
-                    z-index: 10000;
-                    transition: opacity 0.5s ease;">
+                                position: fixed;
+                                top: 50%;
+                                left: 50%;
+                                transform: translate(-50%, -50%);
+                                background: rgba(0,0,0,0.8);
+                                color: white;
+                                padding: 20px;
+                                border-radius: 10px;
+                                z-index: 10000;
+                                transition: opacity 0.5s ease;">
         Успешно!
     </div>
 }
