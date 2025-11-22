@@ -1,13 +1,13 @@
 using NoteFlow.Models;
+using NoteFlow.Pages;
 
 namespace NoteFlow.Services;
-
-public class CurrentStorage
+public class CacheService
 {
     public static List<Note> currNotes = new List<Note>();
     private static string path = StorageService._notesPath;
 
-    static CurrentStorage()
+    static CacheService()
     {
         // parsing notes from path
         foreach (string path in Directory.GetFiles(path, "*.md"))
