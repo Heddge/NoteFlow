@@ -331,9 +331,9 @@
         <button onclick="colorText('purple')">Фиолетовый</button>
         <hr style="margin: 5px 0; border-color: #555;">
         <button onclick="changeFontSize('small')">Маленький</button>
-        <button onclick="changeFontSize('medium')">Средний</button>
-        <button onclick="changeFontSize('large')">Большой</button>
-        <button onclick="changeFontSize('xlarge')">Очень большой</button>
+        <button onclick="changeFontSize('plain')">Средний(стандартный)</button>
+        <button onclick="changeFontSize('big')">Большой</button>
+        <button onclick="changeFontSize('very-big')">Очень большой</button>
     </div>
 
     <div class="main-content" style="overflow-y: visible">
@@ -415,44 +415,41 @@
             document.getElementById('contextMenu').style.display = 'none';
         });
 
-        //Изменение размера шрифта
-        function changeFontSize(size) {
-            const selection = window.getSelection();
-            if (selection.rangeCount == 0) return;
-
-            const range = selection.getRangeAt(0);
-            const selectedText = range.toString();
-
-            if (selectedText.length == 0) return;
-
-            const span = document.createElement('span');
-            span.className = 'font-${size}';
-            span.textContent = selectedText;
-
-            range.deleteContents();
-            range.insertNode(span);
-
-            document.getElementById('context-menu').style.display = 'none';
-        }
-
-        // Окрашивание текста
-        function colorText(color) {
+        // Универсальная функция для применения стилей (добавлено ради того чтобы текст мог быть одновременно и цветным и другого размера)
+        function applyStyleToSelection(styleClass) {
             const selection = window.getSelection();
             if (selection.rangeCount === 0) return;
 
             const range = selection.getRangeAt(0);
             const selectedText = range.toString();
-
             if (selectedText.length === 0) return;
 
-            const span = document.createElement('span');
-            span.className = color;
-            span.textContent = selectedText;
+            // Проверяем, есть ли уже span с классами
+            let span = document.createElement('span');
 
-            range.deleteContents();
-            range.insertNode(span);
+            // Если выделение уже внутри span, добавляем класс к существующему
+            const parentSpan = range.startContainer.parentElement;
+            if (parentSpan && parentSpan.tagName === 'SPAN' && range.toString() === parentSpan.textContent) {
+                // Весь текст выделен внутри одного span - добавляем класс
+                parentSpan.className += ' ' + styleClass;
+            } else {
+                // Создаем новый span с классом
+                span.className = styleClass;
+                span.textContent = selectedText;
+                range.deleteContents();
+                range.insertNode(span);
+            }
 
             document.getElementById('contextMenu').style.display = 'none';
+        }
+
+        // Функции для цветов и размеров
+        function colorText(color) {
+            applyStyleToSelection(color);
+        }
+
+        function changeFontSize(size) {
+            applyStyleToSelection('font-' + size);
         }
 
         // Сохранение заметки
@@ -482,16 +479,16 @@
 @if (!string.IsNullOrEmpty(Model.NoteContent))
 {
     <div data-auto-hide style="
-                                position: fixed;
-                                top: 50%;
-                                left: 50%;
-                                transform: translate(-50%, -50%);
-                                background: rgba(0,0,0,0.8);
-                                color: white;
-                                padding: 20px;
-                                border-radius: 10px;
-                                z-index: 10000;
-                                transition: opacity 0.5s ease;">
+                                    position: fixed;
+                                    top: 50%;
+                                    left: 50%;
+                                    transform: translate(-50%, -50%);
+                                    background: rgba(0,0,0,0.8);
+                                    color: white;
+                                    padding: 20px;
+                                    border-radius: 10px;
+                                    z-index: 10000;
+                                    transition: opacity 0.5s ease;">
         Успешно!
     </div>
 }
