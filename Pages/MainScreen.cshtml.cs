@@ -13,16 +13,10 @@ namespace NoteFlow.Pages
 
         public void OnGet()
         {
-            if (System.IO.File.ReadAllLines(Path.Combine(StorageService._notesPath, "notesdb.txt")).Count() != StorageService.CountFilesInDirectory() - 1)
+            if (Directory.GetLastAccessTime(StorageService._notesPath) != CacheService.lastOpenedDir)
                 CacheService.UpdateMissedNotesInDirToCurrentNotes();
-            
-            Notes = CacheService.currNotes;
 
-            // foreach (string s in System.IO.File.ReadAllLines(Path.Combine(StorageService._notesPath, "notesdb.txt")).ToArray())
-            // {
-            //     Notes.Add(new Note());
-            //     Notes[Notes.Count()-1].NoteContent = 
-            // }
+            Notes = CacheService.currNotes;
         }
 
         // method for redirecting to NoteScreen to create or edit note
