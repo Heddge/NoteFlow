@@ -22,11 +22,11 @@
         <div class="logo-container">
             <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
         </div>
-        
-        <div class = "add-text">
-        <strong>
-            <h1 class = "add-text">Greetings</h1>
-        </strong>
+
+        <div class="add-text">
+            <strong>
+                <h1 class="add-text">Greetings</h1>
+            </strong>
         </div>
 
         <div class="top-bar-actions">
@@ -115,7 +115,7 @@
             }
         </div>
     </div>
-    
+
 
 
     <!-- Карточка нового напоминания -->
@@ -126,20 +126,98 @@
     </div>
     <!-- Надпись напоминания-->
     <div class="reminder-title">Напоминания</div>
+
+    <!-- Календарь -->
+    <div class="calendar-section-title">Календарь</div>
+    <div class="calendar-section-wrapper">
+        <div class="calendar-container gradient-border">
+            <div class="calendar-content">
+                <div class="calendar-left">
+                    <div class="calendar-current-date">Октябрь 31</div>
+                    <div class="calendar-reminder-card">
+                        <div class="calendar-reminder-title">Покормить кота</div>
+                        <div class="calendar-reminder-description">Купить корм для кота, покормить его</div>
+                    </div>
+                </div>
+
+                <div class="calendar-compact gradient-border">
+                    <div class="calendar-header-compact">
+                        <div class="calendar-nav">
+                            <div class="calendar-month-year">October 2025</div>
+                            <button class="calendar-nav-btn">&lt;</button>
+                            <button class="calendar-nav-btn">&gt;</button>
+                        </div>
+                    </div>
+
+                    <div class="calendar-week-days-compact">
+                        <div class="calendar-week-day">SUN</div>
+                        <div class="calendar-week-day">MON</div>
+                        <div class="calendar-week-day">TUE</div>
+                        <div class="calendar-week-day">WED</div>
+                        <div class="calendar-week-day">THU</div>
+                        <div class="calendar-week-day">FRI</div>
+                        <div class="calendar-week-day">SAT</div>
+                    </div>
+
+                    <div class="calendar-days-grid">
+                        <div class="calendar-day empty"></div>
+                        <div class="calendar-day empty"></div>
+                        <div class="calendar-day empty"></div>
+                        <div class="calendar-day">1</div>
+                        <div class="calendar-day">2</div>
+                        <div class="calendar-day">3</div>
+                        <div class="calendar-day">4</div>
+
+                        <div class="calendar-day">5</div>
+                        <div class="calendar-day">6</div>
+                        <div class="calendar-day">7</div>
+                        <div class="calendar-day">8</div>
+                        <div class="calendar-day">9</div>
+                        <div class="calendar-day">10</div>
+                        <div class="calendar-day">11</div>
+
+                        <div class="calendar-day">12</div>
+                        <div class="calendar-day">13</div>
+                        <div class="calendar-day">14</div>
+                        <div class="calendar-day">15</div>
+                        <div class="calendar-day">16</div>
+                        <div class="calendar-day">17</div>
+                        <div class="calendar-day">18</div>
+
+                        <div class="calendar-day">19</div>
+                        <div class="calendar-day">20</div>
+                        <div class="calendar-day">21</div>
+                        <div class="calendar-day">22</div>
+                        <div class="calendar-day">23</div>
+                        <div class="calendar-day">24</div>
+                        <div class="calendar-day">25</div>
+
+                        <div class="calendar-day">26</div>
+                        <div class="calendar-day">27</div>
+                        <div class="calendar-day">28</div>
+                        <div class="calendar-day">29</div>
+                        <div class="calendar-day">30</div>
+                        <div class="calendar-day current">31</div>
+                        <div class="calendar-day empty"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
-    <script>
-        const { ipcRenderer } = require('electron');
+<script>
+    const { ipcRenderer } = require('electron');
 
-        document.getElementById('minimizeBtn')?.addEventListener('click', () => {
-            ipcRenderer.send('minimize-window');
-        });
+    document.getElementById('minimizeBtn')?.addEventListener('click', () => {
+        ipcRenderer.send('minimize-window');
+    });
 
-        document.getElementById('maximizeBtn')?.addEventListener('click', () => {
-            ipcRenderer.send('maximize-window');
-        });
+    document.getElementById('maximizeBtn')?.addEventListener('click', () => {
+        ipcRenderer.send('maximize-window');
+    });
 
-        document.getElementById('closeBtn')?.addEventListener('click', () => {
-            ipcRenderer.send('close-window');
-        });
-    </script>
+    document.getElementById('closeBtn')?.addEventListener('click', () => {
+        ipcRenderer.send('close-window');
+    });
+</script>
