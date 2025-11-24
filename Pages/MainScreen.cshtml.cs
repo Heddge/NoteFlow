@@ -11,11 +11,11 @@ namespace NoteFlow.Pages
         // list of all user`s notes
         public List<Note> Notes = new List<Note>();
 
-        // path for saving and parsing notes
-        private string _notesPathReading = StorageService._notesPath;
-
         public void OnGet()
         {
+            if (Directory.GetLastAccessTime(StorageService._notesPath) != CacheService.lastOpenedDir)
+                CacheService.UpdateMissedNotesInDirToCurrentNotes();
+
             Notes = CacheService.currNotes;
         }
 
