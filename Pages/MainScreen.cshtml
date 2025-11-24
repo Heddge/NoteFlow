@@ -202,20 +202,48 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        document.getElementById('minimizeBtn')?.addEventListener('click', () => {
+            ipcRenderer.send('minimize-window');
+        });
+
+        document.getElementById('maximizeBtn')?.addEventListener('click', () => {
+            ipcRenderer.send('maximize-window');
+        });
+
+        document.getElementById('closeBtn')?.addEventListener('click', () => {
+            ipcRenderer.send('close-window');
+        });
+
+        //Перехват скролла чтобы скроллить колесиком
+        const cardsContainer = document.querySelector('.cards-container');
+
+        cardsContainer.addEventListener('wheel', function (e) {
+            // Предотвращаем вертикальный скролл страницы
+            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+                e.preventDefault();
+
+                // Настройки скролла
+                const scrollSpeed = 2; // Скорость скролла
+                const maxScroll = this.scrollWidth - this.clientWidth;
+
+                // Рассчитываем новую позицию
+                let newScrollLeft = this.scrollLeft + (e.deltaY * scrollSpeed);
+
+                // Ограничиваем скролл в пределах контейнера
+                newScrollLeft = Math.max(0, Math.min(maxScroll, newScrollLeft));
+
+                // Плавный скролл
+                this.scrollTo({
+                    left: newScrollLeft,
+                    behavior: 'smooth'
+                });
+            }
+        }, { passive: false });
+
+    </script>
+
 </body>
-
-<script>
-    const { ipcRenderer } = require('electron');
-
-    document.getElementById('minimizeBtn')?.addEventListener('click', () => {
-        ipcRenderer.send('minimize-window');
-    });
-
-    document.getElementById('maximizeBtn')?.addEventListener('click', () => {
-        ipcRenderer.send('maximize-window');
-    });
-
-    document.getElementById('closeBtn')?.addEventListener('click', () => {
-        ipcRenderer.send('close-window');
-    });
-</script>
