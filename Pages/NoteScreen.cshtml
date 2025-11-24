@@ -245,6 +245,10 @@
             color: #a29bfe;
         }
 
+        .white {
+            color: #FFFFFF;
+        }
+
         /* Размер шрифта текста */
         /*.font-small {
             font-size: 14px !important;
@@ -329,6 +333,7 @@
         <button onclick="colorText('green')">Зеленый</button>
         <button onclick="colorText('yellow')">Желтый</button>
         <button onclick="colorText('purple')">Фиолетовый</button>
+        <button onclick="colorText('white')">Белый</button>
         <hr style="margin: 5px 0; border-color: #555;">
         <!-- <button onclick="changeFontSize('small')">Маленький</button> -->
         <button onclick="changeFontSize('plain')">Сделать текстом</button>
@@ -424,16 +429,28 @@
             const selectedText = range.toString();
             if (selectedText.length === 0) return;
 
-            // Проверяем, есть ли уже span с классами
-            let span = document.createElement('span');
-
-            // Если выделение уже внутри span, добавляем класс к существующему
+            // Проверяем, есть ли уже span
             const parentSpan = range.startContainer.parentElement;
+
             if (parentSpan && parentSpan.tagName === 'SPAN' && range.toString() === parentSpan.textContent) {
-                // Весь текст выделен внутри одного span - добавляем класс
-                parentSpan.className += ' ' + styleClass;
+                // Если весь текст выделен внутри span - заменяем классы
+                const isColorClass = ['red', 'blue', 'green', 'yellow', 'purple', 'white'].includes(styleClass);
+                const isSizeClass = styleClass.startsWith('font-');
+
+                let newClasses = parentSpan.className.split(' ').filter(cls => {
+                    if (isColorClass) {
+                        return !['red', 'blue', 'green', 'yellow', 'purple', 'white'].includes(cls);
+                    } else if (isSizeClass) {
+                        return !cls.startsWith('font-');
+                    }
+                    return true;
+                });
+
+                newClasses.push(styleClass);
+                parentSpan.className = newClasses.join(' ').trim();
             } else {
-                // Создаем новый span с классом
+                // Создаем новый span
+                const span = document.createElement('span');
                 span.className = styleClass;
                 span.textContent = selectedText;
                 range.deleteContents();
@@ -479,16 +496,16 @@
 @if (!string.IsNullOrEmpty(Model.NoteContent))
 {
     <div data-auto-hide style="
-                                    position: fixed;
-                                    top: 50%;
-                                    left: 50%;
-                                    transform: translate(-50%, -50%);
-                                    background: rgba(0,0,0,0.8);
-                                    color: white;
-                                    padding: 20px;
-                                    border-radius: 10px;
-                                    z-index: 10000;
-                                    transition: opacity 0.5s ease;">
+                                                position: fixed;
+                                                top: 50%;
+                                                left: 50%;
+                                                transform: translate(-50%, -50%);
+                                                background: rgba(0,0,0,0.8);
+                                                color: white;
+                                                padding: 20px;
+                                                border-radius: 10px;
+                                                z-index: 10000;
+                                                transition: opacity 0.5s ease;">
         Успешно!
     </div>
 }
