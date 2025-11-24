@@ -5,9 +5,13 @@ body {
     font-family: 'Inter', sans-serif;
     position: relative;
     width: 1920px;
-    height: 2000px;
-    overflow-y: hidden;
+    height: 120vh;
+    overflow-y: auto;
     overflow-x: hidden;
+    scrollbar-width: none;
+    scrollbar-color: #202020;
+    scrollbar-track-color: #191919;
+    scrollbar-shadow-color: #181818;
 }
 
 .top-bar {
