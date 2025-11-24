@@ -148,10 +148,10 @@
             border: none;
             font-family: 'Inter';
             font-weight: 700;
-            font-size: 3vw;
+            font-size: 75px;
             color: #ffffff;
             outline: none;
-            margin-bottom: 2vh;
+            margin-bottom: 1vh;
             padding: 1vh 0;
             position: absolute;
             margin-left: 2vw;
@@ -164,7 +164,7 @@
             width: 95%;
             height: 80vh;
             margin-top: 10vh;
-            margin-left: 2vw;
+            margin-left: 1vw;
             background: #191919;
             border: none;
             border-radius: 5px;
@@ -201,8 +201,8 @@
         /* Контекстное меню */
         .context-menu {
             position: fixed;
-            background: #2d2d2d;
-            border: 1px solid #555;
+            background: #212121;
+            border: 2px solid #202020;
             border-radius: 5px;
             padding: 5px 0;
             z-index: 10001;
@@ -246,20 +246,20 @@
         }
 
         /* Размер шрифта текста */
-        .font-small {
+        /*.font-small {
             font-size: 14px !important;
-        }
+        }*/
 
         .font-plain {
             font-size: 18px !important;
         }
 
         .font-big {
-            font-size: 24px !important;
+            font-size: 32px !important;
         }
 
         .font-very-big {
-            font-size: 32px !important;
+            font-size: 50px !important;
         }
 
         /* Разделитель в контекстном меню */
@@ -330,10 +330,10 @@
         <button onclick="colorText('yellow')">Желтый</button>
         <button onclick="colorText('purple')">Фиолетовый</button>
         <hr style="margin: 5px 0; border-color: #555;">
-        <button onclick="changeFontSize('small')">Маленький</button>
-        <button onclick="changeFontSize('plain')">Средний(стандартный)</button>
-        <button onclick="changeFontSize('big')">Большой</button>
-        <button onclick="changeFontSize('very-big')">Очень большой</button>
+        <!-- <button onclick="changeFontSize('small')">Маленький</button> -->
+        <button onclick="changeFontSize('plain')">Сделать текстом</button>
+        <button onclick="changeFontSize('big')">Сделать заголовком 2-го уровня</button>
+        <button onclick="changeFontSize('very-big')">Сделать заголовком 1-го уровня</button>
     </div>
 
     <div class="main-content" style="overflow-y: visible">
