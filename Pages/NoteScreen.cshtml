@@ -270,7 +270,7 @@
         }
         .save-button {
             position: absolute ;
-            top: 900px ;
+            bottom: 75px ;
             right: 25px ;
             background: #2c2c2c ;
             color: white ;
@@ -513,19 +513,20 @@
 </body>
 
 <!-- FOR DEVELOPING ONLY -->
-@if (!string.IsNullOrEmpty(Model.NoteContent))
+@* @if (!string.IsNullOrEmpty(Model.NoteContent))
 {
-    <div data-auto-hide style="
-                                    position: fixed;
-                                    top: 50%;
-                                    left: 50%;
-                                    transform: translate(-50%, -50%);
-                                    background: rgba(0,0,0,0.8);
-                                    color: white;
-                                    padding: 20px;
-                                    border-radius: 10px;
-                                    z-index: 10000;
-                                    transition: opacity 0.5s ease;">
+    <div data-auto-hide style=" 
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        z-index: 10000;
+        transition: opacity 0.5s ease;">
         Успешно!
     </div>
 }
+*@

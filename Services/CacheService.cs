@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using NoteFlow.Models;
 using NoteFlow.Pages;
 
@@ -5,13 +6,22 @@ namespace NoteFlow.Services;
 public class CacheService
 {
     public static List<Note> currNotes = new List<Note>();
-    private static string path = StorageService._notesPath;
+    public static List<Reminder> currReminders = new List<Reminder>();
+    private static string notesPath = StorageService._notesPath;
+    private static string remindersPath = StorageService._remindersPath;
     static CacheService()
     {
         // parsing notes from path
-        foreach (string path in Directory.GetFiles(path, "*.md"))
+        foreach (string path in Directory.GetFiles(notesPath, "*.md"))
         {
             currNotes.Add(new Note(path));
+        }
+        currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
+
+        // parsing notes from path
+        foreach (string path in Directory.GetFiles(remindersPath, "*.md"))
+        {
+            currReminders.Add(new Reminder(path));
         }
         currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
     }
@@ -28,7 +38,6 @@ public class CacheService
                 temp.NoteTitle = title;
                 temp.NoteEdited = DateTime.Now;
                 temp.NotePath = newPath;
-                currNotes[neededNote] = temp;
                 currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
             }
             catch (NullReferenceException ee)
@@ -64,7 +73,7 @@ public class CacheService
     {
         if (flag)
         {
-            string[] addedPaths = Directory.GetFiles(path, "*.md").Where(x => !getNotesPaths().Contains(x)).ToArray();
+            string[] addedPaths = Directory.GetFiles(notesPath, "*.md").Where(x => !getNotesPaths().Contains(x)).ToArray();
 
             foreach (string path in addedPaths)
                 AddNoteToCurrentNotes(path);
@@ -72,7 +81,7 @@ public class CacheService
             return;
         }
 
-        string[] deletedPaths = getNotesPaths().Where(x => !Directory.GetFiles(path, "*.md").Contains(x)).ToArray();
+        string[] deletedPaths = getNotesPaths().Where(x => !Directory.GetFiles(notesPath, "*.md").Contains(x)).ToArray();
         
         foreach (string path in deletedPaths)
             DeleteNoteFromCurrentNotes(path);

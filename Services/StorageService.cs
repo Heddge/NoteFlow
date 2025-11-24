@@ -10,6 +10,7 @@ namespace NoteFlow.Services
     {
         private static readonly string _myDocumentsPath;
         public static readonly string _notesPath;
+        public static readonly string _remindersPath;
         public static readonly char[] _bannedChars = { '?', '<', '>', ':', '"', '|', '*', '\\', '/' };
 
         static StorageService()
@@ -19,23 +20,27 @@ namespace NoteFlow.Services
                 "NoteFlow");
 
             _notesPath = Path.Combine(_myDocumentsPath, "Notes");
+            _remindersPath = Path.Combine(_myDocumentsPath, "Reminders");
 
             // Создаем папки при первом использовании
             if (!Directory.Exists(_notesPath))
                 Directory.CreateDirectory(_notesPath);
+            if (!Directory.Exists(_remindersPath))
+                Directory.CreateDirectory(_remindersPath);
 
             Console.WriteLine($"Storage initialized: {_notesPath}");
-            Console.WriteLine($"Count files in Directory: {CountFilesInDirectory()}");
+            Console.WriteLine($"Storage initialized: {_remindersPath}");
+            // Console.WriteLine($"Count notes in Directory: {CountFilesInDirectory()}");
         }
 
-        private static string GetPath(string noteTitle)
+        private static string GetNotePath(string noteTitle)
             => Path.Combine(_notesPath, $"{noteTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
             
         
         public static void SaveNewNote(string title, string content)
         {
             // creating new filepath
-            var filePath = GetPath(ToSafetyName(title));
+            var filePath = GetNotePath(ToSafetyNoteName(title));
 
             // put content into the current note
             System.IO.File.WriteAllText(filePath, content);
@@ -46,14 +51,14 @@ namespace NoteFlow.Services
         public static string SaveEditedNote(string title, string content, string path)
         {
             // new path with new (if user changed it) name
-            string newFilePath = GetPath(ToSafetyName(title));
+            string newFilePath = GetNotePath(ToSafetyNoteName(title));
 
             try
             {
                 // put content into the current note and renaming file
                 System.IO.File.WriteAllText(path, content);
 
-                CacheService.UpdateNoteInCurrentNotes(title, content,newFilePath, path);
+                CacheService.UpdateNoteInCurrentNotes(title, content, newFilePath, path);
 
                 System.IO.File.Move(path, newFilePath);
             }
@@ -81,17 +86,17 @@ namespace NoteFlow.Services
             return newFilePath;
             }
 
-        private static string ToSafetyName(string oldName)
+        private static string ToSafetyNoteName(string oldName)
         {
-            if (string.IsNullOrEmpty(oldName) || string.IsNullOrWhiteSpace(oldName))
+            if (string.IsNullOrWhiteSpace(oldName))
                 return "Новая заметка";
 
             string safetyName = new string(oldName.Select(x => _bannedChars.Contains(x) ? ' ' : x).ToArray());
 
-            return string.IsNullOrEmpty(safetyName) || string.IsNullOrWhiteSpace(safetyName) ? "Новая заметка" : safetyName;
+            return string.IsNullOrWhiteSpace(safetyName) ? "Новая заметка" : safetyName;
         }
 
-        public static int CountFilesInDirectory()
+        public static int CountNotesInDirectory()
             => Directory.GetFiles(_notesPath, "*.md").Count();
 
         public static void GenerateNotesDB()

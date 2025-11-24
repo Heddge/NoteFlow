@@ -10,15 +10,16 @@ namespace NoteFlow.Pages
     {
         // list of all user`s notes
         public List<Note> Notes = new List<Note>();
+        public List<Reminder> Reminders = new List<Reminder>();
         public CacheService currentCache = new CacheService();
 
         public void OnGet()
         {
             Notes = CacheService.currNotes;
             
-            if (Notes.Count() != Directory.GetFiles(StorageService._notesPath, "*.md").Count())
+            if (Notes.Count() != StorageService.CountNotesInDirectory())
             {
-                currentCache.UpdateMissedNotesInDirToCurrentNotes(Notes.Count() < Directory.GetFiles(StorageService._notesPath, "*.md").Count());
+                currentCache.UpdateMissedNotesInDirToCurrentNotes(Notes.Count() < StorageService.CountNotesInDirectory());
                 Notes = CacheService.currNotes;
             }
         }
