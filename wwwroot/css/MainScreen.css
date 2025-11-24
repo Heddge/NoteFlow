@@ -8,10 +8,11 @@ body {
     height: 150vh;
     overflow-y: auto;
     overflow-x: hidden;
-    scrollbar-width: none;
-    scrollbar-color: #202020;
-    scrollbar-track-color: #191919;
-    scrollbar-shadow-color: #181818;
+    scroll-behavior: smooth;
+}
+
+body::-webkit-scrollbar {
+    display: none;
 }
 
 .top-bar {
