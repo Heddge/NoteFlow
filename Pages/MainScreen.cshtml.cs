@@ -14,6 +14,8 @@ namespace NoteFlow.Pages
 
         public void OnGet()
         {
+            Notes = CacheService.currNotes;
+            
             if (Notes.Count() != Directory.GetFiles(StorageService._notesPath, "*.md").Count())
             {
                 currentCache.UpdateMissedNotesInDirToCurrentNotes(Notes.Count() < Directory.GetFiles(StorageService._notesPath, "*.md").Count());

@@ -66,9 +66,22 @@ public class CacheService
 
     public void UpdateMissedNotesInDirToCurrentNotes(bool flag)
     {
-        string[] paths = Directory.GetFiles(path, "*.md").Where(x => !getNotesPaths().Contains(x)).ToArray();
+        if (flag)
+        {
+            string[] addedPaths = Directory.GetFiles(path, "*.md").Where(x => !getNotesPaths().Contains(x)).ToArray();
 
-        foreach (string path in paths)
-            AddNoteToCurrentNotes(path);
+            foreach (string path in addedPaths)
+                AddNoteToCurrentNotes(path);
+
+            return;
+        }
+
+        string[] deletedPaths = getNotesPaths().Where(x => !Directory.GetFiles(path, "*.md").Contains(x)).ToArray();
+        
+        foreach (string path in deletedPaths)
+            Console.WriteLine(path);
+
+        foreach (string path in deletedPaths)
+            DeleteNoteFromCurrentNotes(path);
     }
 }
