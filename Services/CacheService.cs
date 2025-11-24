@@ -6,8 +6,6 @@ public class CacheService
 {
     public static List<Note> currNotes = new List<Note>();
     private static string path = StorageService._notesPath;
-    public static DateTime lastOpenedDir = Directory.GetLastAccessTime(path);
-
     static CacheService()
     {
         // parsing notes from path
@@ -16,11 +14,6 @@ public class CacheService
             currNotes.Add(new Note(path));
         }
         currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
-        
-        // if (!File.Exists(Path.Combine(path, "notesdb.txt")))
-        // {
-        //     StorageService.GenerateNotesDB();
-        // }
     }
 
     public static void UpdateNoteInCurrentNotes(string title, string content, string newPath, string Path)
@@ -49,9 +42,11 @@ public class CacheService
 
     public static void AddNoteToCurrentNotes(string Path)
     {
+        Console.WriteLine("Entered in Add method");
         if (currNotes.FindIndex(x => x.NotePath == Path) == -1)
             try
             {
+                Console.WriteLine("Adding");
                 currNotes.Add(new Note(Path));
                 currNotes[currNotes.Count()-1].NoteEdited = DateTime.Now;
                 currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
@@ -65,10 +60,13 @@ public class CacheService
     private static string[] getNotesTitles() =>
         currNotes.Select(x => x.NoteTitle).ToArray();
 
-    public static void UpdateMissedNotesInDirToCurrentNotes()
+        
+    private static string[] getNotesPaths() =>
+        currNotes.Select(x => x.NotePath).ToArray();
+
+    public static void UpdateMissedNotesInDirToCurrentNotes(bool flag)
     {
-        // var temp = Directory.GetFiles(path, "*.md").Count() - 1;
-        string[] paths = Directory.GetFiles(path, "*.md").Where(x => getNotesTitles().Contains(x)).ToArray();
+        string[] paths = Directory.GetFiles(path, "*.md").Where(x => !getNotesPaths().Contains(x)).ToArray();
 
         foreach (string path in paths)
             AddNoteToCurrentNotes(path);

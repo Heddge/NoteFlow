@@ -13,10 +13,16 @@ namespace NoteFlow.Pages
 
         public void OnGet()
         {
-            if (Directory.GetLastAccessTime(StorageService._notesPath) != CacheService.lastOpenedDir)
-                CacheService.UpdateMissedNotesInDirToCurrentNotes();
-
+            // if (Directory.GetLastAccessTime(StorageService._notesPath) != CacheService.lastOpenedDir)
+                // CacheService.UpdateMissedNotesInDirToCurrentNotes();
+            
             Notes = CacheService.currNotes;
+
+            if (Notes.Count() != Directory.GetFiles(StorageService._notesPath, "*.md").Count())
+            {
+                CacheService.UpdateMissedNotesInDirToCurrentNotes(Notes.Count() < Directory.GetFiles(StorageService._notesPath, "*.md").Count());
+                Notes = CacheService.currNotes;
+            }
         }
 
         // method for redirecting to NoteScreen to create or edit note
