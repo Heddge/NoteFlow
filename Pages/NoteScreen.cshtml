@@ -478,16 +478,71 @@
             document.forms[0].submit();
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const editor = document.getElementById('richTextEditor');
-            const existingContent = document.getElementById('NoteContent').value;
+        // Горячие клавиши для мака
+        @if (PlatformHelper.IsMacOS)
+            {
+                <text>
+                    document.addEventListener('keydown', function (e) {
+                    if (e.metaKey) { // Cmd key
+                    const standardCombos = ['a','c','v','x','z','q','s','f','p','w'];
+                    if (standardCombos.includes(e.key)){
+                        return;
+                    }
+                    switch (e.key) {
+                            case '1': colorText('red'); break;
+                    case '2': colorText('blue'); break;
+                    case '3': colorText('green'); break;
+                    case '4': colorText('yellow'); break;
+                    case '5': colorText('purple'); break;
+                    case '6': colorText('white'); break;
+                    case 'e': changeFontSize('plain'); break;
+                    case 'r': changeFontSize('big'); break;
+                    case 't': changeFontSize('very-big'); break;
+                        }
+                    }
+                });
+                </text>
+        }
 
-            if (existingContent && existingContent.trim() !== '') {
-                editor.innerHTML = existingContent;
-            } else {
-                editor.innerHTML = '';
+            // Горячие клавиши для остальных платформ
+            @if (!PlatformHelper.IsMacOS)
+            {
+                <text>
+                    document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey) {
+                // Не блокируем стандартные комбинации
+                const standardCombos = ['a', 'c', 'v', 'x', 'z', 'q', 's', 'f', 'p', 'w', 'n', 'o', 't'];
+                    if (standardCombos.includes(e.key.toLowerCase())) {
+                    return;
+                }
+
+                    e.preventDefault();
+                    switch (e.key.toLowerCase()) {
+                    case '1': colorText('red'); break;
+                    case '2': colorText('blue'); break;
+                    case '3': colorText('green'); break;
+                    case '4': colorText('yellow'); break;
+                    case '5': colorText('purple'); break;
+                    case '6': colorText('white'); break;
+                    case 'h': changeFontSize('very-big'); break;    
+                    case 's': changeFontSize('big'); break;         
+                    case 't': changeFontSize('plain'); break;       
+                }
             }
         });
+                </text>
+        }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const editor = document.getElementById('richTextEditor');
+                const existingContent = document.getElementById('NoteContent').value;
+
+                if (existingContent && existingContent.trim() !== '') {
+                    editor.innerHTML = existingContent;
+                } else {
+                    editor.innerHTML = '';
+                }
+            });
     </script>
 
 </body>
@@ -496,16 +551,16 @@
 @if (!string.IsNullOrEmpty(Model.NoteContent))
 {
     <div data-auto-hide style="
-                                                position: fixed;
-                                                top: 50%;
-                                                left: 50%;
-                                                transform: translate(-50%, -50%);
-                                                background: rgba(0,0,0,0.8);
-                                                color: white;
-                                                padding: 20px;
-                                                border-radius: 10px;
-                                                z-index: 10000;
-                                                transition: opacity 0.5s ease;">
+                                                            position: fixed;
+                                                            top: 50%;
+                                                            left: 50%;
+                                                            transform: translate(-50%, -50%);
+                                                            background: rgba(0,0,0,0.8);
+                                                            color: white;
+                                                            padding: 20px;
+                                                            border-radius: 10px;
+                                                            z-index: 10000;
+                                                            transition: opacity 0.5s ease;">
         Успешно!
     </div>
 }
