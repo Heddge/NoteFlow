@@ -10,17 +10,13 @@ namespace NoteFlow.Pages
     {
         // list of all user`s notes
         public List<Note> Notes = new List<Note>();
+        public CacheService currentCache = new CacheService();
 
         public void OnGet()
         {
-            // if (Directory.GetLastAccessTime(StorageService._notesPath) != CacheService.lastOpenedDir)
-                // CacheService.UpdateMissedNotesInDirToCurrentNotes();
-            
-            Notes = CacheService.currNotes;
-
             if (Notes.Count() != Directory.GetFiles(StorageService._notesPath, "*.md").Count())
             {
-                CacheService.UpdateMissedNotesInDirToCurrentNotes(Notes.Count() < Directory.GetFiles(StorageService._notesPath, "*.md").Count());
+                currentCache.UpdateMissedNotesInDirToCurrentNotes(Notes.Count() < Directory.GetFiles(StorageService._notesPath, "*.md").Count());
                 Notes = CacheService.currNotes;
             }
         }

@@ -64,7 +64,7 @@ public class CacheService
     private static string[] getNotesPaths() =>
         currNotes.Select(x => x.NotePath).ToArray();
 
-    public static void UpdateMissedNotesInDirToCurrentNotes(bool flag)
+    public void UpdateMissedNotesInDirToCurrentNotes(bool flag)
     {
         string[] paths = Directory.GetFiles(path, "*.md").Where(x => !getNotesPaths().Contains(x)).ToArray();
 
