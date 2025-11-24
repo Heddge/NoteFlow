@@ -199,8 +199,8 @@ body {
     align-items: center;
     justify-content: center;
     position: relative;
-    top: 25px;
-    right: 10px;
+    top: 35px;
+    left: 300px;
 }
 
 /* Карточка заметки */
