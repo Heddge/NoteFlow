@@ -57,10 +57,6 @@ public class CacheService
             }
     }
 
-    private static string[] getNotesTitles() =>
-        currNotes.Select(x => x.NoteTitle).ToArray();
-
-        
     private static string[] getNotesPaths() =>
         currNotes.Select(x => x.NotePath).ToArray();
 
@@ -78,9 +74,6 @@ public class CacheService
 
         string[] deletedPaths = getNotesPaths().Where(x => !Directory.GetFiles(path, "*.md").Contains(x)).ToArray();
         
-        foreach (string path in deletedPaths)
-            Console.WriteLine(path);
-
         foreach (string path in deletedPaths)
             DeleteNoteFromCurrentNotes(path);
     }
