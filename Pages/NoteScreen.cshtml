@@ -306,7 +306,18 @@
             mask-composite: exclude ;
             z-index: -1 ;
         }
-
+        .back-button {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            color: #aeaeae;
+            z-index: 1000;
+        }
 
     </style>
 </head>
@@ -338,6 +349,11 @@
         {
             <!-- Windows/Linux стиль - кнопки справа -->
             <div class="top-bar-actions windows-buttons">
+                <button class="nav-buttons back-button" title="На главную" id="backBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
                 <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
                     <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
@@ -432,6 +448,9 @@
 
         document.getElementById('closeBtn')?.addEventListener('click', () => {
             ipcRenderer.send('close-window');
+        });
+        document.getElementById('backBtn')?.addEventListener('click', () => {
+            window.location.href = "/MainScreen";
         });
 
         // Контекстное меню
