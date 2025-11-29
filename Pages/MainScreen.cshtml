@@ -23,6 +23,37 @@
             overflow-x: hidden;
         }
 
+        /* Надпись "Недавние файлы" */
+        .recent-files-label {
+            position: absolute;
+            left: 287px;
+            top: 110px;
+            font-family: 'Inter';
+            font-weight: 500;
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Кнопка настроек */
+        .settings-btn {
+            position: fixed;
+            left: 30px;
+            bottom: 30px;
+            background: hsla(0, 0%, 24%, 0.80);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-family: 'Inter';
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .settings-btn:hover {
+            background: rgba(80, 80, 80, 0.9);
+        }
+        
         .top-bar {
             position: fixed;
             width: 100%;
@@ -329,6 +360,9 @@
 </head>
 
 <body>
+    <!-- Надпись "Недавние файлы" -->
+    <div class="recent-files-label">Недавние файлы</div>
+
     <nav class="top-bar">
         <div class="logo-container">
             <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
@@ -352,6 +386,10 @@
                     <path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round" />
                 </svg>
             </button>
+
+            <!-- Кнопка настроек -->
+            <button class="settings-btn" onclick="openSettings()">Настройки</button>
+
         </div>
     </nav>
 
@@ -406,4 +444,9 @@
     document.getElementById('toEditNoteScreen').addEventListener('click', function () {
         window.location.href = '/NoteScreen';
     });
+
+    function openSettings() {
+            console.log('Открыть настройки');
+            window.location.href = '/Settings';
+        }
 </script>
