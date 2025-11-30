@@ -46,9 +46,10 @@ namespace NoteFlow
                 endpoints.MapRazorPages();
 
 
-                endpoints.MapGet("/", async context =>
+                endpoints.MapGet("/", context =>
                     {
                         context.Response.Redirect("/MainScreen");
+                        return Task.CompletedTask;
                         // context.Response.Redirect("/MainPage");
                     });
             }

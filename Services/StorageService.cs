@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using NoteFlow.Models;
+using NoteFlow.Pages;
 
 namespace NoteFlow.Services
 {
@@ -24,6 +25,7 @@ namespace NoteFlow.Services
                 Directory.CreateDirectory(_notesPath);
 
             Console.WriteLine($"Storage initialized: {_notesPath}");
+            Console.WriteLine($"Count files in Directory: {CountFilesInDirectory()}");
         }
 
         private static string GetPath(string noteTitle)
@@ -37,6 +39,8 @@ namespace NoteFlow.Services
 
             // put content into the current note
             System.IO.File.WriteAllText(filePath, content);
+            CacheService.AddNoteToCurrentNotes(filePath);
+
         }
 
         public static string SaveEditedNote(string title, string content, string path)
@@ -48,6 +52,9 @@ namespace NoteFlow.Services
             {
                 // put content into the current note and renaming file
                 System.IO.File.WriteAllText(path, content);
+
+                CacheService.UpdateNoteInCurrentNotes(title, content,newFilePath, path);
+
                 System.IO.File.Move(path, newFilePath);
             }
             catch (IOException e)
@@ -82,6 +89,16 @@ namespace NoteFlow.Services
             string safetyName = new string(oldName.Select(x => _bannedChars.Contains(x) ? ' ' : x).ToArray());
 
             return string.IsNullOrEmpty(safetyName) || string.IsNullOrWhiteSpace(safetyName) ? "Новая заметка" : safetyName;
+        }
+
+        public static int CountFilesInDirectory()
+            => Directory.GetFiles(_notesPath, "*.md").Count();
+
+        public static void GenerateNotesDB()
+        {
+            string[] temp = CacheService.currNotes.Select(
+                x => new string(x.GetId() + '?' + x.NoteTitle + '?' + x.NotePath + '?' + x.NoteCreated + '?' + x.NoteEdited + '?' + x.NoteContent.Substring(0,30))).ToArray();
+            File.WriteAllLines(Path.Combine(_notesPath, "notesdb.txt"), temp);
         }
     }
 }

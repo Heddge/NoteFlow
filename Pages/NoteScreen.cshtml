@@ -275,7 +275,69 @@
             color: #a29bfe;
         }
 
-        
+        /* Размер шрифта текста */
+        .font-small {
+            font-size: 14px !important;
+        }
+
+        .font-plain {
+            font-size: 18px !important;
+        }
+
+        .font-big {
+            font-size: 24px !important;
+        }
+
+        .font-very-big {
+            font-size: 32px !important;
+        }
+
+        /* Разделитель в контекстном меню */
+        .context-menu-div {
+            margin: 5px 0;
+            border: none;
+            border-top: 1px solid #555;
+        }
+        .save-button {
+            position: absolute ;
+            top: 900px ;
+            right: 25px ;
+            background: #2c2c2c ;
+            color: white ;
+            width: 60px ;
+            height: 60px ;
+            border-radius: 50% ;
+            cursor: pointer ;
+            font-size: 24px ;
+            display: flex ;
+            align-items: center ;
+            justify-content: center ;
+            border: none ;
+            z-index: 9999 ;
+        }
+
+        .save-button::before {
+            content: '' ;
+            position: absolute ;
+            top: -2px ;
+            left: -2px ;
+            right: -2px ;
+            bottom: -2px ;
+            border-radius: 50% ;
+            padding: 1px ;
+            background: conic-gradient(from 0deg, rgba(152, 249, 255, 0.8), rgba(135, 38, 183, 0.8), rgba(152, 249, 255, 0.8)) ;
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0) ;
+            mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0) ;
+            -webkit-mask-composite: xor ;
+            mask-composite: exclude ;
+            z-index: -1 ;
+        }
+
+
     </style>
 </head>
 
@@ -337,6 +399,11 @@
         <button onclick="colorText('green')">Зеленый</button>
         <button onclick="colorText('yellow')">Желтый</button>
         <button onclick="colorText('purple')">Фиолетовый</button>
+        <hr style="margin: 5px 0; border-color: #555;">
+        <button onclick="changeFontSize('small')">Маленький</button>
+        <button onclick="changeFontSize('plain')">Средний(стандартный)</button>
+        <button onclick="changeFontSize('big')">Большой</button>
+        <button onclick="changeFontSize('very-big')">Очень большой</button>
     </div>
 
     <div class="main-content" style="overflow-y: visible">
@@ -354,19 +421,16 @@
                     @Html.Raw(Model.NoteContent)
                 </div>
             </div>
-
-            <button type="button"onclick="saveNote()" asp-page-handler="CreateOrEditNote" style="
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                background: #d7dbd7;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 5px;
-                cursor: pointer;">
-                Сохранить
+            <button type="button" onclick="saveNote()" asp-page-handler="CreateOnEditNote" class="save-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cccccc" stroke-width="1.5">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10,9 9,9 9,11"/>
+                </svg>
             </button>
+
         </form>
 
         <button type="button" onclick="saveNote()" asp-page-handler="CreateOnEditNote" class="save-button">
@@ -429,24 +493,41 @@
             document.getElementById('contextMenu').style.display = 'none';
         });
 
-        // Окрашивание текста
-        function colorText(color) {
+        // Универсальная функция для применения стилей (добавлено ради того чтобы текст мог быть одновременно и цветным и другого размера)
+        function applyStyleToSelection(styleClass) {
             const selection = window.getSelection();
             if (selection.rangeCount === 0) return;
 
             const range = selection.getRangeAt(0);
             const selectedText = range.toString();
-
             if (selectedText.length === 0) return;
 
-            const span = document.createElement('span');
-            span.className = color;
-            span.textContent = selectedText;
+            // Проверяем, есть ли уже span с классами
+            let span = document.createElement('span');
 
-            range.deleteContents();
-            range.insertNode(span);
+            // Если выделение уже внутри span, добавляем класс к существующему
+            const parentSpan = range.startContainer.parentElement;
+            if (parentSpan && parentSpan.tagName === 'SPAN' && range.toString() === parentSpan.textContent) {
+                // Весь текст выделен внутри одного span - добавляем класс
+                parentSpan.className += ' ' + styleClass;
+            } else {
+                // Создаем новый span с классом
+                span.className = styleClass;
+                span.textContent = selectedText;
+                range.deleteContents();
+                range.insertNode(span);
+            }
 
             document.getElementById('contextMenu').style.display = 'none';
+        }
+
+        // Функции для цветов и размеров
+        function colorText(color) {
+            applyStyleToSelection(color);
+        }
+
+        function changeFontSize(size) {
+            applyStyleToSelection('font-' + size);
         }
 
         // Сохранение заметки
@@ -476,16 +557,16 @@
 @if (!string.IsNullOrEmpty(Model.NoteContent))
 {
     <div data-auto-hide style="
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    background: rgba(0,0,0,0.8);
-                    color: white;
-                    padding: 20px;
-                    border-radius: 10px;
-                    z-index: 10000;
-                    transition: opacity 0.5s ease;">
+                                    position: fixed;
+                                    top: 50%;
+                                    left: 50%;
+                                    transform: translate(-50%, -50%);
+                                    background: rgba(0,0,0,0.8);
+                                    color: white;
+                                    padding: 20px;
+                                    border-radius: 10px;
+                                    z-index: 10000;
+                                    transition: opacity 0.5s ease;">
         Успешно!
     </div>
 }

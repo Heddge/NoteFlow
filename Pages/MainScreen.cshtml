@@ -98,7 +98,6 @@
 
             <!-- Карточки заметок -->
             @if (Model.Notes.Count() > 0)
-            {
                 @for (int i = 0; i < Model.Notes.Count(); i++)
                 {
                     <form method="post" asp-page-handler="ToEditorForEditOrCreate">
@@ -112,7 +111,6 @@
                         </button>
                     </form>
                 }
-            }
         </div>
     </div>
 

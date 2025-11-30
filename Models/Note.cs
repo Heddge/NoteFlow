@@ -9,6 +9,7 @@ public class Note
     public readonly DateTime NoteCreated;
     public DateTime NoteEdited;
     public string NotePath;
+    public Guid NoteId;
 
     public Note(string path)
     {
@@ -18,7 +19,6 @@ public class Note
         NoteEdited = File.GetLastWriteTime(path);
         NotePath = path;
     }
-    // => Path.Combine(_notesPath, $"{noteTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
 
 
     public string BeatifulCreationDate()
@@ -36,5 +36,11 @@ public class Note
             return $"{NoteCreated:dd.MM.yy HH:mm}";
         
         return NoteCreated.ToString();
+    }
+
+    public string GetId()
+    {
+        NoteId = Guid.NewGuid();
+        return NoteId.ToString();
     }
 }

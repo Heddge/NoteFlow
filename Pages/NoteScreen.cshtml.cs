@@ -11,27 +11,20 @@ namespace NoteFlow.Pages
     {
 
         [BindProperty]
-        public string NoteContent { get; set; }
+        public string NoteContent { get; set; } = "";
         [BindProperty]
-        public string NoteTitle { get; set; }
+        public string NoteTitle { get; set; } = "";
 
-        public string _path;
-
-        private Note _currNote;
-
+        public string _path = "";
         public void OnGet(string notePath)
         {
             this._path = notePath;
+
             if (System.IO.File.Exists(_path))
             {
-                _currNote = new Note(_path);
-                NoteTitle = _currNote.NoteTitle;
-                NoteContent = _currNote.NoteContent;
-            }
-            else
-            {
-                NoteTitle = "";
-                NoteContent = "";
+                Note tempNote = new Note(_path);
+                NoteTitle = tempNote.NoteTitle;
+                NoteContent = tempNote.NoteContent;
             }
         }
 
@@ -44,11 +37,10 @@ namespace NoteFlow.Pages
             _path = path;
 
             // if user tried to save full empty note
-            if ((string.IsNullOrWhiteSpace(NoteTitle) || string.IsNullOrEmpty(NoteTitle))
-            && (string.IsNullOrWhiteSpace(NoteContent) || string.IsNullOrEmpty(NoteContent)))
+            if (string.IsNullOrWhiteSpace(NoteTitle) && string.IsNullOrWhiteSpace(NoteContent))
                 return Page();
 
-            if (string.IsNullOrWhiteSpace(NoteTitle) || string.IsNullOrEmpty(NoteTitle))
+            if (string.IsNullOrWhiteSpace(NoteTitle))
             {
                 NoteTitle = "Новая заметка";
             }
@@ -67,6 +59,7 @@ namespace NoteFlow.Pages
 
         public IActionResult OnPostDeleteNote(string path)
         {
+            CacheService.DeleteNoteFromCurrentNotes(path);
             System.IO.File.Delete(path);
             return RedirectToPage("/MainScreen");
         }
