@@ -385,7 +385,27 @@ body {
 .settings-btn:hover {
             background: rgba(80, 80, 80, 0.9);
         }
-        
+
+/* Кнопка домой */
+.home-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(60, 60, 60, 0.8);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: 'Inter';
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+        .home-btn:hover {
+            background: rgba(80, 80, 80, 0.9);
+        }
+
 button {
     background: none !important;
     border: none !important;
