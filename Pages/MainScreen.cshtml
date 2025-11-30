@@ -21,7 +21,10 @@
 
      <!-- Надпись "Недавние файлы" -->
     <div class="recent-files-label">Недавние файлы</div>
-    
+
+    <!-- Кнопка настроек -->
+    <button class="settings-btn" onclick="openSettings()">Настройки</button>
+
     <nav class="top-bar">
         <div class="logo-container">
             <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
@@ -222,4 +225,9 @@
     document.getElementById('closeBtn')?.addEventListener('click', () => {
         ipcRenderer.send('close-window');
     });
+
+    @*function openSettings() {
+            console.log('Открыть настройки');
+            window.location.href = '/Settings';
+        }*@
 </script>
