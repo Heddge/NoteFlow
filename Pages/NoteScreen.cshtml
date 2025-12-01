@@ -272,6 +272,57 @@
             border: none;
             border-top: 1px solid #555;
         }
+        .save-button {
+            position: absolute ;
+            bottom: 75px ;
+            right: 25px ;
+            background: #2c2c2c ;
+            color: white ;
+            width: 60px ;
+            height: 60px ;
+            border-radius: 50% ;
+            cursor: pointer ;
+            font-size: 24px ;
+            display: flex ;
+            align-items: center ;
+            justify-content: center ;
+            border: none ;
+            z-index: 9999 ;
+        }
+
+        .save-button::before {
+            content: '' ;
+            position: absolute ;
+            top: -2px ;
+            left: -2px ;
+            right: -2px ;
+            bottom: -2px ;
+            border-radius: 50% ;
+            padding: 1px ;
+            background: conic-gradient(from 0deg, rgba(152, 249, 255, 0.8), rgba(135, 38, 183, 0.8), rgba(152, 249, 255, 0.8)) ;
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0) ;
+            mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0) ;
+            -webkit-mask-composite: xor ;
+            mask-composite: exclude ;
+            z-index: -1 ;
+        }
+        .back-button {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            color: #aeaeae;
+            z-index: 1000;
+        }
+
     </style>
 </head>
 
@@ -302,6 +353,11 @@
         {
             <!-- Windows/Linux стиль - кнопки справа -->
             <div class="top-bar-actions windows-buttons">
+                <button class="nav-buttons back-button" title="На главную" id="backBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
                 <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
                     <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
@@ -356,19 +412,16 @@
                     @Html.Raw(Model.NoteContent)
                 </div>
             </div>
-
-            <button type="button" onclick="saveNote()" asp-page-handler="CreateOrEditNote" style="
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                background: #d7dbd7;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 5px;
-                cursor: pointer;">
-                Сохранить
+            <button type="button" onclick="saveNote()" asp-page-handler="CreateOnEditNote" class="save-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cccccc" stroke-width="1.5">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10,9 9,9 9,11"/>
+                </svg>
             </button>
+
         </form>
         <form method="post">
             <input type="hidden" name="path" value="@Model._path" />
@@ -400,6 +453,9 @@
 
         document.getElementById('closeBtn')?.addEventListener('click', () => {
             ipcRenderer.send('close-window');
+        });
+        document.getElementById('backBtn')?.addEventListener('click', () => {
+            window.location.href = "/MainScreen";
         });
 
         // Контекстное меню
@@ -548,19 +604,20 @@
 </body>
 
 <!-- FOR DEVELOPING ONLY -->
-@if (!string.IsNullOrEmpty(Model.NoteContent))
+@* @if (!string.IsNullOrEmpty(Model.NoteContent))
 {
-    <div data-auto-hide style="
-                                                            position: fixed;
-                                                            top: 50%;
-                                                            left: 50%;
-                                                            transform: translate(-50%, -50%);
-                                                            background: rgba(0,0,0,0.8);
-                                                            color: white;
-                                                            padding: 20px;
-                                                            border-radius: 10px;
-                                                            z-index: 10000;
-                                                            transition: opacity 0.5s ease;">
+    <div data-auto-hide style=" 
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        z-index: 10000;
+        transition: opacity 0.5s ease;">
         Успешно!
     </div>
 }
+*@

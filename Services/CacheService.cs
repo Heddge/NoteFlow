@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using NoteFlow.Models;
 using NoteFlow.Pages;
 
@@ -5,22 +6,24 @@ namespace NoteFlow.Services;
 public class CacheService
 {
     public static List<Note> currNotes = new List<Note>();
-    private static string path = StorageService._notesPath;
-    public static DateTime lastOpenedDir = Directory.GetLastAccessTime(path);
-
+    public static List<Reminder> currReminders = new List<Reminder>();
+    private static string notesPath = StorageService._notesPath;
+    private static string remindersPath = StorageService._remindersPath;
     static CacheService()
     {
         // parsing notes from path
-        foreach (string path in Directory.GetFiles(path, "*.md"))
+        foreach (string path in Directory.GetFiles(notesPath, "*.md"))
         {
             currNotes.Add(new Note(path));
         }
         currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
-        
-        // if (!File.Exists(Path.Combine(path, "notesdb.txt")))
-        // {
-        //     StorageService.GenerateNotesDB();
-        // }
+
+        // parsing notes from path
+        foreach (string path in Directory.GetFiles(remindersPath, "*.md"))
+        {
+            currReminders.Add(new Reminder(path));
+        }
+        currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
     }
 
     public static void UpdateNoteInCurrentNotes(string title, string content, string newPath, string Path)
@@ -35,7 +38,6 @@ public class CacheService
                 temp.NoteTitle = title;
                 temp.NoteEdited = DateTime.Now;
                 temp.NotePath = newPath;
-                currNotes[neededNote] = temp;
                 currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
             }
             catch (NullReferenceException ee)
@@ -49,9 +51,11 @@ public class CacheService
 
     public static void AddNoteToCurrentNotes(string Path)
     {
+        Console.WriteLine("Entered in Add method");
         if (currNotes.FindIndex(x => x.NotePath == Path) == -1)
             try
             {
+                Console.WriteLine("Adding");
                 currNotes.Add(new Note(Path));
                 currNotes[currNotes.Count()-1].NoteEdited = DateTime.Now;
                 currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
@@ -62,15 +66,24 @@ public class CacheService
             }
     }
 
-    private static string[] getNotesTitles() =>
-        currNotes.Select(x => x.NoteTitle).ToArray();
+    private static string[] getNotesPaths() =>
+        currNotes.Select(x => x.NotePath).ToArray();
 
-    public static void UpdateMissedNotesInDirToCurrentNotes()
+    public void UpdateMissedNotesInDirToCurrentNotes(bool flag)
     {
-        // var temp = Directory.GetFiles(path, "*.md").Count() - 1;
-        string[] paths = Directory.GetFiles(path, "*.md").Where(x => getNotesTitles().Contains(x)).ToArray();
+        if (flag)
+        {
+            string[] addedPaths = Directory.GetFiles(notesPath, "*.md").Where(x => !getNotesPaths().Contains(x)).ToArray();
 
-        foreach (string path in paths)
-            AddNoteToCurrentNotes(path);
+            foreach (string path in addedPaths)
+                AddNoteToCurrentNotes(path);
+
+            return;
+        }
+
+        string[] deletedPaths = getNotesPaths().Where(x => !Directory.GetFiles(notesPath, "*.md").Contains(x)).ToArray();
+        
+        foreach (string path in deletedPaths)
+            DeleteNoteFromCurrentNotes(path);
     }
 }

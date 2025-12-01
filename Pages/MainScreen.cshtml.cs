@@ -10,13 +10,18 @@ namespace NoteFlow.Pages
     {
         // list of all user`s notes
         public List<Note> Notes = new List<Note>();
+        public List<Reminder> Reminders = new List<Reminder>();
+        public CacheService currentCache = new CacheService();
 
         public void OnGet()
         {
-            if (Directory.GetLastAccessTime(StorageService._notesPath) != CacheService.lastOpenedDir)
-                CacheService.UpdateMissedNotesInDirToCurrentNotes();
-
             Notes = CacheService.currNotes;
+            
+            if (Notes.Count() != StorageService.CountNotesInDirectory())
+            {
+                currentCache.UpdateMissedNotesInDirToCurrentNotes(Notes.Count() < StorageService.CountNotesInDirectory());
+                Notes = CacheService.currNotes;
+            }
         }
 
         // method for redirecting to NoteScreen to create or edit note

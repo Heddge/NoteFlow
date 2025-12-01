@@ -360,6 +360,57 @@ body::-webkit-scrollbar {
     justify-content: center;
 }
 
+/* Надпись "Недавние файлы" */
+.recent-files-label {
+    position: absolute;
+    left: 287px;
+    top: 110px;
+    font-family: 'Inter';
+    font-weight: 500;
+    font-size: 24px;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* Кнопка настроек */
+.settings-btn {
+    position: fixed;
+    left: 30px;
+    bottom: 30px;
+    background: hsla(0, 0%, 24%, 0.80);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: 'Inter';
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.settings-btn:hover {
+            background: rgba(80, 80, 80, 0.9);
+        }
+
+/* Кнопка домой */
+.home-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(60, 60, 60, 0.8);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: 'Inter';
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+        .home-btn:hover {
+            background: rgba(80, 80, 80, 0.9);
+        }
+
 button {
     background: none !important;
     border: none !important;

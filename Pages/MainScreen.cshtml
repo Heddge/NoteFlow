@@ -18,6 +18,13 @@
 </head>
 
 <body>
+
+    <!-- Кнопка настроек -->
+    <button class="settings-btn" onclick="openSettings()">Настройки</button>
+
+    <!-- Кнопка домой -->
+    <button class="home-btn" onclick="goHome()">Домой</button>
+
     <nav class="top-bar">
         <div class="logo-container">
             <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
@@ -54,6 +61,13 @@
             else
             {
                 <div class="top-bar-actions windows-buttons">
+                    <button class="nav-buttons" title="Перезагрузить" id="reloadBtn">
+                        <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M23 4v6h-6M1 20v-6h6" stroke-width="2" stroke-linecap="round" />
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </button>
                     <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
                         <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
@@ -84,6 +98,8 @@
         <div class="blur">
             <img src="/Images/blur.png" alt="NoteFlow" />
         </div>
+        <!-- Надпись "Недавние файлы" -->
+        <div class="recent-files-label">Недавние файлы</div>
         <!-- Контейнер для карточек заметок -->
         <div class="cards-container">
             <!-- Карточка добавления заметки -->
@@ -217,6 +233,20 @@
         document.getElementById('closeBtn')?.addEventListener('click', () => {
             ipcRenderer.send('close-window');
         });
+
+        document.getElementById('reloadBtn')?.addEventListener('click', () => {
+            location.reload();
+        });
+
+    @*function openSettings() {
+            console.log('Открыть настройки');
+            window.location.href = '/Settings';
+        }*@
+
+            function goHome() {
+                console.log('Возврат на главный экран');
+                window.location.href = '/MainScreen';
+            }
 
         //Перехват скролла чтобы скроллить колесиком
         const cardsContainer = document.querySelector('.cards-container');
