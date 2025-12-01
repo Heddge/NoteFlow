@@ -109,6 +109,7 @@ body {
     scrollbar-width: none;
 }
 
+
 .card {
     width: 200px;
     height: 200px;
@@ -293,67 +294,10 @@ body {
     color: #555554;
 }
 
-.reminder-card {
-    position: absolute;
-    width: 180px;
-    height: 170px;
-    left: 287px;
-    top: 450px;
-    transition: transform 0.3s ease;
-}
 
-.reminder-card:hover {
-    transform: translateY(-5px);
-}
 
-.reminder-card-bg {
-    box-sizing: border-box;
-    width: 180px;
-    height: 170px;
-    background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), rgba(30, 30, 30, 0.98);
-    border-radius: 41px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
 
-.reminder-card-bg::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: 41px;
-    padding: 1px;
-    background: radial-gradient(circle at 15% 20%, rgba(152, 249, 255, 0.3) 0%, rgba(255, 255, 255, 0.2) 30%, rgba(135, 38, 183, 0.1) 70%, transparent 100%);
-    -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-}
 
-.reminder-icon {
-    font-family: 'Inter';
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 100%;
-    letter-spacing: 0%;
-    text-align: center;
-    vertical-align: middle;
-    color: #FFFFFF;
-    width: 155px;
-    height: 43px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
 button {
     background: none !important;
@@ -643,4 +587,123 @@ form {
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
+}
+
+/* ===== КОНТЕЙНЕР ДЛЯ НАПОМИНАНИЙ ===== */
+.reminders-container {
+    position: absolute;
+    width: 1265px;
+    height: 245px;
+    left: 287px;
+    top: 420px;
+    overflow: hidden;
+}
+
+.reminders-container .cards-container {
+    display: flex !important;
+    gap: 25px !important; /* Отступ 25px между карточками */
+    align-items: flex-start !important; /* Выравниваем по верхнему краю */
+    padding-left: 0 !important; /* Убираем лишние отступы */
+}
+
+/* Широкая карточка напоминания */
+.wide-reminder-card {
+    width: 540px !important; /* В 3 раза шире обычной */
+    height: 200px;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important; /* Убираем все margin */
+}
+
+.wide-reminder-card:hover {
+    transform: translateY(-5px);
+}
+
+.wide-reminder-bg {
+    box-sizing: border-box;
+    width: 540px;
+    height: 200px;
+    background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), rgba(30, 30, 30, 0.98) !important;
+    border-radius: 41px;
+    position: relative;
+    display: flex !important;
+    align-items: center !important;
+    padding-left: 30px !important;
+    margin: 0 !important; /* Убираем отступы */
+}
+
+/* Первая карточка (новая заметка) - убираем лишние margin */
+.reminders-container .card {
+    width: 180px;
+    height: 200px;
+    margin: 0 !important; /* Важно: убираем все margin */
+}
+
+.reminders-container .card-bg {
+    margin: 0 !important;
+}
+
+.wide-reminder-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 41px;
+    padding: 1px;
+    background: radial-gradient(circle at 15% 20%, rgba(152, 249, 255, 0.3) 0%, rgba(255, 255, 255, 0.2) 30%, rgba(135, 38, 183, 0.1) 70%, transparent 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* Контент широкой карточки */
+.reminder-content-box {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    position: relative;
+    z-index: 1;
+}
+
+.reminder-emoji {
+    font-size: 48px;
+    flex-shrink: 0;
+}
+
+.reminder-text-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.reminder-main-text {
+    font-family: 'Inter';
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 26px;
+    color: #DADADA;
+    margin-bottom: 5px;
+}
+
+.reminder-description-text {
+    font-family: 'Inter';
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 22px;
+    color: #A9A49C;
+    margin-bottom: 8px;
+}
+
+.reminder-time-stamp {
+    font-family: 'Inter';
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 16px;
+    color: #555554;
 }

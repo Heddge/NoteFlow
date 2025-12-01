@@ -114,16 +114,41 @@
         </div>
     </div>
 
-
-
-    <!-- Карточка нового напоминания -->
-    <div class="reminder-card">
-        <div class="reminder-card-bg">
-            <div class="reminder-icon">Новое напоминание</div>
-        </div>
-    </div>
-    <!-- Надпись напоминания-->
+        <!-- Надпись напоминания-->
     <div class="reminder-title">Напоминания</div>
+
+   <!-- Контейнер для напоминаний -->
+<div class="reminders-container">
+    <div class="blur">
+        <img src="/Images/blur.png" alt="NoteFlow" />
+    </div>
+    
+    <div class="cards-container">
+        <!-- Карточка нового напоминания -->
+        <div class="card">
+            <div class="card-bg">
+                <div class="add-note-text">Новое напоминание</div>
+            </div>
+        </div>
+
+        <!-- Карточка существующего напоминания -->
+        <button class="wide-reminder-card">
+            <div class="wide-reminder-bg">
+                <div class="reminder-content-box">
+                    <div class="reminder-emoji">📌</div>
+                    <div class="reminder-text-box">
+                        <div class="reminder-main-text">Не забыть покормить</div>
+                        <div class="reminder-description-text">кота в 18:00</div>
+                        <div class="reminder-time-stamp">Сегодня, 18:00</div>
+                    </div>
+                </div>
+            </div>
+        </button>
+    </div>
+</div>
+
+
+
 
     <!-- Календарь -->
     <div class="calendar-section-title">Календарь</div>
