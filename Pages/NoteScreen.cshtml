@@ -349,7 +349,7 @@
             position: fixed;
             left: 0;
             top: 100px;
-            width: 361px;
+            width: 250px;
             height: 75vh;
             background: radial-gradient(90.16% 143.01% at 15.32% 21.04%,
                     rgba(117, 117, 117, 0.2) 0%,
@@ -477,18 +477,18 @@
 
         /* Секции сайдбара */
         .sidebar-section {
-            margin-left: 37px;
+            margin-left: 20px;
             margin-bottom: 40px;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         .sidebar-item {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 5px;
             cursor: pointer;
             transition: all 0.2s;
-            padding: 6px 10px;
+            padding: 2px 6px;
             border-radius: 8px;
             border: 1px solid transparent;
         }
@@ -576,14 +576,16 @@
         .file-title {
             font-family: 'Inter';
             font-style: normal;
-            font-weight: 600;
-            font-size: 18px;
-            line-height: 22px;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 20px;
             color: #A6A6A6;
-            white-space: nowrap;
+            white-space: normal;
             overflow: hidden;
             text-overflow: ellipsis;
             flex: 1;
+            word-wrap: break-word;
+            max-width: 180px;
         }
 
         /* Стиль для основного контента при развернутом/свернутом сайдбаре */
@@ -839,7 +841,7 @@
                 <!-- Пример пустого состояния -->
                 <div class="file-item" style="justify-content: center; cursor: default;" onclick="showDevModal()">
                     <div class="file-icon">&lt;/&gt;</div>
-                    <div class="file-title">Нет недавних файлов</div>
+                    <div class="file-title">Нет недавних <br/> файлов</div>
                 </div>
             </div>
         </div>
@@ -944,13 +946,13 @@
             {
                 <text>
                     document.addEventListener('keydown', function (e) {
-                                            if (e.metaKey) { // Cmd key
-                                                const standardCombos = ['a','c','v','x','z','q','s','f','p','w'];
+                                                if (e.metaKey) { // Cmd key
+                                                    const standardCombos = ['a','c','v','x','z','q','s','f','p','w'];
                     if (standardCombos.includes(e.key)){
-                                                return;
-                                            }
+                                                    return;
+                                                }
                     switch (e.key) {
-                                            case '1': colorText('red'); break;
+                                                case '1': colorText('red'); break;
                     case '2': colorText('blue'); break;
                     case '3': colorText('green'); break;
                     case '4': colorText('yellow'); break;
@@ -959,9 +961,9 @@
                     case 'e': changeFontSize('plain'); break;
                     case 'r': changeFontSize('big'); break;
                     case 't': changeFontSize('very-big'); break;
+                                                        }
                                                     }
-                                                }
-                                            });
+                                                });
                 </text>
         }
 
@@ -970,16 +972,16 @@
             {
                 <text>
                     document.addEventListener('keydown', function (e) {
-                                            if (e.ctrlKey) {
-                                            // Не блокируем стандартные комбинации
-                                            const standardCombos = ['a', 'c', 'v', 'x', 'z', 'q', 'f', 'p', 'w', 'n', 'o', 't'];
+                                                if (e.ctrlKey) {
+                                                // Не блокируем стандартные комбинации
+                                                const standardCombos = ['a', 'c', 'v', 'x', 'z', 'q', 'f', 'p', 'w', 'n', 'o', 't'];
                     if (standardCombos.includes(e.key.toLowerCase())) {
-                                            return;
-                                            }
+                                                return;
+                                                }
 
                     e.preventDefault();
                     switch (e.key.toLowerCase()) {
-                                            case '1': colorText('red'); break;
+                                                case '1': colorText('red'); break;
                     case '2': colorText('blue'); break;
                     case '3': colorText('green'); break;
                     case '4': colorText('yellow'); break;
@@ -988,9 +990,9 @@
                     case '7': changeFontSize('very-big'); break;
                     case '8': changeFontSize('big'); break;
                     case '9': changeFontSize('plain'); break;       
+                                                        }
                                                     }
-                                                }
-                                            });
+                                                });
                 </text>
         }
 
@@ -1052,11 +1054,6 @@
                 devModal.style.display = 'none';
                 devModalOverlay.style.display = 'none';
             }
-        });
-
-        // Инициализация - убедимся, что сайдбар открыт по умолчанию
-        document.addEventListener('DOMContentLoaded', function () {
-            document.body.classList.add('sidebar-expanded');
         });
     </script>
 
