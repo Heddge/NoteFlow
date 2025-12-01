@@ -253,7 +253,7 @@ body {
     width: 150px;
     height: 22px;
     left: 15px;
-    top: 30px;
+    top: 60px;
     font-family: 'Inter';
     font-weight: 600;
     font-size: 18px;
@@ -267,14 +267,24 @@ body {
     position: absolute;
     width: 170px;
     height: 60px;
-    right: 50px;
-    top: 60px;
+    right: 49px;
+    top: 90px;
     font-family: 'Inter';
     font-weight: 600;
     font-size: 18px;
     line-height: 22px;
     color: #A9A49C;
     overflow: hidden;
+}
+
+.note-icon {
+    position: absolute;
+    top: 35px;
+    left: 15px;
+    font-family: 'Inter', monospace;
+    font-weight: 600;
+    font-size: 20px;
+    color: #fffdfd;
 }
 
 .note-timestamp {
