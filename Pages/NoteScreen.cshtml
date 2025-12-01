@@ -25,6 +25,22 @@
             overflow-x: hidden;
         }
 
+        .sidebar::-webkit-scrollbar,
+        .main-content::-webkit-scrollbar,
+        .editor-container::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        .sidebar,
+        .main-content,
+        .editor-container {
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+        }
+
         /* Topbar settings */
         .top-bar {
             position: fixed;
@@ -128,9 +144,9 @@
 
         .main-content {
             position: absolute;
-            width: 80vw;
-            height: 100vh;
-            left: 20vw;
+            width: calc(100vw - 361px);
+            height: calc(100vh - 60px);
+            left: 361px;
             top: 60px;
             background: none;
             color: #191919;
@@ -138,8 +154,11 @@
             flex-direction: column;
             padding: 2vw;
             box-sizing: border-box;
-            overflow: visible;
+            overflow-y: hidden;
+            overflow-x: hidden;
             resize: none;
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .note-title-input {
@@ -168,7 +187,7 @@
             background: #191919;
             border: none;
             border-radius: 5px;
-            overflow: auto;
+            overflow: hidden;
             padding-left: 0;
         }
 
@@ -272,44 +291,46 @@
             border: none;
             border-top: 1px solid #555;
         }
+
         .save-button {
-            position: absolute ;
-            bottom: 75px ;
-            right: 25px ;
-            background: #2c2c2c ;
-            color: white ;
-            width: 60px ;
-            height: 60px ;
-            border-radius: 50% ;
-            cursor: pointer ;
-            font-size: 24px ;
-            display: flex ;
-            align-items: center ;
-            justify-content: center ;
-            border: none ;
-            z-index: 9999 ;
+            position: absolute;
+            bottom: 75px;
+            right: 25px;
+            background: #2c2c2c;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            z-index: 9999;
         }
 
         .save-button::before {
-            content: '' ;
-            position: absolute ;
-            top: -2px ;
-            left: -2px ;
-            right: -2px ;
-            bottom: -2px ;
-            border-radius: 50% ;
-            padding: 1px ;
-            background: conic-gradient(from 0deg, rgba(152, 249, 255, 0.8), rgba(135, 38, 183, 0.8), rgba(152, 249, 255, 0.8)) ;
-            -webkit-mask: 
-                linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0) ;
-            mask: 
-                linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0) ;
-            -webkit-mask-composite: xor ;
-            mask-composite: exclude ;
-            z-index: -1 ;
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            padding: 1px;
+            background: conic-gradient(from 0deg, rgba(152, 249, 255, 0.8), rgba(135, 38, 183, 0.8), rgba(152, 249, 255, 0.8));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
         }
+
         .back-button {
             position: absolute;
             left: 10px;
@@ -323,6 +344,319 @@
             z-index: 1000;
         }
 
+        /* Основной сайдбар */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 100px;
+            width: 250px;
+            height: 75vh;
+            background: radial-gradient(90.16% 143.01% at 15.32% 21.04%,
+                    rgba(117, 117, 117, 0.2) 0%,
+                    rgba(94, 98, 101, 0.0447917) 77.08%,
+                    rgba(126, 126, 126, 0) 100%),
+                linear-gradient(0deg, rgba(30, 30, 30, 0.98), rgba(30, 30, 30, 0.98)),
+                #000000;
+            z-index: 900;
+            transform: translateX(0);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-top: 30px;
+            overflow-y: hidden;
+            overflow-x: hidden;
+            border-radius: 0 24px 24px 0;
+            position: relative;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 0 24px 24px 0;
+            padding: 1px;
+            background: radial-gradient(circle at 15% 20%,
+                    rgba(152, 249, 255, 0.3) 0%,
+                    rgba(255, 255, 255, 0.2) 30%,
+                    rgba(135, 38, 183, 0.1) 70%,
+                    transparent 100%);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-361px);
+        }
+
+        /* Кнопка сворачивания сайдбара */
+        .toggle-sidebar-btn {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            left: 20px;
+            top: 40px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-sidebar-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .toggle-sidebar-btn.collapsed {
+            left: 20px;
+            transform: rotate(180deg);
+        }
+
+        .toggle-sidebar-btn.collapsed:hover {
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        /* Иконка внутри кнопки */
+        .toggle-icon {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon-line {
+            position: absolute;
+            height: 2px;
+            background: #FFFFFF;
+            border-radius: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-icon-line:nth-child(1) {
+            top: 6px;
+            width: 24px;
+        }
+
+        .toggle-icon-line:nth-child(2) {
+            top: 12px;
+            width: 18px;
+        }
+
+        .toggle-icon-line:nth-child(3) {
+            top: 18px;
+            width: 12px;
+        }
+
+        .toggle-sidebar-btn.collapsed .toggle-icon-line:nth-child(1) {
+            top: 12px;
+            width: 24px;
+            transform: rotate(45deg);
+        }
+
+        .toggle-sidebar-btn.collapsed .toggle-icon-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .toggle-sidebar-btn.collapsed .toggle-icon-line:nth-child(3) {
+            top: 12px;
+            width: 24px;
+            transform: rotate(-45deg);
+        }
+
+        /* Секции сайдбара */
+        .sidebar-section {
+            margin-left: 20px;
+            margin-bottom: 40px;
+            margin-top: 10px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 2px 6px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-icon {
+            width: 27px;
+            height: 27px;
+            margin-right: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-title {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            font-size: 24px;
+            line-height: 29px;
+            letter-spacing: 0.06em;
+            color: #A6A6A6;
+            white-space: nowrap;
+        }
+
+        /* Recent files section */
+        .recent-files-section {
+            margin-left: 27px;
+            margin-top: 30px;
+        }
+
+        .recent-files-title {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 29px;
+            color: #A6A6A6;
+            margin-bottom: 20px;
+        }
+
+        /* Стили для файлов как в MainScreen */
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 283px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(30, 30, 30, 0.5);
+            position: relative;
+            min-height: 60px;
+        }
+
+        .file-item:hover {
+            background: rgba(40, 40, 40, 0.7);
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter';
+            font-weight: 600;
+            font-size: 18px;
+            color: #A6A6A6;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            margin-right: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .file-title {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 20px;
+            color: #A6A6A6;
+            white-space: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            word-wrap: break-word;
+            max-width: 180px;
+        }
+
+        /* Стиль для основного контента при развернутом/свернутом сайдбаре */
+        .main-content {
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            width: calc(100vw - 361px);
+            height: calc(100vh - 60px);
+            left: 361px;
+            top: 60px;
+            background: none;
+            color: #191919;
+            display: flex;
+            flex-direction: column;
+            padding: 2vw;
+            box-sizing: border-box;
+            overflow-y: auto;
+            overflow-x: hidden;
+            resize: none;
+        }
+
+        .sidebar-expanded .main-content {
+            left: 361px;
+            width: calc(100vw - 361px);
+        }
+
+        .sidebar-collapsed .main-content {
+            left: 0;
+            width: 100vw;
+        }
+
+        /* Всплывающее окно "В разработке" */
+        .dev-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: none;
+            padding: 30px 40px;
+            border-radius: 12px;
+            z-index: 2000;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: none;
+            animation: modalAppear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 300px;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .dev-modal-content {
+            color: #FFFFFF;
+            font-family: 'Inter';
+            font-size: 22px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 0.5px;
+        }
+
+        .dev-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1999;
+            animation: overlayAppear 0.3s ease;
+        }
     </style>
 </head>
 
@@ -355,7 +689,7 @@
             <div class="top-bar-actions windows-buttons">
                 <button class="nav-buttons back-button" title="На главную" id="backBtn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </button>
                 <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
@@ -376,11 +710,6 @@
             </div>
         }
     </nav>
-
-    <!-- Логотип вынесен отдельно -->
-    <div class="logo-container">
-        <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
-    </div>
 
     <!-- Контекстное меню -->
     <div id="contextMenu" class="context-menu">
@@ -414,11 +743,11 @@
             </div>
             <button type="button" onclick="saveNote()" asp-page-handler="CreateOnEditNote" class="save-button">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cccccc" stroke-width="1.5">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14,2 14,8 20,8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                    <polyline points="10,9 9,9 9,11"/>
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14,2 14,8 20,8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10,9 9,9 9,11" />
                 </svg>
             </button>
 
@@ -439,6 +768,84 @@
             </button>
         </form>
     </div>
+
+    <!-- Всплывающее окно -->
+    <div id="devModal" class="dev-modal">
+        <div class="dev-modal-content">В разработке</div>
+    </div>
+    <div id="devModalOverlay" class="dev-modal-overlay"></div>
+
+    <button id="toggleSidebarBtn" class="toggle-sidebar-btn">
+        <div class="toggle-icon">
+            <div class="toggle-icon-line"></div>
+            <div class="toggle-icon-line"></div>
+            <div class="toggle-icon-line"></div>
+        </div>
+    </button>
+
+    <!-- Сайдбар -->
+    <aside id="sidebar" class="sidebar">
+        <!-- Навигационные элементы -->
+        <div class="sidebar-section">
+            <div class="sidebar-item" onclick="showDevModal()">
+                <div class="sidebar-icon">
+                    <!-- SVG иконка поиска -->
+                    <svg width="27" height="27" viewBox="0 0 27 27" fill="none">
+                        <circle cx="11" cy="11" r="8" stroke="#A6A6A6" stroke-width="2" />
+                        <path d="M18.5 17.5L25 24" stroke="#A6A6A6" stroke-width="2" />
+                    </svg>
+                </div>
+                <div class="sidebar-title">Поиск</div>
+            </div>
+
+            <div class="sidebar-item" onclick="showDevModal()">
+                <div class="sidebar-icon">
+                    <!-- SVG иконка меню -->
+                    <svg width="27" height="27" viewBox="0 0 27 27" fill="none">
+                        <rect x="4" y="8" width="19" height="2" fill="#A6A6A6" />
+                        <rect x="4" y="13" width="19" height="2" fill="#A6A6A6" />
+                        <rect x="4" y="18" width="19" height="2" fill="#A6A6A6" />
+                    </svg>
+                </div>
+                <div class="sidebar-title">Меню</div>
+            </div>
+
+            <div class="sidebar-item" onclick="showDevModal()">
+                <div class="sidebar-icon">
+                    <!-- SVG иконка аккаунта -->
+                    <svg width="27" height="27" viewBox="0 0 27 27" fill="none">
+                        <circle cx="13.5" cy="9" r="5" stroke="#A6A6A6" stroke-width="2" />
+                        <path d="M5 23C5 18.5 9 15 13.5 15C18 15 22 18.5 22 23" stroke="#A6A6A6" stroke-width="2" />
+                    </svg>
+                </div>
+                <div class="sidebar-title">Аккаунт</div>
+            </div>
+
+            <div class="sidebar-item" onclick="showDevModal()">
+                <div class="sidebar-icon">
+                    <!-- SVG иконка избранного -->
+                    <svg width="27" height="27" viewBox="0 0 27 27" fill="none">
+                        <path d="M13.5 22L6.5 15.5C4 13 4 9 6.5 6.5C9 4 13 4 15.5 6.5C18 9 18 13 15.5 15.5L13.5 17.5"
+                            stroke="#A6A6A6" stroke-width="2" fill="none" />
+                    </svg>
+                </div>
+                <div class="sidebar-title">Избранное</div>
+            </div>
+        </div>
+
+        <!-- Недавние файлы -->
+        <div class="recent-files-section">
+            <div class="recent-files-title">Недавние файлы</div>
+            <div class="file-list" id="recentFilesList">
+                <!-- Файлы будут загружаться динамически -->
+                <!-- Пример пустого состояния -->
+                <div class="file-item" style="justify-content: center; cursor: default;" onclick="showDevModal()">
+                    <div class="file-icon">&lt;/&gt;</div>
+                    <div class="file-title">Нет недавних <br/> файлов</div>
+                </div>
+            </div>
+        </div>
+    </aside>
 
     <script>
         const { ipcRenderer } = require('electron');
@@ -539,13 +946,13 @@
             {
                 <text>
                     document.addEventListener('keydown', function (e) {
-                    if (e.metaKey) { // Cmd key
-                    const standardCombos = ['a','c','v','x','z','q','s','f','p','w'];
+                                                if (e.metaKey) { // Cmd key
+                                                    const standardCombos = ['a','c','v','x','z','q','s','f','p','w'];
                     if (standardCombos.includes(e.key)){
-                        return;
-                    }
+                                                    return;
+                                                }
                     switch (e.key) {
-                            case '1': colorText('red'); break;
+                                                case '1': colorText('red'); break;
                     case '2': colorText('blue'); break;
                     case '3': colorText('green'); break;
                     case '4': colorText('yellow'); break;
@@ -554,9 +961,9 @@
                     case 'e': changeFontSize('plain'); break;
                     case 'r': changeFontSize('big'); break;
                     case 't': changeFontSize('very-big'); break;
-                        }
-                    }
-                });
+                                                        }
+                                                    }
+                                                });
                 </text>
         }
 
@@ -565,27 +972,27 @@
             {
                 <text>
                     document.addEventListener('keydown', function (e) {
-            if (e.ctrlKey) {
-                // Не блокируем стандартные комбинации
-                const standardCombos = ['a', 'c', 'v', 'x', 'z', 'q', 'f', 'p', 'w', 'n', 'o', 't'];
+                                                if (e.ctrlKey) {
+                                                // Не блокируем стандартные комбинации
+                                                const standardCombos = ['a', 'c', 'v', 'x', 'z', 'q', 'f', 'p', 'w', 'n', 'o', 't'];
                     if (standardCombos.includes(e.key.toLowerCase())) {
-                    return;
-                }
+                                                return;
+                                                }
 
                     e.preventDefault();
                     switch (e.key.toLowerCase()) {
-                    case '1': colorText('red'); break;
+                                                case '1': colorText('red'); break;
                     case '2': colorText('blue'); break;
                     case '3': colorText('green'); break;
                     case '4': colorText('yellow'); break;
                     case '5': colorText('purple'); break;
                     case '6': colorText('white'); break;
-                    case '7': changeFontSize('very-big'); break;    
-                    case '8': changeFontSize('big'); break;         
+                    case '7': changeFontSize('very-big'); break;
+                    case '8': changeFontSize('big'); break;
                     case '9': changeFontSize('plain'); break;       
-                }
-            }
-        });
+                                                        }
+                                                    }
+                                                });
                 </text>
         }
 
@@ -599,6 +1006,55 @@
                     editor.innerHTML = '';
                 }
             });
+
+        // Функционал сайдбара
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+        const mainContent = document.querySelector('.main-content');
+        const devModal = document.getElementById('devModal');
+        const devModalOverlay = document.getElementById('devModalOverlay');
+
+        // Состояние сайдбара
+        let isSidebarCollapsed = false;
+
+        // Переключение сайдбара
+        toggleSidebarBtn.addEventListener('click', function (e) {
+            e.stopPropagation(); // Предотвращаем всплытие
+
+            isSidebarCollapsed = !isSidebarCollapsed;
+
+            if (isSidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                toggleSidebarBtn.classList.add('collapsed');
+                document.body.classList.add('sidebar-collapsed');
+                document.body.classList.remove('sidebar-expanded');
+            } else {
+                sidebar.classList.remove('collapsed');
+                toggleSidebarBtn.classList.remove('collapsed');
+                document.body.classList.add('sidebar-expanded');
+                document.body.classList.remove('sidebar-collapsed');
+            }
+        });
+
+        // Показать модальное окно "В разработке"
+        function showDevModal() {
+            devModal.style.display = 'block';
+            devModalOverlay.style.display = 'block';
+        }
+
+        // Закрытие окна по клику на оверлей
+        devModalOverlay.addEventListener('click', function () {
+            devModal.style.display = 'none';
+            devModalOverlay.style.display = 'none';
+        });
+
+        // Закрытие окна по Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                devModal.style.display = 'none';
+                devModalOverlay.style.display = 'none';
+            }
+        });
     </script>
 
 </body>
