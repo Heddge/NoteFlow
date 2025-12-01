@@ -18,6 +18,16 @@
 </head>
 
 <body>
+
+     <!-- Надпись "Недавние файлы" -->
+    <div class="recent-files-label">Недавние файлы</div>
+
+    <!-- Кнопка настроек -->
+    <button class="settings-btn" onclick="openSettings()">Настройки</button>
+
+    <!-- Кнопка домой -->
+    <button class="home-btn" onclick="goHome()">Домой</button>
+
     <nav class="top-bar">
         <div class="logo-container">
             <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
@@ -224,7 +234,18 @@
     document.getElementById('closeBtn')?.addEventListener('click', () => {
         ipcRenderer.send('close-window');
     });
+    
     document.getElementById('reloadBtn')?.addEventListener('click', () => {
         location.reload();
     });
+
+    @*function openSettings() {
+            console.log('Открыть настройки');
+            window.location.href = '/Settings';
+        }*@
+
+    function goHome() {
+            console.log('Возврат на главный экран');
+            window.location.href = '/MainScreen';
+        }
 </script>
