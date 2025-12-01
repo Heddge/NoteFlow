@@ -779,4 +779,51 @@ form {
     color: #A9A49C;
     margin-bottom: 8px;
 }
+/* ===== ВРЕМЯ СОЗДАНИЯ НАПОМИНАНИЯ ВНИЗУ ===== */
+
+/* Контейнер для времени создания внизу карточки */
+.reminder-created-time-container {
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center; /* По центру */
+    align-items: center;
+    z-index: 2;
+}
+
+/* Время создания - маленький серый текст */
+.reminder-created-time {
+    font-family: 'Inter';
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 16px;
+    color: #555554; /* Серый цвет */
+    text-align: center;
+}
+
+/* Обновляем структуру wide-reminder-bg для относительного позиционирования */
+.wide-reminder-bg {
+    box-sizing: border-box;
+    width: 540px;
+    height: 200px;
+    background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), rgba(30, 30, 30, 0.98) !important;
+    border-radius: 41px;
+    position: relative; /* Важно для абсолютного позиционирования детей */
+    display: flex !important;
+    align-items: center !important;
+    padding-left: 30px !important;
+    margin: 0 !important;
+}
+
+/* Немного уменьшаем отступ для основного контента */
+.reminder-content-box {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    position: relative;
+    z-index: 1;
+    margin-top: 40px; /* Уменьшаем, чтобы уместить время создания внизу */
+}
 
