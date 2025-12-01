@@ -700,10 +700,83 @@ form {
     margin-bottom: 8px;
 }
 
-.reminder-time-stamp {
+.reminder-time-header-container {
+    position: absolute;
+    top: 30px; /* Отступ сверху */
+    left: 30px; /* Отступ слева */
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Расстояние между датой и временем */
+    z-index: 2;
+}
+
+/* Общий стиль для даты и времени */
+.reminder-date,
+.reminder-time {
     font-family: 'Inter';
     font-weight: 600;
-    font-size: 13px;
-    line-height: 16px;
-    color: #555554;
+    color: #FFFFFF;
+    display: inline;
 }
+
+/* Дата */
+.reminder-date {
+    font-size: 18px;
+    line-height: 22px;
+}
+
+/* Время */
+.reminder-time {
+    font-size: 18px;
+    line-height: 22px;
+    color: #A9A49C; /* Более светлый цвет для времени */
+}
+
+/* Разделитель (опционально, если нужен) */
+.reminder-date::after {
+    content: '';
+    display: inline-block;
+    width: 1px;
+    height: 16px;
+    background-color: #555555;
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
+/* Обновляем контент карточки - смещаем вниз */
+.reminder-content-box {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    position: relative;
+    z-index: 1;
+    margin-top: 40px; /* Смещаем контент ниже, чтобы не перекрывало время */
+}
+
+/* Увеличиваем отступы для текста напоминания */
+.reminder-text-box {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px; /* Дополнительный отступ сверху */
+}
+
+/* Если нужно сделать заголовок покрупнее */
+.reminder-main-text {
+    font-family: 'Inter';
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 26px;
+    color: #DADADA;
+    margin-bottom: 5px;
+}
+
+/* Если нужно сделать описание поменьше */
+.reminder-description-text {
+    font-family: 'Inter';
+    font-weight: 500; /* Менее жирный */
+    font-size: 16px;
+    line-height: 20px;
+    color: #A9A49C;
+    margin-bottom: 8px;
+}
+
