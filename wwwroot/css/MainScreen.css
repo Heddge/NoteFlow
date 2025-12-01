@@ -302,6 +302,14 @@ body {
     transition: transform 0.3s ease;
 }
 
+.reminder-card1 {
+    position: relative;
+    width: 180px;
+    height: 170px; 
+    right: 400;
+    transition: transform 0.3s ease;
+}
+
 .reminder-card:hover {
     transform: translateY(-5px);
 }
