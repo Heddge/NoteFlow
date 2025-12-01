@@ -672,10 +672,7 @@ form {
     z-index: 1;
 }
 
-.reminder-emoji {
-    font-size: 48px;
-    flex-shrink: 0;
-}
+
 
 .reminder-text-box {
     display: flex;
@@ -700,13 +697,16 @@ form {
     margin-bottom: 8px;
 }
 
+/* Время и дата посередине сверху */
 .reminder-time-header-container {
     position: absolute;
-    top: 30px; /* Отступ сверху */
-    left: 30px; /* Отступ слева */
+    top: 30px;
+    left: 0;
+    right: 0;
     display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 10px; /* Расстояние между датой и временем */
+    gap: 15px;
     z-index: 2;
 }
 
@@ -715,70 +715,97 @@ form {
 .reminder-time {
     font-family: 'Inter';
     font-weight: 600;
-    color: #FFFFFF;
     display: inline;
 }
 
 /* Дата */
 .reminder-date {
-    font-size: 18px;
+    font-size: 25px;
     line-height: 22px;
+    color: #FFFFFF;
 }
 
 /* Время */
 .reminder-time {
-    font-size: 18px;
+    font-size: 25px;
     line-height: 22px;
-    color: #A9A49C; /* Более светлый цвет для времени */
+    color: #FFFFFF;
 }
 
-/* Разделитель (опционально, если нужен) */
-.reminder-date::after {
-    content: '';
-    display: inline-block;
-    width: 1px;
-    height: 16px;
-    background-color: #555555;
-    margin-left: 10px;
-    margin-right: 5px;
-}
-
-/* Обновляем контент карточки - смещаем вниз */
+/* Контейнер для основного контента */
 .reminder-content-box {
     display: flex;
-    align-items: center;
-    gap: 25px;
+    flex-direction: column;
+    align-items: flex-start; /* Выравниваем по левому краю */
     position: relative;
     z-index: 1;
-    margin-top: 40px; /* Смещаем контент ниже, чтобы не перекрывало время */
+    margin-top: 70px; /* Отступ от времени сверху */
+    width: 100%;
+    padding: 0 30px;
+    box-sizing: border-box;
+    gap: 0; /* Убираем gap между элементами */
 }
 
-/* Увеличиваем отступы для текста напоминания */
-.reminder-text-box {
-    display: flex;
-    flex-direction: column;
-    margin-top: 10px; /* Дополнительный отступ сверху */
-}
-
-/* Если нужно сделать заголовок покрупнее */
+/* Заголовок напоминания */
 .reminder-main-text {
     font-family: 'Inter';
-    font-weight: 600;
-    font-size: 22px;
-    line-height: 26px;
-    color: #DADADA;
-    margin-bottom: 5px;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px; /* Уменьшаем line-height */
+    color: #FFFFFF;
+    text-align: left;
+    width: 100%;
+    margin-bottom: 5px; /* Небольшой отступ снизу для описания */
 }
 
-/* Если нужно сделать описание поменьше */
+/* Описание напоминания (прямо под заголовком) */
 .reminder-description-text {
     font-family: 'Inter';
-    font-weight: 500; /* Менее жирный */
-    font-size: 16px;
+    font-weight: 500;
+    font-size: 16px; /* Немного уменьшаем размер */
+    line-height: 20px; /* Уменьшаем line-height */
+    color: #A9A49C;
+    text-align: left;
+    width: 100%;
+    margin-top: 0; /* Убираем верхний отступ */
+}
+
+/* Поднимаем текст напоминания выше */
+.reminder-content-box {
+    display: flex;
+    flex-direction: column; /* Меняем на колонку */
+    align-items: center; /* Центрируем по горизонтали */
+    position: relative;
+    z-index: 1;
+    margin-top: 70px; /* Поднимаем текст ближе ко времени */
+    width: 100%;
+    padding: 0 30px;
+    box-sizing: border-box;
+}
+
+/* Увеличиваем и центрируем заголовок */
+.reminder-main-text {
+    font-family: 'Inter';
+    font-weight: 700;
+    font-size: 18px; /* Увеличиваем размер */
+    line-height: 31px;
+    color: #FFFFFF;
+    text-align: left; 
+    width: 100%;
+}
+
+/* Увеличиваем и центрируем описание */
+.reminder-description-text {
+    font-family: 'Inter';
+    font-weight: 500;
+    font-size: 18px; /* Увеличиваем размер */
     line-height: 20px;
     color: #A9A49C;
-    margin-bottom: 8px;
+    text-align: left; 
+    width: 100%;
+    margin-top: 0;
 }
+
 /* ===== ВРЕМЯ СОЗДАНИЯ НАПОМИНАНИЯ ВНИЗУ ===== */
 
 /* Контейнер для времени создания внизу карточки */
@@ -803,25 +830,26 @@ form {
     text-align: center;
 }
 
-/* Обновляем структуру wide-reminder-bg для относительного позиционирования */
+/* Обновляем wide-reminder-bg */
 .wide-reminder-bg {
     box-sizing: border-box;
     width: 540px;
     height: 200px;
     background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), rgba(30, 30, 30, 0.98) !important;
     border-radius: 41px;
-    position: relative; /* Важно для абсолютного позиционирования детей */
+    position: relative;
     display: flex !important;
-    align-items: center !important;
-    padding-left: 30px !important;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 30px 0 !important;
     margin: 0 !important;
 }
-
 /* Немного уменьшаем отступ для основного контента */
 .reminder-content-box {
     display: flex;
     align-items: center;
-    gap: 25px;
+    gap: 0px;
     position: relative;
     z-index: 1;
     margin-top: 40px; /* Уменьшаем, чтобы уместить время создания внизу */
