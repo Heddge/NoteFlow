@@ -19,11 +19,27 @@
 
 <body>
 
+
     <!-- Кнопка настроек
     <button class="settings-btn" onclick="openSettings()">Настройки</button> -->
 
     <!-- Кнопка домой
     <button class="home-btn" onclick="goHome()">Домой</button> -->
+
+    <!-- Всплывающее окно -->
+    <div id="devModal" class="dev-modal">
+        <div class="dev-modal-content">В разработке...</div>
+    </div>
+    <div id="devModalOverlay" class="dev-modal-overlay"></div>
+
+    <button id="toggleSidebarBtn" class="toggle-sidebar-btn">
+        <div class="toggle-icon">
+            <div class="toggle-icon-line"></div>
+            <div class="toggle-icon-line"></div>
+            <div class="toggle-icon-line"></div>
+        </div>
+    </button>
+
 
     <nav class="top-bar">
         <div class="logo-container">
@@ -135,35 +151,35 @@
         <img src="/Images/blur.png" alt="NoteFlow" />
     </div>
     
-    <div class="cards-container">
+    <div class="cards-container" onclick="showDevModal()">
         <!-- Карточка нового напоминания -->
-        <div class="card">
+        <div class="card" onclick="showDevModal()">
             <div class="card-bg">
                 <div class="add-note-text">Добавить напоминание</div>
             </div>
         </div>
 
-        <div class="wide-reminder-card">
-    <div class="wide-reminder-bg gradient-border">
-        <!-- Время и дата посередине сверху -->
-        <div class="reminder-time-header-container">
-            <div class="reminder-date">Сегодня</div>
-            <div class="reminder-time">10:45</div>
+        <div class="wide-reminder-card" onclick="showDevModal()">
+            <div class="wide-reminder-bg gradient-border" onclick="showDevModal()">
+                <!-- Время и дата посередине сверху -->
+                <div class="reminder-time-header-container">
+                    <div class="reminder-date">Сегодня</div>
+                    <div class="reminder-time">10:45</div>
+                </div>
+                
+                <!-- Основной контент (без emoji) -->
+                <div class="reminder-content-box">
+                    <div class="reminder-main-text">Покормить кота</div>
+                    <div class="reminder-description-text">Купить корм для кота, покормить его</div>
+                </div>
+                
+                <!-- Линия и время создания внизу -->
+                <div class="reminder-created-time-container">
+                    <div class="reminder-divider-line"></div>
+                    <div class="reminder-created-time">Вчера 21:45</div>
+                </div>
+            </div>
         </div>
-        
-        <!-- Основной контент (без emoji) -->
-        <div class="reminder-content-box">
-            <div class="reminder-main-text">Покормить кота</div>
-            <div class="reminder-description-text">Купить корм для кота, покормить его</div>
-        </div>
-        
-        <!-- Линия и время создания внизу -->
-        <div class="reminder-created-time-container">
-            <div class="reminder-divider-line"></div>
-            <div class="reminder-created-time">Вчера 21:45</div>
-        </div>
-    </div>
-</div>
     </div>
 </div>
 
@@ -171,9 +187,9 @@
 
 
     <!-- Календарь -->
-    <div class="calendar-section-title">Календарь</div>
+    <div class="calendar-section-title" >Календарь</div>
     <div class="calendar-section-wrapper">
-        <div class="calendar-container gradient-border">
+        <div class="calendar-container gradient-border" onclick="showDevModal()">
             <div class="calendar-content">
                 <div class="calendar-left">
                     <div class="calendar-current-date">Октябрь 31</div>
@@ -303,6 +319,28 @@
             }
         }, { passive: false });
 
+
+        const devModal = document.getElementById('devModal');
+        const devModalOverlay = document.getElementById('devModalOverlay');
+        // Показать модальное окно "В разработке"
+        function showDevModal() {
+            devModal.style.display = 'block';
+            devModalOverlay.style.display = 'block';
+        }
+
+        // Закрытие окна по клику на оверлей
+        devModalOverlay.addEventListener('click', function () {
+            devModal.style.display = 'none';
+            devModalOverlay.style.display = 'none';
+        });
+
+        // Закрытие окна по Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                devModal.style.display = 'none';
+                devModalOverlay.style.display = 'none';
+            }
+        });
     </script>
 
 </body>
