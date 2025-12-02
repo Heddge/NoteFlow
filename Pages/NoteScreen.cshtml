@@ -669,7 +669,6 @@
             z-index: 9998;
             animation: overlayAppear 0.3s ease;
         }
-
     </style>
 </head>
 
@@ -679,6 +678,12 @@
         {
             <!-- macOS стиль - кнопки слева -->
             <div class="top-bar-actions macos-buttons">
+                <!-- Кнопка "Назад" (домой) -->
+                <button class="nav-buttons back-button-mac" title="На главную" id="backBtn">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
                 <button class="nav-buttons close-btn" title="Закрыть" id="closeBtn">
                     <svg width="12" height="12" viewBox="0 0 12 12">
                         <circle cx="6" cy="6" r="6" fill="#FF5F57" />
@@ -852,7 +857,7 @@
                 <!-- Пример пустого состояния -->
                 <div class="file-item" style="justify-content: center; cursor: default;" onclick="showDevModal()">
                     <div class="file-icon">&lt;/&gt;</div>
-                    <div class="file-title">Нет недавних <br/> файлов</div>
+                    <div class="file-title">Нет недавних <br /> файлов</div>
                 </div>
             </div>
         </div>
@@ -957,13 +962,13 @@
             {
                 <text>
                     document.addEventListener('keydown', function (e) {
-                                                if (e.metaKey) { // Cmd key
-                                                    const standardCombos = ['a','c','v','x','z','q','s','f','p','w'];
+                                                    if (e.metaKey) { // Cmd key
+                                                        const standardCombos = ['a','c','v','x','z','q','s','f','p','w'];
                     if (standardCombos.includes(e.key)){
-                                                    return;
-                                                }
+                                                        return;
+                                                    }
                     switch (e.key) {
-                                                case '1': colorText('red'); break;
+                                                    case '1': colorText('red'); break;
                     case '2': colorText('blue'); break;
                     case '3': colorText('green'); break;
                     case '4': colorText('yellow'); break;
@@ -972,9 +977,9 @@
                     case 'e': changeFontSize('plain'); break;
                     case 'r': changeFontSize('big'); break;
                     case 't': changeFontSize('very-big'); break;
+                                                            }
                                                         }
-                                                    }
-                                                });
+                                                    });
                 </text>
         }
 
@@ -983,16 +988,16 @@
             {
                 <text>
                     document.addEventListener('keydown', function (e) {
-                                                if (e.ctrlKey) {
-                                                // Не блокируем стандартные комбинации
-                                                const standardCombos = ['a', 'c', 'v', 'x', 'z', 'q', 'f', 'p', 'w', 'n', 'o', 't'];
+                                                    if (e.ctrlKey) {
+                                                    // Не блокируем стандартные комбинации
+                                                    const standardCombos = ['a', 'c', 'v', 'x', 'z', 'q', 'f', 'p', 'w', 'n', 'o', 't'];
                     if (standardCombos.includes(e.key.toLowerCase())) {
-                                                return;
-                                                }
+                                                    return;
+                                                    }
 
                     e.preventDefault();
                     switch (e.key.toLowerCase()) {
-                                                case '1': colorText('red'); break;
+                                                    case '1': colorText('red'); break;
                     case '2': colorText('blue'); break;
                     case '3': colorText('green'); break;
                     case '4': colorText('yellow'); break;
@@ -1001,9 +1006,9 @@
                     case '7': changeFontSize('very-big'); break;
                     case '8': changeFontSize('big'); break;
                     case '9': changeFontSize('plain'); break;       
+                                                            }
                                                         }
-                                                    }
-                                                });
+                                                    });
                 </text>
         }
 
