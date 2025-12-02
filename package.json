@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "app-builder-lib": "^26.0.12"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.6.4",
+    "electron": "^23.0.0"
+  },
+  "build": {
+    "appId": "your.app.id",
+    "productName": "NoteFlow",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/*.iml",
+      "!{,.}*",
+      "!**/*.map",
+      "!**/node_modules/**/*.map"
+    ]
+  }
+}
