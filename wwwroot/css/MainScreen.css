@@ -271,16 +271,21 @@ body::-webkit-scrollbar {
 
 .note-description {
     position: absolute;
-    width: 170px;
-    height: 60px;
-    right: 49px;
-    top: 90px;
+    width: 150px;
+    height: 70px;
+    left: 15px;
+    top: 85px !important;
     font-family: 'Inter';
-    font-weight: 600;
+    font-weight: 500;
     font-size: 18px;
-    line-height: 22px;
+    line-height: 1.2;
     color: #A9A49C;
     overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+    text-align: left;
 }
 
 .note-icon {
@@ -288,8 +293,8 @@ body::-webkit-scrollbar {
     top: 35px;
     left: 15px;
     font-family: 'Inter', monospace;
-    font-weight: 600;
-    font-size: 20px;
+    font-weight: 900;
+    font-size: 25px;
     color: #fffdfd;
 }
 
@@ -297,8 +302,8 @@ body::-webkit-scrollbar {
     position: absolute;
     width: 101.99px;
     height: 17.74px;
-    left: 40px;
-    top: 150px;
+    left: 50px;
+    top: 170px;
     font-family: 'Inter';
     font-weight: 600;
     font-size: 13px;
