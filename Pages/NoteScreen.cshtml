@@ -25,6 +25,22 @@
             overflow-x: hidden;
         }
 
+        .sidebar::-webkit-scrollbar,
+        .main-content::-webkit-scrollbar,
+        .editor-container::-webkit-scrollbar,
+        body::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        .sidebar,
+        .main-content,
+        .editor-container {
+            -ms-overflow-style: none !important;
+            scrollbar-width: none !important;
+        }
+
         /* Topbar settings */
         .top-bar {
             position: fixed;
@@ -128,9 +144,9 @@
 
         .main-content {
             position: absolute;
-            width: 80vw;
-            height: 100vh;
-            left: 20vw;
+            width: calc(100vw - 361px);
+            height: calc(100vh - 60px);
+            left: 361px;
             top: 60px;
             background: none;
             color: #191919;
@@ -138,8 +154,11 @@
             flex-direction: column;
             padding: 2vw;
             box-sizing: border-box;
-            overflow: visible;
+            overflow-y: hidden;
+            overflow-x: hidden;
             resize: none;
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .note-title-input {
@@ -148,10 +167,10 @@
             border: none;
             font-family: 'Inter';
             font-weight: 700;
-            font-size: 3vw;
+            font-size: 75px;
             color: #ffffff;
             outline: none;
-            margin-bottom: 2vh;
+            margin-bottom: 1vh;
             padding: 1vh 0;
             position: absolute;
             margin-left: 2vw;
@@ -164,11 +183,11 @@
             width: 95%;
             height: 80vh;
             margin-top: 10vh;
-            margin-left: 2vw;
+            margin-left: 1vw;
             background: #191919;
             border: none;
             border-radius: 5px;
-            overflow: auto;
+            overflow: hidden;
             padding-left: 0;
         }
 
@@ -201,8 +220,8 @@
         /* Контекстное меню */
         .context-menu {
             position: fixed;
-            background: #2d2d2d;
-            border: 1px solid #555;
+            background: #212121;
+            border: 2px solid #202020;
             border-radius: 5px;
             padding: 5px 0;
             z-index: 10001;
@@ -275,21 +294,25 @@
             color: #a29bfe;
         }
 
-        /* Размер шрифта текста */
-        .font-small {
-            font-size: 14px !important;
+        .white {
+            color: #FFFFFF;
         }
+
+        /* Размер шрифта текста */
+        /*.font-small {
+            font-size: 14px !important;
+        }*/
 
         .font-plain {
             font-size: 18px !important;
         }
 
         .font-big {
-            font-size: 24px !important;
+            font-size: 32px !important;
         }
 
         .font-very-big {
-            font-size: 32px !important;
+            font-size: 50px !important;
         }
 
         /* Разделитель в контекстном меню */
@@ -298,46 +321,8 @@
             border: none;
             border-top: 1px solid #555;
         }
+
         .save-button {
-            position: absolute ;
-            top: 890x ;
-            right: 25px ;
-            background: #2c2c2c ;
-            color: white ;
-            width: 60px ;
-            height: 60px ;
-            border-radius: 50% ;
-            cursor: pointer ;
-            font-size: 24px ;
-            display: flex ;
-            align-items: center ;
-            justify-content: center ;
-            border: none ;
-            z-index: 9999 ;
-        }
-
-        .save-button::before {
-            content: '' ;
-            position: absolute ;
-            top: -2px ;
-            left: -2px ;
-            right: -2px ;
-            bottom: -2px ;
-            border-radius: 50% ;
-            padding: 1px ;
-            background: conic-gradient(from 0deg, rgba(152, 249, 255, 0.8), rgba(135, 38, 183, 0.8), rgba(152, 249, 255, 0.8)) ;
-            -webkit-mask: 
-                linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0) ;
-            mask: 
-                linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0) ;
-            -webkit-mask-composite: xor ;
-            mask-composite: exclude ;
-            z-index: -1 ;
-        }
-
-        .delete-button {
             position: absolute ;
             top: 900px ;
             right: 25px ;
@@ -355,25 +340,282 @@
             z-index: 9999 ;
         }
 
-        .delete-button::before {
-            content: '' ;
-            position: absolute ;
-            top: -2px ;
-            left: -2px ;
-            right: -2px ;
-            bottom: -2px ;
-            border-radius: 50% ;
-            padding: 1px ;
-            background: conic-gradient(from 0deg, rgba(152, 249, 255, 0.8), rgba(135, 38, 183, 0.8), rgba(152, 249, 255, 0.8)) ;
-            -webkit-mask: 
-                linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0) ;
-            mask: 
-                linear-gradient(#fff 0 0) content-box, 
-                linear-gradient(#fff 0 0) ;
-            -webkit-mask-composite: xor ;
-            mask-composite: exclude ;
-            z-index: -1 ;
+        .save-button::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 50%;
+            padding: 1px;
+            background: conic-gradient(from 0deg, rgba(152, 249, 255, 0.8), rgba(135, 38, 183, 0.8), rgba(152, 249, 255, 0.8));
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: -1;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            color: #aeaeae;
+            z-index: 1000;
+        }
+
+        /* Основной сайдбар */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 100px;
+            width: 250px;
+            height: 75vh;
+            background: radial-gradient(90.16% 143.01% at 15.32% 21.04%,
+                    rgba(117, 117, 117, 0.2) 0%,
+                    rgba(94, 98, 101, 0.0447917) 77.08%,
+                    rgba(126, 126, 126, 0) 100%),
+                linear-gradient(0deg, rgba(30, 30, 30, 0.98), rgba(30, 30, 30, 0.98)),
+                #000000;
+            z-index: 900;
+            transform: translateX(0);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-top: 30px;
+            overflow-y: hidden;
+            overflow-x: hidden;
+            border-radius: 0 24px 24px 0;
+            position: relative;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 0 24px 24px 0;
+            padding: 1px;
+            background: radial-gradient(circle at 15% 20%,
+                    rgba(152, 249, 255, 0.3) 0%,
+                    rgba(255, 255, 255, 0.2) 30%,
+                    rgba(135, 38, 183, 0.1) 70%,
+                    transparent 100%);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-361px);
+        }
+
+        /* Кнопка сворачивания сайдбара */
+        .toggle-sidebar-btn {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            left: 20px;
+            top: 40px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-sidebar-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .toggle-sidebar-btn.collapsed {
+            left: 20px;
+            transform: rotate(180deg);
+        }
+
+        .toggle-sidebar-btn.collapsed:hover {
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        /* Иконка внутри кнопки */
+        .toggle-icon {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon-line {
+            position: absolute;
+            height: 2px;
+            background: #FFFFFF;
+            border-radius: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-icon-line:nth-child(1) {
+            top: 6px;
+            width: 24px;
+        }
+
+        .toggle-icon-line:nth-child(2) {
+            top: 12px;
+            width: 18px;
+        }
+
+        .toggle-icon-line:nth-child(3) {
+            top: 18px;
+            width: 12px;
+        }
+
+        .toggle-sidebar-btn.collapsed .toggle-icon-line:nth-child(1) {
+            top: 12px;
+            width: 24px;
+            transform: rotate(45deg);
+        }
+
+        .toggle-sidebar-btn.collapsed .toggle-icon-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .toggle-sidebar-btn.collapsed .toggle-icon-line:nth-child(3) {
+            top: 12px;
+            width: 24px;
+            transform: rotate(-45deg);
+        }
+
+        /* Секции сайдбара */
+        .sidebar-section {
+            margin-left: 20px;
+            margin-bottom: 40px;
+            margin-top: 10px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 2px 6px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-icon {
+            width: 27px;
+            height: 27px;
+            margin-right: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-title {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            font-size: 24px;
+            line-height: 29px;
+            letter-spacing: 0.06em;
+            color: #A6A6A6;
+            white-space: nowrap;
+        }
+
+        /* Recent files section */
+        .recent-files-section {
+            margin-left: 27px;
+            margin-top: 30px;
+        }
+
+        .recent-files-title {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 29px;
+            color: #A6A6A6;
+            margin-bottom: 20px;
+        }
+
+        /* Стили для файлов как в MainScreen */
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 283px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(30, 30, 30, 0.5);
+            position: relative;
+            min-height: 60px;
+        }
+
+        .file-item:hover {
+            background: rgba(40, 40, 40, 0.7);
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter';
+            font-weight: 600;
+            font-size: 18px;
+            color: #A6A6A6;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            margin-right: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .file-title {
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 500;
+            font-size: 16px;
+            line-height: 20px;
+            color: #A6A6A6;
+            white-space: normal;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            word-wrap: break-word;
+            max-width: 180px;
         }
 
 
@@ -407,6 +649,11 @@
         {
             <!-- Windows/Linux стиль - кнопки справа -->
             <div class="top-bar-actions windows-buttons">
+                <button class="nav-buttons back-button" title="На главную" id="backBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
                 <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
                     <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
@@ -426,11 +673,6 @@
         }
     </nav>
 
-    <!-- Логотип вынесен отдельно -->
-    <div class="logo-container">
-        <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
-    </div>
-
     <!-- Контекстное меню -->
     <div id="contextMenu" class="context-menu">
         <button onclick="colorText('red')">Красный</button>
@@ -438,11 +680,12 @@
         <button onclick="colorText('green')">Зеленый</button>
         <button onclick="colorText('yellow')">Желтый</button>
         <button onclick="colorText('purple')">Фиолетовый</button>
+        <button onclick="colorText('white')">Белый</button>
         <hr style="margin: 5px 0; border-color: #555;">
-        <button onclick="changeFontSize('small')">Маленький</button>
-        <button onclick="changeFontSize('plain')">Средний(стандартный)</button>
-        <button onclick="changeFontSize('big')">Большой</button>
-        <button onclick="changeFontSize('very-big')">Очень большой</button>
+        <!-- <button onclick="changeFontSize('small')">Маленький</button> -->
+        <button onclick="changeFontSize('plain')">Сделать текстом</button>
+        <button onclick="changeFontSize('big')">Сделать заголовком 2-го уровня</button>
+        <button onclick="changeFontSize('very-big')">Сделать заголовком 1-го уровня</button>
     </div>
 
     <div class="main-content" style="overflow-y: visible">
@@ -462,11 +705,11 @@
             </div>
             <button type="button" onclick="saveNote()" asp-page-handler="CreateOnEditNote" class="save-button">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cccccc" stroke-width="1.5">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14,2 14,8 20,8"/>
-                    <line x1="16" y1="13" x2="8" y2="13"/>
-                    <line x1="16" y1="17" x2="8" y2="17"/>
-                    <polyline points="10,9 9,9 9,11"/>
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14,2 14,8 20,8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                    <polyline points="10,9 9,9 9,11" />
                 </svg>
             </button>
          </form>
@@ -503,8 +746,6 @@
         </form>
     </div>
 
-
-
     <script>
         const { ipcRenderer } = require('electron');
 
@@ -518,6 +759,9 @@
 
         document.getElementById('closeBtn')?.addEventListener('click', () => {
             ipcRenderer.send('close-window');
+        });
+        document.getElementById('backBtn')?.addEventListener('click', () => {
+            window.location.href = "/MainScreen";
         });
 
         // Контекстное меню
@@ -547,16 +791,28 @@
             const selectedText = range.toString();
             if (selectedText.length === 0) return;
 
-            // Проверяем, есть ли уже span с классами
-            let span = document.createElement('span');
-
-            // Если выделение уже внутри span, добавляем класс к существующему
+            // Проверяем, есть ли уже span
             const parentSpan = range.startContainer.parentElement;
+
             if (parentSpan && parentSpan.tagName === 'SPAN' && range.toString() === parentSpan.textContent) {
-                // Весь текст выделен внутри одного span - добавляем класс
-                parentSpan.className += ' ' + styleClass;
+                // Если весь текст выделен внутри span - заменяем классы
+                const isColorClass = ['red', 'blue', 'green', 'yellow', 'purple', 'white'].includes(styleClass);
+                const isSizeClass = styleClass.startsWith('font-');
+
+                let newClasses = parentSpan.className.split(' ').filter(cls => {
+                    if (isColorClass) {
+                        return !['red', 'blue', 'green', 'yellow', 'purple', 'white'].includes(cls);
+                    } else if (isSizeClass) {
+                        return !cls.startsWith('font-');
+                    }
+                    return true;
+                });
+
+                newClasses.push(styleClass);
+                parentSpan.className = newClasses.join(' ').trim();
             } else {
-                // Создаем новый span с классом
+                // Создаем новый span
+                const span = document.createElement('span');
                 span.className = styleClass;
                 span.textContent = selectedText;
                 range.deleteContents();
@@ -584,14 +840,118 @@
             document.forms[0].submit();
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const editor = document.getElementById('richTextEditor');
-            const existingContent = document.getElementById('NoteContent').value;
+        // Горячие клавиши для мака
+        @if (PlatformHelper.IsMacOS)
+            {
+                <text>
+                    document.addEventListener('keydown', function (e) {
+                                                if (e.metaKey) { // Cmd key
+                                                    const standardCombos = ['a','c','v','x','z','q','s','f','p','w'];
+                    if (standardCombos.includes(e.key)){
+                                                    return;
+                                                }
+                    switch (e.key) {
+                                                case '1': colorText('red'); break;
+                    case '2': colorText('blue'); break;
+                    case '3': colorText('green'); break;
+                    case '4': colorText('yellow'); break;
+                    case '5': colorText('purple'); break;
+                    case '6': colorText('white'); break;
+                    case 'e': changeFontSize('plain'); break;
+                    case 'r': changeFontSize('big'); break;
+                    case 't': changeFontSize('very-big'); break;
+                                                        }
+                                                    }
+                                                });
+                </text>
+        }
 
-            if (existingContent && existingContent.trim() !== '') {
-                editor.innerHTML = existingContent;
+            // Горячие клавиши для остальных платформ
+            @if (!PlatformHelper.IsMacOS)
+            {
+                <text>
+                    document.addEventListener('keydown', function (e) {
+                                                if (e.ctrlKey) {
+                                                // Не блокируем стандартные комбинации
+                                                const standardCombos = ['a', 'c', 'v', 'x', 'z', 'q', 'f', 'p', 'w', 'n', 'o', 't'];
+                    if (standardCombos.includes(e.key.toLowerCase())) {
+                                                return;
+                                                }
+
+                    e.preventDefault();
+                    switch (e.key.toLowerCase()) {
+                                                case '1': colorText('red'); break;
+                    case '2': colorText('blue'); break;
+                    case '3': colorText('green'); break;
+                    case '4': colorText('yellow'); break;
+                    case '5': colorText('purple'); break;
+                    case '6': colorText('white'); break;
+                    case '7': changeFontSize('very-big'); break;
+                    case '8': changeFontSize('big'); break;
+                    case '9': changeFontSize('plain'); break;       
+                                                        }
+                                                    }
+                                                });
+                </text>
+        }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const editor = document.getElementById('richTextEditor');
+                const existingContent = document.getElementById('NoteContent').value;
+
+                if (existingContent && existingContent.trim() !== '') {
+                    editor.innerHTML = existingContent;
+                } else {
+                    editor.innerHTML = '';
+                }
+            });
+
+        // Функционал сайдбара
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+        const mainContent = document.querySelector('.main-content');
+        const devModal = document.getElementById('devModal');
+        const devModalOverlay = document.getElementById('devModalOverlay');
+
+        // Состояние сайдбара
+        let isSidebarCollapsed = false;
+
+        // Переключение сайдбара
+        toggleSidebarBtn.addEventListener('click', function (e) {
+            e.stopPropagation(); // Предотвращаем всплытие
+
+            isSidebarCollapsed = !isSidebarCollapsed;
+
+            if (isSidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                toggleSidebarBtn.classList.add('collapsed');
+                document.body.classList.add('sidebar-collapsed');
+                document.body.classList.remove('sidebar-expanded');
             } else {
-                editor.innerHTML = '';
+                sidebar.classList.remove('collapsed');
+                toggleSidebarBtn.classList.remove('collapsed');
+                document.body.classList.add('sidebar-expanded');
+                document.body.classList.remove('sidebar-collapsed');
+            }
+        });
+
+        // Показать модальное окно "В разработке"
+        function showDevModal() {
+            devModal.style.display = 'block';
+            devModalOverlay.style.display = 'block';
+        }
+
+        // Закрытие окна по клику на оверлей
+        devModalOverlay.addEventListener('click', function () {
+            devModal.style.display = 'none';
+            devModalOverlay.style.display = 'none';
+        });
+
+        // Закрытие окна по Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                devModal.style.display = 'none';
+                devModalOverlay.style.display = 'none';
             }
         });
     </script>
@@ -599,19 +959,20 @@
 </body>
 
 <!-- FOR DEVELOPING ONLY -->
-@if (!string.IsNullOrEmpty(Model.NoteContent))
+@* @if (!string.IsNullOrEmpty(Model.NoteContent))
 {
-    <div data-auto-hide style="
-                                    position: fixed;
-                                    top: 50%;
-                                    left: 50%;
-                                    transform: translate(-50%, -50%);
-                                    background: rgba(0,0,0,0.8);
-                                    color: white;
-                                    padding: 20px;
-                                    border-radius: 10px;
-                                    z-index: 10000;
-                                    transition: opacity 0.5s ease;">
+    <div data-auto-hide style=" 
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        z-index: 10000;
+        transition: opacity 0.5s ease;">
         Успешно!
     </div>
 }
+*@

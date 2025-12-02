@@ -18,9 +18,16 @@
 </head>
 
 <body>
+
+    <!-- Кнопка настроек
+    <button class="settings-btn" onclick="openSettings()">Настройки</button> -->
+
+    <!-- Кнопка домой
+    <button class="home-btn" onclick="goHome()">Домой</button> -->
+
     <nav class="top-bar">
         <div class="logo-container">
-            <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
+            <img src="/Images/Logo.png" class="logo" alt="NoteFlow" />
         </div>
 
         <div class="add-text">
@@ -54,6 +61,13 @@
             else
             {
                 <div class="top-bar-actions windows-buttons">
+                    <button class="nav-buttons" title="Перезагрузить" id="reloadBtn">
+                        <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M23 4v6h-6M1 20v-6h6" stroke-width="2" stroke-linecap="round" />
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" stroke-width="2"
+                                stroke-linecap="round" />
+                        </svg>
+                    </button>
                     <button class="nav-buttons" title="Свернуть" id="minimizeBtn">
                         <svg width="32" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M5 12h14" stroke-width="2" stroke-linecap="round" />
@@ -74,10 +88,8 @@
         </div>
 
     </nav>
-
-    <div class="logo-container">
-        <img src="/Images/Logo.svg" class="logo" alt="NoteFlow" />
-    </div>
+    <!-- Надпись "Недавние файлы" -->
+    <div class="recent-files-label">Недавние файлы</div>
 
     <!-- Обертка для контейнера с блюром -->
     <div class="cards-container-wrapper">
@@ -115,16 +127,49 @@
         </div>
     </div>
 
+        <!-- Надпись напоминания-->
+    <div class="reminder-title">Напоминания</div>
 
+<!-- Контейнер для напоминаний -->
+<div class="reminders-container">
+    <div class="blur">
+        <img src="/Images/blur.png" alt="NoteFlow" />
+    </div>
+    
+    <div class="cards-container">
+        <!-- Карточка нового напоминания -->
+        <div class="card">
+            <div class="card-bg">
+                <div class="add-note-text">Добавить напоминание</div>
+            </div>
+        </div>
 
-    <!-- Карточка нового напоминания -->
-    <div class="reminder-card">
-        <div class="reminder-card-bg">
-            <div class="reminder-icon">Новое напоминание</div>
+        <div class="wide-reminder-card">
+    <div class="wide-reminder-bg gradient-border">
+        <!-- Время и дата посередине сверху -->
+        <div class="reminder-time-header-container">
+            <div class="reminder-date">Сегодня</div>
+            <div class="reminder-time">10:45</div>
+        </div>
+        
+        <!-- Основной контент (без emoji) -->
+        <div class="reminder-content-box">
+            <div class="reminder-main-text">Покормить кота</div>
+            <div class="reminder-description-text">Купить корм для кота, покормить его</div>
+        </div>
+        
+        <!-- Линия и время создания внизу -->
+        <div class="reminder-created-time-container">
+            <div class="reminder-divider-line"></div>
+            <div class="reminder-created-time">Вчера 21:45</div>
         </div>
     </div>
-    <!-- Надпись напоминания-->
-    <div class="reminder-title">Напоминания</div>
+</div>
+    </div>
+</div>
+
+
+
 
     <!-- Календарь -->
     <div class="calendar-section-title">Календарь</div>
@@ -203,20 +248,62 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        document.getElementById('minimizeBtn')?.addEventListener('click', () => {
+            ipcRenderer.send('minimize-window');
+        });
+
+        document.getElementById('maximizeBtn')?.addEventListener('click', () => {
+            ipcRenderer.send('maximize-window');
+        });
+
+        document.getElementById('closeBtn')?.addEventListener('click', () => {
+            ipcRenderer.send('close-window');
+        });
+
+        document.getElementById('reloadBtn')?.addEventListener('click', () => {
+            location.reload();
+        });
+
+    @*function openSettings() {
+            console.log('Открыть настройки');
+            window.location.href = '/Settings';
+        }*@
+
+            function goHome() {
+                console.log('Возврат на главный экран');
+                window.location.href = '/MainScreen';
+            }
+
+        //Перехват скролла чтобы скроллить колесиком
+        const cardsContainer = document.querySelector('.cards-container');
+
+        cardsContainer.addEventListener('wheel', function (e) {
+            // Предотвращаем вертикальный скролл страницы
+            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+                e.preventDefault();
+
+                // Настройки скролла
+                const scrollSpeed = 2; // Скорость скролла
+                const maxScroll = this.scrollWidth - this.clientWidth;
+
+                // Рассчитываем новую позицию
+                let newScrollLeft = this.scrollLeft + (e.deltaY * scrollSpeed);
+
+                // Ограничиваем скролл в пределах контейнера
+                newScrollLeft = Math.max(0, Math.min(maxScroll, newScrollLeft));
+
+                // Плавный скролл
+                this.scrollTo({
+                    left: newScrollLeft,
+                    behavior: 'smooth'
+                });
+            }
+        }, { passive: false });
+
+    </script>
+
 </body>
-
-<script>
-    const { ipcRenderer } = require('electron');
-
-    document.getElementById('minimizeBtn')?.addEventListener('click', () => {
-        ipcRenderer.send('minimize-window');
-    });
-
-    document.getElementById('maximizeBtn')?.addEventListener('click', () => {
-        ipcRenderer.send('maximize-window');
-    });
-
-    document.getElementById('closeBtn')?.addEventListener('click', () => {
-        ipcRenderer.send('close-window');
-    });
-</script>
