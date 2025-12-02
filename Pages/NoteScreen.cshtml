@@ -239,6 +239,36 @@
             cursor: pointer;
         }
 
+        .save-button {
+          position: absolute;
+          top: 830px;
+          right: 30px;
+          background: #2c2c2c;
+          color: white;
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          cursor: pointer;
+          font-size: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: none;
+          z-index: 9999;
+          transition: all 0.3s ease;
+          box-shadow: 0 0 0 rgba(255, 0, 0, 0);
+        }
+
+        .delete-button:hover {
+          background: #ff4444;
+          box-shadow: 0 0 20px 5px rgba(255, 0, 0, 0.7);
+          transform: scale(1.05);
+        }
+
+        .delete-button:hover svg {
+          stroke: white;
+        }
+        
         .context-menu button:hover {
             background: #404040;
         }
@@ -293,21 +323,21 @@
         }
 
         .save-button {
-            position: absolute;
-            bottom: 75px;
-            right: 25px;
-            background: #2c2c2c;
-            color: white;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            z-index: 9999;
+            position: absolute ;
+            top: 900px ;
+            right: 25px ;
+            background: #2c2c2c ;
+            color: white ;
+            width: 60px ;
+            height: 60px ;
+            border-radius: 50% ;
+            cursor: pointer ;
+            font-size: 24px ;
+            display: flex ;
+            align-items: center ;
+            justify-content: center ;
+            border: none ;
+            z-index: 9999 ;
         }
 
         .save-button::before {
@@ -588,25 +618,6 @@
             max-width: 180px;
         }
 
-        /* Стиль для основного контента при развернутом/свернутом сайдбаре */
-        .main-content {
-            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: absolute;
-            width: calc(100vw - 361px);
-            height: calc(100vh - 60px);
-            left: 361px;
-            top: 60px;
-            background: none;
-            color: #191919;
-            display: flex;
-            flex-direction: column;
-            padding: 2vw;
-            box-sizing: border-box;
-            overflow-y: auto;
-            overflow-x: hidden;
-            resize: none;
-        }
 
         .sidebar-expanded .main-content {
             left: 361px;
@@ -657,6 +668,7 @@
             z-index: 9998;
             animation: overlayAppear 0.3s ease;
         }
+
     </style>
 </head>
 
@@ -750,8 +762,23 @@
                     <polyline points="10,9 9,9 9,11" />
                 </svg>
             </button>
-
         </form>
+
+    
+    <form method ="post">
+        <input type="hidden" name="path" value="@Model._path"/>
+        <button asp-page-handler="DeleteNote" type="submit" class="delete-button">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cccccc" stroke-width="1.5">
+                <path d="M3 6h18"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+                <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                <line x1="10" y1="11" x2="10" y2="17"/>
+                <line x1="14" y1="11" x2="14" y2="17"/>
+            </svg>
+        </button>
+    </form>  
+        
+
         <form method="post">
             <input type="hidden" name="path" value="@Model._path" />
             <button asp-page-handler="DeleteNote" type="submit" style="

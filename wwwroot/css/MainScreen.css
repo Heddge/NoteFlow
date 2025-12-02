@@ -207,8 +207,8 @@ body::-webkit-scrollbar {
     align-items: center;
     justify-content: center;
     position: relative;
-    top: 25px;
-    right: 10px;
+    top: 35px;
+    left: 300px;
 }
 
 /* Карточка заметки */
@@ -262,7 +262,7 @@ body::-webkit-scrollbar {
     width: 150px;
     height: 22px;
     left: 15px;
-    top: 30px;
+    top: 62px;
     font-family: 'Inter';
     font-weight: 600;
     font-size: 18px;
@@ -270,28 +270,50 @@ body::-webkit-scrollbar {
     display: flex;
     align-items: center;
     color: #DADADA;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+    max-width: 150px !important;
+    display: block !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
 }
 
 .note-description {
     position: absolute;
-    width: 170px;
-    height: 60px;
+    width: 150px;
+    height: 70px;
     left: 15px;
-    top: 60px;
+    top: 85px !important;
     font-family: 'Inter';
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 22px;
+    font-weight: 500;
+    font-size: 19px;
+    line-height: 1.2;
     color: #A9A49C;
     overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+    text-align: left;
+}
+
+.note-icon {
+    position: absolute;
+    top: 35px;
+    left: 15px;
+    font-family: 'Inter', monospace;
+    font-weight: 900;
+    font-size: 25px;
+    color: #fffdfd;
 }
 
 .note-timestamp {
     position: absolute;
     width: 101.99px;
     height: 17.74px;
-    left: 40px;
-    top: 150px;
+    left: 50px;
+    top: 170px;
     font-family: 'Inter';
     font-weight: 600;
     font-size: 13px;
