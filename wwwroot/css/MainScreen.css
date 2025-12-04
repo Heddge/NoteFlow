@@ -206,7 +206,7 @@ body::-webkit-scrollbar {
     height: 100px;
     align-items: center;
     justify-content: center;
-    position: relative;
+    position: absolute;
     top: 15px;
     left: 300px;
 }
