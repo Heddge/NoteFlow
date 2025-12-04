@@ -40,15 +40,12 @@
         </div>
     </button>
 
-    
+
     <div class="add-text">
         <strong>
             <h1 class="add-text">Greetings</h1>
         </strong>
     </div>
-    
-    <!-- Надпись напоминания-->
-    <div class="reminder-title">Напоминания</div>
 
     <nav class="top-bar">
         <div class="logo-container">
@@ -132,7 +129,7 @@
                 @for (int i = 0; i < Model.Notes.Count(); i++)
                 {
                     <form method="post" asp-page-handler="ToEditorForEditOrCreate">
-                        <input type="hidden" name="path" value="@Model.Notes[i].NotePath"/>
+                        <input type="hidden" name="path" value="@Model.Notes[i].NotePath" />
                         <button type="submit" class="note-card">
                             <div class="note-card-bg">
                                 <div class="note-icon">&lt;/&gt;</div>
@@ -146,50 +143,69 @@
         </div>
     </div>
 
-
-<!-- Контейнер для напоминаний -->
-<div class="reminders-container">
-    <div class="blur">
-        <img src="/Images/blur.png" alt="NoteFlow" />
+    <!-- НАДПИСЬ НАПОМИНАНИЯ -->
+    <div style="
+    font-family: 'Inter';
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    vertical-align: middle;
+    color: rgba(255, 255, 255, 0.7);
+    width: auto;
+    height: auto;
+    justify-content: center;
+    position: absolute;
+    top: 390px;
+    left: 287px;
+">
+        Напоминания
     </div>
-    
-    <div class="cards-container">
-        <!-- Карточка нового напоминания -->
-        <div class="card" onclick="showDevModal()">
-            <div class="card-bg">
-                <div class="add-note-text">Добавить напоминание</div>
-            </div>
+
+    <!-- Контейнер для напоминаний -->
+    <div class="reminders-container">
+        <div class="blur">
+            <img src="/Images/blur.png" alt="NoteFlow" />
         </div>
 
-        <div class="wide-reminder-card">
-            <div class="wide-reminder-bg gradient-border" onclick="showDevModal()">
-                <!-- Время и дата посередине сверху -->
-                <div class="reminder-time-header-container">
-                    <div class="reminder-date">Сегодня</div>
-                    <div class="reminder-time">10:45</div>
+        <div class="cards-container">
+            <!-- Карточка нового напоминания -->
+            <div class="card" onclick="showDevModal()">
+                <div class="card-bg">
+                    <div class="add-note-text">Добавить напоминание</div>
                 </div>
-                
-                <!-- Основной контент (без emoji) -->
-                <div class="reminder-content-box">
-                    <div class="reminder-main-text">Покормить кота</div>
-                    <div class="reminder-description-text">Купить корм для кота, покормить его</div>
-                </div>
-                
-                <!-- Линия и время создания внизу -->
-                <div class="reminder-created-time-container">
-                    <div class="reminder-divider-line"></div>
-                    <div class="reminder-created-time">Вчера 21:45</div>
+            </div>
+
+            <div class="wide-reminder-card">
+                <div class="wide-reminder-bg gradient-border" onclick="showDevModal()">
+                    <!-- Время и дата посередине сверху -->
+                    <div class="reminder-time-header-container">
+                        <div class="reminder-date">Сегодня</div>
+                        <div class="reminder-time">10:45</div>
+                    </div>
+
+                    <!-- Основной контент (без emoji) -->
+                    <div class="reminder-content-box">
+                        <div class="reminder-main-text">Покормить кота</div>
+                        <div class="reminder-description-text">Купить корм для кота, покормить его</div>
+                    </div>
+
+                    <!-- Линия и время создания внизу -->
+                    <div class="reminder-created-time-container">
+                        <div class="reminder-divider-line"></div>
+                        <div class="reminder-created-time">Вчера 21:45</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
 
 
     <!-- Календарь -->
-    <div class="calendar-section-title" >Календарь</div>
+    <div class="calendar-section-title">Календарь</div>
     <div class="calendar-section-wrapper">
         <div class="calendar-container gradient-border" onclick="showDevModal()">
             <div class="calendar-content">

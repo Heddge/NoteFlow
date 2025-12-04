@@ -359,8 +359,8 @@ body::-webkit-scrollbar {
 }
 
 .settings-btn:hover {
-            background: rgba(80, 80, 80, 0.9);
-        }
+    background: rgba(80, 80, 80, 0.9);
+}
 
 /* Кнопка домой */
 .home-btn {
@@ -378,9 +378,9 @@ body::-webkit-scrollbar {
     transition: background 0.2s;
 }
 
-        .home-btn:hover {
-            background: rgba(80, 80, 80, 0.9);
-        }
+.home-btn:hover {
+    background: rgba(80, 80, 80, 0.9);
+}
 
 button {
     background: none !important;
@@ -442,23 +442,6 @@ form {
     width: auto;
     z-index: 9997;
     pointer-events: none;
-}
-
-.reminder-title {
-    font-family: 'Inter';
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 100%;
-    letter-spacing: 0%;
-    text-align: center;
-    vertical-align: middle;
-    color: rgba(255, 255, 255, 0.7);
-    width: 155px;
-    height: 43px;
-    justify-content: center;
-    position: relative;
-    top: 370px;
-    left: 270px;
 }
 
 /* Секция календаря */
@@ -685,14 +668,18 @@ form {
 
 .reminders-container .cards-container {
     display: flex !important;
-    gap: 25px !important; /* Отступ 25px между карточками */
-    align-items: flex-start !important; /* Выравниваем по верхнему краю */
-    padding-left: 0 !important; /* Убираем лишние отступы */
+    gap: 25px !important;
+    /* Отступ 25px между карточками */
+    align-items: flex-start !important;
+    /* Выравниваем по верхнему краю */
+    padding-left: 0 !important;
+    /* Убираем лишние отступы */
 }
 
 /* Широкая карточка напоминания */
 .wide-reminder-card {
-    width: 540px !important; /* В 3 раза шире обычной */
+    width: 540px !important;
+    /* В 3 раза шире обычной */
     height: 200px;
     transition: transform 0.3s ease;
     flex-shrink: 0;
@@ -700,7 +687,8 @@ form {
     background: none !important;
     border: none !important;
     padding: 0 !important;
-    margin: 0 !important; /* Убираем все margin */
+    margin: 0 !important;
+    /* Убираем все margin */
 }
 
 .wide-reminder-card:hover {
@@ -717,14 +705,16 @@ form {
     display: flex !important;
     align-items: center !important;
     padding-left: 30px !important;
-    margin: 0 !important; /* Убираем отступы */
+    margin: 0 !important;
+    /* Убираем отступы */
 }
 
 /* Первая карточка (новая заметка) - убираем лишние margin */
 .reminders-container .card {
     width: 180px;
     height: 200px;
-    margin: 0 !important; /* Важно: убираем все margin */
+    margin: 0 !important;
+    /* Важно: убираем все margin */
 }
 
 .reminders-container .card-bg {
@@ -821,14 +811,17 @@ form {
 .reminder-content-box {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Выравниваем по левому краю */
+    align-items: flex-start;
+    /* Выравниваем по левому краю */
     position: relative;
     z-index: 1;
-    margin-top: 70px; /* Отступ от времени сверху */
+    margin-top: 70px;
+    /* Отступ от времени сверху */
     width: 100%;
     padding: 0 30px;
     box-sizing: border-box;
-    gap: 0; /* Убираем gap между элементами */
+    gap: 0;
+    /* Убираем gap между элементами */
 }
 
 /* Заголовок напоминания */
@@ -836,33 +829,41 @@ form {
     font-family: 'Inter';
     font-weight: 700;
     font-size: 18px;
-    line-height: 22px; /* Уменьшаем line-height */
+    line-height: 22px;
+    /* Уменьшаем line-height */
     color: #FFFFFF;
     text-align: left;
     width: 100%;
-    margin-bottom: 5px; /* Небольшой отступ снизу для описания */
+    margin-bottom: 5px;
+    /* Небольшой отступ снизу для описания */
 }
 
 /* Описание напоминания (прямо под заголовком) */
 .reminder-description-text {
     font-family: 'Inter';
     font-weight: 500;
-    font-size: 16px; /* Немного уменьшаем размер */
-    line-height: 20px; /* Уменьшаем line-height */
+    font-size: 16px;
+    /* Немного уменьшаем размер */
+    line-height: 20px;
+    /* Уменьшаем line-height */
     color: #A9A49C;
     text-align: left;
     width: 100%;
-    margin-top: 0; /* Убираем верхний отступ */
+    margin-top: 0;
+    /* Убираем верхний отступ */
 }
 
 /* Поднимаем текст напоминания выше */
 .reminder-content-box {
     display: flex;
-    flex-direction: column; /* Меняем на колонку */
-    align-items: center; /* Центрируем по горизонтали */
+    flex-direction: column;
+    /* Меняем на колонку */
+    align-items: center;
+    /* Центрируем по горизонтали */
     position: relative;
     z-index: 1;
-    margin-top: 70px; /* Поднимаем текст ближе ко времени */
+    margin-top: 70px;
+    /* Поднимаем текст ближе ко времени */
     width: 100%;
     padding: 0 30px;
     box-sizing: border-box;
@@ -872,10 +873,11 @@ form {
 .reminder-main-text {
     font-family: 'Inter';
     font-weight: 700;
-    font-size: 18px; /* Увеличиваем размер */
+    font-size: 18px;
+    /* Увеличиваем размер */
     line-height: 31px;
     color: #FFFFFF;
-    text-align: left; 
+    text-align: left;
     width: 100%;
 }
 
@@ -883,10 +885,11 @@ form {
 .reminder-description-text {
     font-family: 'Inter';
     font-weight: 500;
-    font-size: 18px; /* Увеличиваем размер */
+    font-size: 18px;
+    /* Увеличиваем размер */
     line-height: 20px;
     color: #A9A49C;
-    text-align: left; 
+    text-align: left;
     width: 100%;
     margin-top: 0;
 }
@@ -900,7 +903,8 @@ form {
     left: 0;
     right: 0;
     display: flex;
-    justify-content: center; /* По центру */
+    justify-content: center;
+    /* По центру */
     align-items: center;
     z-index: 2;
 }
@@ -911,7 +915,8 @@ form {
     font-weight: 500;
     font-size: 13px;
     line-height: 16px;
-    color: #555554; /* Серый цвет */
+    color: #555554;
+    /* Серый цвет */
     text-align: center;
 }
 
@@ -930,6 +935,7 @@ form {
     padding: 30px 0 !important;
     margin: 0 !important;
 }
+
 /* Немного уменьшаем отступ для основного контента */
 .reminder-content-box {
     display: flex;
@@ -937,7 +943,8 @@ form {
     gap: 0px;
     position: relative;
     z-index: 1;
-    margin-top: 40px; /* Уменьшаем, чтобы уместить время создания внизу */
+    margin-top: 40px;
+    /* Уменьшаем, чтобы уместить время создания внизу */
 }
 
 /* Всплывающее окно "В разработке" */
