@@ -11,6 +11,7 @@
 <!DOCTYPE html>
 
 <head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Backplate settings */
         body {
@@ -165,12 +166,12 @@
             width: 85%;
             background: transparent;
             border: none;
-            font-family: 'Inter';
+            font-family: 'Inter', sans-serif;
             font-weight: 700;
-            font-size: 75px;
+            font-size: 54px;
             color: #ffffff;
             outline: none;
-            margin-bottom: 1vh;
+            margin-bottom: 0;
             padding: 1vh 0;
             position: absolute;
             margin-left: 2vw;
@@ -182,9 +183,9 @@
             display: flex;
             width: 95%;
             height: 80vh;
-            margin-top: 10vh;
-            margin-left: 1vw;
-            background: #191919;
+            margin-top: 90px;
+            margin-left: 2.1vw;
+            background: transparent;
             border: none;
             border-radius: 5px;
             overflow: hidden;
@@ -195,11 +196,12 @@
             flex: 1;
             background: transparent;
             border: none;
-            font-family: 'Inter', monospace;
-            font-size: 18px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 17px;
             color: #ffffff;
-            line-height: 28px;
-            padding: 10px;
+            line-height: 1.6;
+            padding: 10px 0;
             outline: none;
             white-space: pre-wrap;
             overflow-wrap: break-word;
@@ -237,6 +239,7 @@
             color: white;
             text-align: left;
             cursor: pointer;
+            font-family: 'Inter', sans-serif;
         }
         
         .context-menu button:hover {
@@ -244,46 +247,21 @@
         }
 
         /* Цвета для текста */
-        .red {
-            color: #ff6b6b;
-        }
-
-        .blue {
-            color: #74b9ff;
-        }
-
-        .green {
-            color: #55efc4;
-        }
-
-        .yellow {
-            color: #fdcb6e;
-        }
-
-        .purple {
-            color: #a29bfe;
-        }
-
-        .white {
-            color: #FFFFFF;
-        }
+        .red { color: #ff6b6b; }
+        .blue { color: #74b9ff; }
+        .green { color: #55efc4; }
+        .yellow { color: #fdcb6e; }
+        .purple { color: #a29bfe; }
+        .white { color: #FFFFFF; }
 
         /* Размер шрифта текста */
         /*.font-small {
             font-size: 14px !important;
         }*/
 
-        .font-plain {
-            font-size: 18px !important;
-        }
-
-        .font-big {
-            font-size: 32px !important;
-        }
-
-        .font-very-big {
-            font-size: 50px !important;
-        }
+        .font-plain { font-size: 17px !important; }
+        .font-big { font-size: 28px !important; font-weight: 600; }
+        .font-very-big { font-size: 40px !important; font-weight: 700; }
 
         /* Разделитель в контекстном меню */
         .context-menu-div {
@@ -331,7 +309,6 @@
             z-index: -1;
         }
         
-
         .delete-button {
             position: absolute;
             bottom: 10px;
@@ -386,6 +363,7 @@
                     rgba(117, 117, 117, 0.2) 0%,
                     rgba(94, 98, 101, 0.0447917) 77.08%,
                     rgba(126, 126, 126, 0) 100%),
+               
                 linear-gradient(0deg, rgba(30, 30, 30, 0.98), rgba(30, 30, 30, 0.98)),
                 #000000;
             z-index: 900;
@@ -508,7 +486,8 @@
 
         /* Секции сайдбара */
         .sidebar-section {
-            margin-left: 20px;
+            margin-left: 10px;
+            margin-right: 15px;
             margin-bottom: 40px;
             margin-top: 10px;
         }
@@ -519,97 +498,94 @@
             margin-bottom: 5px;
             cursor: pointer;
             transition: all 0.2s;
-            padding: 2px 6px;
+            padding: 4px 12px;
             border-radius: 8px;
-            border: 1px solid transparent;
+            border: 0.5px solid transparent;
         }
 
         .sidebar-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            border: 0.5px solid rgba(255, 255, 255, 0.08);
         }
 
         .sidebar-icon {
-            width: 27px;
-            height: 27px;
-            margin-right: 30px;
+            width: 24px;
+            height: 24px;
+            margin-right: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .sidebar-title {
-            font-family: 'Inter';
-            font-style: normal;
+            font-family: 'Inter', sans-serif;
             font-weight: 500;
-            font-size: 24px;
-            line-height: 29px;
-            letter-spacing: 0.06em;
+            font-size: 20px;
             color: #A6A6A6;
             white-space: nowrap;
         }
 
         /* Recent files section */
         .recent-files-section {
-            margin-left: 27px;
+            margin-left: 10px;
+            margin-right: 15px;
             margin-top: 30px;
         }
 
         .recent-files-title {
-            font-family: 'Inter';
-            font-style: normal;
+            font-family: 'Inter', sans-serif;
             font-weight: 600;
-            font-size: 24px;
-            line-height: 29px;
+            font-size: 20px;
             color: #A6A6A6;
             margin-bottom: 20px;
+            padding-left: 12px;
         }
 
         /* Стили для файлов как в MainScreen */
         .file-list {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            width: 283px;
+            gap: 12px;
+            width: 100%;
         }
 
         .file-item {
             display: flex;
             align-items: center;
-            padding: 12px 16px;
+            padding: 10px 12px;
             cursor: pointer;
             transition: all 0.2s;
-            background: rgba(30, 30, 30, 0.5);
+            background: rgba(30, 30, 30, 0.3);
             position: relative;
-            min-height: 60px;
+            min-height: 50px;
+            border-radius: 8px;
+            border: 0.5px solid transparent;
         }
 
         .file-item:hover {
-            background: rgba(40, 40, 40, 0.7);
+            border: 0.5px solid rgba(255, 255, 255, 0.06);
+            background: rgba(45, 45, 45, 0.4);
         }
 
         .file-icon {
-            width: 40px;
-            height: 40px;
+            width: 34px;
+            height: 34px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Inter';
+            font-family: 'Inter', sans-serif;
             font-weight: 600;
-            font-size: 18px;
+            font-size: 16px;
             color: #A6A6A6;
             background: rgba(0, 0, 0, 0.3);
             border-radius: 6px;
-            margin-right: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-right: 6px;
         }
 
         .file-title {
-            font-family: 'Inter';
-            font-style: normal;
+            font-family: 'Inter', sans-serif;
             font-weight: 500;
-            font-size: 16px;
-            line-height: 20px;
+            font-size: 15px;
             color: #A6A6A6;
             white-space: normal;
             overflow: hidden;
@@ -618,7 +594,6 @@
             word-wrap: break-word;
             max-width: 180px;
         }
-
 
         .sidebar-expanded .main-content {
             left: 361px;
@@ -651,7 +626,7 @@
 
         .dev-modal-content {
             color: #FFFFFF;
-            font-family: 'Inter';
+            font-family: 'Inter', sans-serif;
             font-size: 22px;
             font-weight: 600;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -676,9 +651,7 @@
     <nav class="top-bar">
         @if (PlatformHelper.IsMacOS)
         {
-            <!-- macOS стиль - кнопки слева -->
             <div class="top-bar-actions macos-buttons">
-                <!-- Кнопка "Назад" (домой) -->
                 <button class="nav-buttons back-button-mac" title="На главную" id="backBtn">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M19 12H5M12 19l-7-7 7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -703,7 +676,6 @@
         }
         else
         {
-            <!-- Windows/Linux стиль - кнопки справа -->
             <div class="top-bar-actions windows-buttons">
                 <button class="nav-buttons back-button" title="На главную" id="backBtn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -729,7 +701,6 @@
         }
     </nav>
 
-    <!-- Контекстное меню -->
     <div id="contextMenu" class="context-menu">
         <button onclick="colorText('red')">Красный</button>
         <button onclick="colorText('blue')">Синий</button>
@@ -738,7 +709,6 @@
         <button onclick="colorText('purple')">Фиолетовый</button>
         <button onclick="colorText('white')">Белый</button>
         <hr style="margin: 5px 0; border-color: #555;">
-        <!-- <button onclick="changeFontSize('small')">Маленький</button> -->
         <button onclick="changeFontSize('plain')">Сделать текстом</button>
         <button onclick="changeFontSize('big')">Сделать заголовком 2-го уровня</button>
         <button onclick="changeFontSize('very-big')">Сделать заголовком 1-го уровня</button>
@@ -750,7 +720,6 @@
             <input type="Text" asp-for="NoteTitle" class="note-title-input" placeholder="Новая заметка"
                 maxlength="35" />
 
-            <!-- Hidden field for raw text -->
             <input asp-for="NoteContent" type="hidden" id="NoteContent" name="NoteContent" value="@Model.NoteContent" />
 
             <div class="editor-container">
@@ -770,7 +739,6 @@
             </button>
         </form>
 
-    
     <form method ="post">
         <input type="hidden" name="path" value="@Model._path"/>
         <button asp-page-handler="DeleteNote" type="submit" class="delete-button save-button" style="bottom: 75px;">
@@ -785,7 +753,6 @@
     </form>
     </div>
 
-    <!-- Всплывающее окно -->
     <div id="devModal" class="dev-modal">
         <div class="dev-modal-content">В разработке...</div>
     </div>
@@ -799,13 +766,10 @@
         </div>
     </button>
 
-    <!-- Сайдбар -->
     <aside id="sidebar" class="sidebar">
-        <!-- Навигационные элементы -->
         <div class="sidebar-section">
             <div class="sidebar-item" onclick="showDevModal()">
                 <div class="sidebar-icon">
-                    <!-- SVG иконка поиска -->
                     <svg width="27" height="27" viewBox="0 0 27 27" fill="none">
                         <circle cx="11" cy="11" r="8" stroke="#A6A6A6" stroke-width="2" />
                         <path d="M18.5 17.5L25 24" stroke="#A6A6A6" stroke-width="2" />
@@ -816,7 +780,6 @@
 
             <div class="sidebar-item" onclick="showDevModal()">
                 <div class="sidebar-icon">
-                    <!-- SVG иконка меню -->
                     <svg width="27" height="27" viewBox="0 0 27 27" fill="none">
                         <rect x="4" y="8" width="19" height="2" fill="#A6A6A6" />
                         <rect x="4" y="13" width="19" height="2" fill="#A6A6A6" />
@@ -828,7 +791,6 @@
 
             <div class="sidebar-item" onclick="showDevModal()">
                 <div class="sidebar-icon">
-                    <!-- SVG иконка аккаунта -->
                     <svg width="27" height="27" viewBox="0 0 27 27" fill="none">
                         <circle cx="13.5" cy="9" r="5" stroke="#A6A6A6" stroke-width="2" />
                         <path d="M5 23C5 18.5 9 15 13.5 15C18 15 22 18.5 22 23" stroke="#A6A6A6" stroke-width="2" />
@@ -839,7 +801,6 @@
 
             <div class="sidebar-item" onclick="showDevModal()">
                 <div class="sidebar-icon">
-                    <!-- SVG иконка избранного -->
                     <svg width="27" height="27" viewBox="0 0 27 27" fill="none">
                         <path d="M13.5 22L6.5 15.5C4 13 4 9 6.5 6.5C9 4 13 4 15.5 6.5C18 9 18 13 15.5 15.5L13.5 17.5"
                             stroke="#A6A6A6" stroke-width="2" fill="none" />
@@ -849,12 +810,9 @@
             </div>
         </div>
 
-        <!-- Недавние файлы -->
         <div class="recent-files-section">
             <div class="recent-files-title">Недавние файлы</div>
             <div class="file-list" id="recentFilesList">
-                <!-- Файлы будут загружаться динамически -->
-                <!-- Пример пустого состояния -->
                 <div class="file-item" style="justify-content: center; cursor: default;" onclick="showDevModal()">
                     <div class="file-icon">&lt;/&gt;</div>
                     <div class="file-title">Нет недавних <br /> файлов</div>
@@ -877,6 +835,7 @@
         document.getElementById('closeBtn')?.addEventListener('click', () => {
             ipcRenderer.send('close-window');
         });
+        
         document.getElementById('backBtn')?.addEventListener('click', () => {
             window.location.href = "/MainScreen";
         });
@@ -962,11 +921,11 @@
             {
                 <text>
                     document.addEventListener('keydown', function (e) {
-                                                    if (e.metaKey) { // Cmd key
+                                                                    if (e.metaKey) { // Cmd key
                                                         const standardCombos = ['a','c','v','x','z','q','s','f','p','w'];
                     if (standardCombos.includes(e.key)){
                                                         return;
-                                                    }
+                                                     }
                     switch (e.key) {
                                                     case '1': colorText('red'); break;
                     case '2': colorText('blue'); break;
@@ -979,8 +938,8 @@
                     case 't': changeFontSize('very-big'); break;
                                                             }
                                                         }
-                                                    });
-                </text>
+                                     });
+</text>
         }
 
             // Горячие клавиши для остальных платформ
@@ -988,14 +947,14 @@
             {
                 <text>
                     document.addEventListener('keydown', function (e) {
-                                                    if (e.ctrlKey) {
+                                                     if (e.ctrlKey) {
                                                     // Не блокируем стандартные комбинации
-                                                    const standardCombos = ['a', 'c', 'v', 'x', 'z', 'q', 'f', 'p', 'w', 'n', 'o', 't'];
+                                                     const standardCombos = ['a', 'c', 'v', 'x', 'z', 'q', 'f', 'p', 'w', 'n', 'o', 't'];
                     if (standardCombos.includes(e.key.toLowerCase())) {
-                                                    return;
+                                             return;
                                                     }
 
-                    e.preventDefault();
+                     e.preventDefault();
                     switch (e.key.toLowerCase()) {
                                                     case '1': colorText('red'); break;
                     case '2': colorText('blue'); break;
@@ -1008,8 +967,8 @@
                     case '9': changeFontSize('plain'); break;       
                                                             }
                                                         }
-                                                    });
-                </text>
+                                             });
+</text>
         }
 
             document.addEventListener('DOMContentLoaded', function () {
@@ -1017,23 +976,20 @@
                 const existingContent = document.getElementById('NoteContent').value;
 
                 if (existingContent && existingContent.trim() !== '') {
-                    editor.innerHTML = existingContent;
+                 editor.innerHTML = existingContent;
                 } else {
                     editor.innerHTML = '';
                 }
             });
-
-        // Функционал сайдбара
+// Функционал сайдбара
         const sidebar = document.getElementById('sidebar');
         const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
-        const mainContent = document.querySelector('.main-content');
+const mainContent = document.querySelector('.main-content');
         const devModal = document.getElementById('devModal');
         const devModalOverlay = document.getElementById('devModalOverlay');
-
-        // Состояние сайдбара
+// Состояние сайдбара
         let isSidebarCollapsed = false;
-
-        // Переключение сайдбара
+// Переключение сайдбара
         toggleSidebarBtn.addEventListener('click', function (e) {
             e.stopPropagation(); // Предотвращаем всплытие
 
@@ -1042,20 +998,21 @@
             if (isSidebarCollapsed) {
                 sidebar.classList.add('collapsed');
                 toggleSidebarBtn.classList.add('collapsed');
-                document.body.classList.add('sidebar-collapsed');
+            
+    document.body.classList.add('sidebar-collapsed');
                 document.body.classList.remove('sidebar-expanded');
             } else {
                 sidebar.classList.remove('collapsed');
                 toggleSidebarBtn.classList.remove('collapsed');
                 document.body.classList.add('sidebar-expanded');
                 document.body.classList.remove('sidebar-collapsed');
+  
             }
         });
-
-        // Показать модальное окно "В разработке"
+// Показать модальное окно "В разработке"
         function showDevModal() {
             devModal.style.display = 'block';
-            devModalOverlay.style.display = 'block';
+devModalOverlay.style.display = 'block';
         }
 
         // Закрытие окна по клику на оверлей
@@ -1063,19 +1020,17 @@
             devModal.style.display = 'none';
             devModalOverlay.style.display = 'none';
         });
-
-        // Закрытие окна по Escape
+// Закрытие окна по Escape
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 devModal.style.display = 'none';
                 devModalOverlay.style.display = 'none';
             }
         });
-    </script>
+</script>
 
 </body>
 
-<!-- FOR DEVELOPING ONLY -->
 @* @if (!string.IsNullOrEmpty(Model.NoteContent))
 {
     <div data-auto-hide style=" 
@@ -1088,7 +1043,8 @@
         padding: 20px;
         border-radius: 10px;
         z-index: 10000;
-        transition: opacity 0.5s ease;">
+     
+   transition: opacity 0.5s ease;">
         Успешно!
     </div>
 }
