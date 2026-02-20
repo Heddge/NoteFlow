@@ -32,7 +32,6 @@ namespace NoteFlow.Services
             Console.WriteLine($"Storage initialized: {_remindersPath}");
             // Console.WriteLine($"Count notes in Directory: {CountFilesInDirectory()}");
         }
-
         private static string GetNotePath(string noteTitle)
             => Path.Combine(_notesPath, $"{noteTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
             
@@ -99,11 +98,11 @@ namespace NoteFlow.Services
         public static int CountNotesInDirectory()
             => Directory.GetFiles(_notesPath, "*.md").Count();
 
-        public static void GenerateNotesDB()
-        {
-            string[] temp = CacheService.currNotes.Select(
-                x => new string(x.GetId() + '?' + x.NoteTitle + '?' + x.NotePath + '?' + x.NoteCreated + '?' + x.NoteEdited + '?' + x.NoteContent.Substring(0,30))).ToArray();
-            File.WriteAllLines(Path.Combine(_notesPath, "notesdb.txt"), temp);
-        }
+        // public static void GenerateNotesDB()
+        // {
+        //     string[] temp = CacheService.currNotesDict.Select(
+        //         x => new string(x.GetId() + '?' + x.NoteTitle + '?' + x.NotePath + '?' + x.NoteCreated + '?' + x.NoteEdited + '?' + x.NoteContent.Substring(0,30))).ToArray();
+        //     File.WriteAllLines(Path.Combine(_notesPath, "notesdb.txt"), temp);
+        // }
     }
 }

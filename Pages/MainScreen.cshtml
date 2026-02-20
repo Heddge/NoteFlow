@@ -1,4 +1,5 @@
 @page
+@using NoteFlow.Models
 @using NoteFlow.Pages;
 @using NoteFlow.Services;
 @using NoteFlow.Helpers;
@@ -125,8 +126,24 @@
             </form>
 
             <!-- Карточки заметок -->
-            @if (Model.Notes.Count() > 0)
-                @for (int i = 0; i < Model.Notes.Count(); i++)
+            @if (Model.NotesDict.Count() > 0)
+                @foreach (KeyValuePair<string, Note> pair in Model.NotesDict)
+                    {
+                        <form method="post" asp-page-handler="ToEditorForEditOrCreate">
+                        <input type="hidden" name="path" value="@pair.Value.NotePath" />
+                        <button type="submit" class="note-card">
+                            <div class="note-card-bg">
+                                <div class="note-icon">&lt;/&gt;</div>
+                                <div class="note-title">@pair.Value.NoteTitle</div>
+                                <div class="note-description">@Html.Raw(pair.Value.NoteContent)</div>
+                                <div class="note-timestamp">@pair.Value.BeatifulCreationDate()</div>
+                            </div>
+                        </button>
+                    </form>
+                    }
+
+            @* @if (Model.NotesDict.Count() > 0)
+                @for (int i = 0; i < Model.NotesDict.Count(); i++)
                 {
                     <form method="post" asp-page-handler="ToEditorForEditOrCreate">
                         <input type="hidden" name="path" value="@Model.Notes[i].NotePath" />
@@ -139,7 +156,7 @@
                             </div>
                         </button>
                     </form>
-                }
+                } *@
         </div>
     </div>
 
@@ -176,7 +193,7 @@
                     <div class="add-note-text">Добавить напоминание</div>
                 </div>
             </div>
-
+            
             <div class="wide-reminder-card">
                 <div class="wide-reminder-bg gradient-border" onclick="showDevModal()">
                     <!-- Время и дата посередине сверху -->

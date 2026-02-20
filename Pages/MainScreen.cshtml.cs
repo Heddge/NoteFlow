@@ -9,18 +9,18 @@ namespace NoteFlow.Pages
     public class MainScreenModel : PageModel
     {
         // list of all user`s notes
-        public List<Note> Notes = new List<Note>();
+        public Dictionary<string, Note> NotesDict = new Dictionary<string, Note>();
         public List<Reminder> Reminders = new List<Reminder>();
         public CacheService currentCache = new CacheService();
 
         public void OnGet()
         {
-            Notes = CacheService.currNotes;
+            NotesDict = CacheService.currNotesDict;
             
-            if (Notes.Count() != StorageService.CountNotesInDirectory())
+            if (NotesDict.Count() != StorageService.CountNotesInDirectory())
             {
-                currentCache.UpdateMissedNotesInDirToCurrentNotes(Notes.Count() < StorageService.CountNotesInDirectory());
-                Notes = CacheService.currNotes;
+                currentCache.UpdateMissedNotesInDirToCurrentNotes(NotesDict.Count() < StorageService.CountNotesInDirectory());
+                NotesDict = CacheService.currNotesDict;
             }
         }
 
