@@ -259,8 +259,8 @@ body::-webkit-scrollbar {
     top: 100px;
     width: 251px;
     height: calc(100vh - 120px);
-    background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), 
-                linear-gradient(0deg, rgba(30, 30, 30, 0.98), rgba(30, 30, 30, 0.98)), #000;
+    background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(70, 70, 70, 0.15) 0%, rgba(60, 64, 67, 0.03) 77.08%, rgba(80, 80, 80, 0) 100%), 
+                linear-gradient(0deg, #1b1b1b, #1b1b1b);
     z-index: 900;
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 30px 15px 20px 15px;

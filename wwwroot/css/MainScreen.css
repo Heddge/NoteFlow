@@ -292,7 +292,6 @@ body::-webkit-scrollbar {
     color: #A9A49C;
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     word-break: break-word;
     text-align: left;
