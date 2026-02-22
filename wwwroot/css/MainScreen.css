@@ -44,14 +44,14 @@ body::-webkit-scrollbar {
 
 .logo-container {
     position: absolute;
-    left: 20px;
-    top: 50px;
+    left: 75px;
+    top: 71px;
     z-index: 1000;
 }
 
 .logo {
-    width: 60px;
-    height: 60px;
+    width: 135px;
+    height: 140px;
 }
 
 .nav-buttons {
