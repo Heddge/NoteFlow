@@ -19,7 +19,6 @@ namespace NoteFlow
         private readonly object _reminderLock = new object();
         private CancellationTokenSource? _reminderNotificationCts;
         private BrowserWindow? _mainWindow;
-        private bool _isExitRequested;
 
         public Startup(IConfiguration configuration)
         {
@@ -77,7 +76,7 @@ namespace NoteFlow
         private async void CreateWindow()
         {
             Electron.App.SetAppUserModelId("com.NoteFlow.app");
-            Electron.WindowManager.IsQuitOnWindowAllClosed = false;
+            Electron.WindowManager.IsQuitOnWindowAllClosed = true;
 
             string? appIconPath = ResolveAppIconPath();
 
@@ -128,24 +127,19 @@ namespace NoteFlow
             
             await Electron.IpcMain.On("close-window", (args) =>
             {
-                _mainWindow?.Hide();
+                _mainWindow?.Close();
             });
 
             bool notificationsSupported = await Electron.Notification.IsSupportedAsync();
             Console.WriteLine($"Electron notifications supported: {notificationsSupported}");
 
-            SetupTray(appIconPath);
             StartReminderNotificationLoop();
 
             _mainWindow.OnClosed += () =>
             {
                 _mainWindow = null;
 
-                if (!_isExitRequested)
-                    return;
-
                 _reminderNotificationCts?.Cancel();
-                Electron.Tray.Destroy();
                 Electron.App.Quit();
                 Electron.App.Exit();
             };
@@ -288,56 +282,6 @@ namespace NoteFlow
                 return false;
 
             return now - scheduledAt <= maxDelay;
-        }
-
-        private void SetupTray(string? iconPath)
-        {
-            if (string.IsNullOrWhiteSpace(iconPath))
-                return;
-
-            var trayMenu = new[]
-            {
-                new MenuItem
-                {
-                    Label = "Открыть NoteFlow",
-                    Click = () => RestoreMainWindow()
-                },
-                new MenuItem
-                {
-                    Label = "Выход",
-                    Click = () => ExitApplication()
-                }
-            };
-
-            Electron.Tray.Show(iconPath, trayMenu);
-            Electron.Tray.SetToolTip("NoteFlow");
-            Electron.Tray.OnClick += (_, __) => RestoreMainWindow();
-            Electron.Tray.OnDoubleClick += (_, __) => RestoreMainWindow();
-        }
-
-        private void RestoreMainWindow()
-        {
-            if (_mainWindow == null)
-                return;
-
-            _mainWindow.Show();
-            _mainWindow.Focus();
-        }
-
-        private void ExitApplication()
-        {
-            _isExitRequested = true;
-            _reminderNotificationCts?.Cancel();
-
-            if (_mainWindow != null)
-            {
-                _mainWindow.Close();
-                return;
-            }
-
-            Electron.Tray.Destroy();
-            Electron.App.Quit();
-            Electron.App.Exit();
         }
 
         private static string? ResolveAppIconPath()
