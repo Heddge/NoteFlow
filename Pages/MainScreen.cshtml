@@ -2,6 +2,7 @@
 @using NoteFlow.Pages;
 @using NoteFlow.Services;
 @using NoteFlow.Helpers;
+@using System.Text.Json;
 @model NoteFlow.Pages.MainScreenModel;
 @{
     Layout = null;
@@ -32,50 +33,87 @@
     </div>
     <div id="devModalOverlay" class="dev-modal-overlay"></div>
 
-    <div id="reminderModal" class="dev-modal" style="display: none; z-index: 1001; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-    <div class="dev-modal-content gradient-border" style="width: 600px; padding: 30px; background: rgba(30, 30, 30, 0.95); border-radius: 16px; text-align: left;">
-        <h2 style="color: white; margin-top: 0; margin-bottom: 20px; font-family: 'Inter', sans-serif;">Новое напоминание</h2>
-        
-        <form method="post" asp-page-handler="CreateReminder" style="display: flex; gap: 30px;">
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
-                <input type="text" name="Title" placeholder="Название" required 
-                       style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: white; font-family: 'Inter';" />
-                
-                <textarea name="Description" placeholder="Описание" rows="5" 
-                          style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: white; font-family: 'Inter'; resize: none;"></textarea>
-                
-                <label style="color: white; font-family: 'Inter'; display: flex; align-items: center; gap: 10px; cursor: pointer;">
-                    <input type="checkbox" name="IsRepeating" style="width: 18px; height: 18px; cursor: pointer;" />
-                    Повторяющееся
-                </label>
+    <div id="reminderModal" class="reminder-modal" aria-hidden="true">
+        <div id="reminderModalContent" class="reminder-modal-content gradient-border">
+            <div class="reminder-modal-glow reminder-modal-glow-left"></div>
+            <div class="reminder-modal-glow reminder-modal-glow-right"></div>
+
+            <div class="reminder-modal-header">
+                <h2>Новое напоминание</h2>
+                <p>Запланируй дату и время, чтобы карточка сразу появилась на главном экране.</p>
             </div>
 
-            <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
-                <label style="color: rgba(255,255,255,0.7); font-family: 'Inter'; font-size: 14px;">Дата</label>
-                <div style="display: flex; gap: 10px;">
-                    <select name="Day" style="flex: 1; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
-                        @for (int i = 1; i <= 31; i++) { <option value="@i">@i</option> }
-                    </select>
-                    <select name="Month" style="flex: 1; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
-                        @for (int i = 1; i <= 12; i++) { <option value="@i">@i</option> }
-                    </select>
-                    <select name="Year" style="flex: 1; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
-                        @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 5; i++) { <option value="@i">@i</option> }
-                    </select>
+            <form method="post" asp-page-handler="CreateReminder" class="reminder-form">
+                <div class="reminder-form-column">
+                    <label class="reminder-input-label" for="reminderTitle">Название</label>
+                    <input id="reminderTitle" class="reminder-input" type="text" name="Title" placeholder="Например, позвонить по работе"
+                        required maxlength="120" />
+
+                    <label class="reminder-input-label" for="reminderDescription">Описание</label>
+                    <textarea id="reminderDescription" class="reminder-textarea" name="Description"
+                        placeholder="Коротко: что нужно сделать" rows="5" maxlength="280"></textarea>
+
+                    <label class="reminder-repeat">
+                        <input type="checkbox" name="IsRepeating" />
+                        <span>Повторять ежедневно</span>
+                    </label>
                 </div>
 
-                <label style="color: rgba(255,255,255,0.7); font-family: 'Inter'; font-size: 14px; margin-top: 10px;">Время</label>
-                <input type="time" name="Time" value="12:00" required 
-                       style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: white; font-family: 'Inter';" />
-            </div>
-            
-            <div style="position: absolute; bottom: 20px; right: 30px; display: flex; gap: 10px;">
-                <button type="button" onclick="closeReminderModal()" style="padding: 8px 16px; border-radius: 8px; border: none; background: rgba(255,255,255,0.1); color: white; cursor: pointer; font-family: 'Inter';">Отмена</button>
-                <button type="submit" style="padding: 8px 16px; border-radius: 8px; border: none; background: #28CA42; color: white; cursor: pointer; font-family: 'Inter'; font-weight: bold;">Добавить</button>
-            </div>
-        </form>
+                <div class="reminder-form-column">
+                    <label class="reminder-input-label">Дата</label>
+                    <div class="reminder-date-grid">
+                        <select class="reminder-select" name="Day">
+                            @for (int i = 1; i <= 31; i++)
+                            {
+                                if (i == DateTime.Now.Day)
+                                {
+                                    <option selected value="@i">@i</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            }
+                        </select>
+                        <select class="reminder-select" name="Month">
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                if (i == DateTime.Now.Month)
+                                {
+                                    <option selected value="@i">@i</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            }
+                        </select>
+                        <select class="reminder-select" name="Year">
+                            @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 5; i++)
+                            {
+                                if (i == DateTime.Now.Year)
+                                {
+                                    <option selected value="@i">@i</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <label class="reminder-input-label" for="reminderTime">Время</label>
+                    <input id="reminderTime" class="reminder-input" type="time" name="Time" value="@DateTime.Now.ToString("HH:mm")" required />
+                </div>
+
+                <div class="reminder-form-actions">
+                    <button type="button" class="reminder-btn reminder-btn-secondary" onclick="closeReminderModal()">Отмена</button>
+                    <button type="submit" class="reminder-btn reminder-btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
     <button id="toggleSidebarBtn" class="toggle-sidebar-btn">
         <div class="toggle-icon">
@@ -177,7 +215,6 @@
                         <input type="hidden" name="path" value="@Model.Notes[i].NotePath" />
                         <button type="submit" class="note-card">
                             <div class="note-card-bg">
-                                <div class="note-icon">&lt;/&gt;</div>
                                 <div class="note-title">@Model.Notes[i].NoteTitle</div>
                                 <div class="note-description">@Html.Raw(Model.Notes[i].NoteContent)</div>
                                 <div class="note-timestamp">@Model.Notes[i].BeatifulCreationDate()</div>
@@ -189,24 +226,7 @@
     </div>
 
     <!-- НАДПИСЬ НАПОМИНАНИЯ -->
-    <div style="
-    font-family: 'Inter';
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 100%;
-    letter-spacing: 0%;
-    text-align: center;
-    vertical-align: middle;
-    color: rgba(255, 255, 255, 0.7);
-    width: auto;
-    height: auto;
-    justify-content: center;
-    position: absolute;
-    top: 390px;
-    left: 287px;
-">
-        Напоминания
-    </div>
+    <div class="reminders-label">Напоминания</div>
 
     <!-- Контейнер для напоминаний -->
     <div class="reminders-container">
@@ -216,33 +236,53 @@
 
         <div class="cards-container">
             <!-- Карточка нового напоминания -->
-            <div class="card" onclick="showReminderModal()">
-    <div class="card-bg">
-        <div class="add-note-text">Добавить напоминание</div>
-    </div>
-</div>
-
-            <div class="wide-reminder-card">
-                <div class="wide-reminder-bg gradient-border" onclick="showDevModal()">
-                    <!-- Время и дата посередине сверху -->
-                    <div class="reminder-time-header-container">
-                        <div class="reminder-date">Сегодня</div>
-                        <div class="reminder-time">10:45</div>
-                    </div>
-
-                    <!-- Основной контент (без emoji) -->
-                    <div class="reminder-content-box">
-                        <div class="reminder-main-text">Покормить кота</div>
-                        <div class="reminder-description-text">Купить корм для кота, покормить его</div>
-                    </div>
-
-                    <!-- Линия и время создания внизу -->
-                    <div class="reminder-created-time-container">
-                        <div class="reminder-divider-line"></div>
-                        <div class="reminder-created-time">Вчера 21:45</div>
-                    </div>
+            <div class="card add-reminder-card" onclick="showReminderModal()">
+                <div class="card-bg">
+                    <div class="add-note-text">Добавить напоминание</div>
                 </div>
             </div>
+
+            @if (Model.Reminders.Count() > 0)
+            {
+                foreach (var reminder in Model.Reminders)
+                {
+                    <div class="wide-reminder-card reminder-card-enter">
+                        <div class="wide-reminder-bg gradient-border">
+                            <form method="post" asp-page-handler="DeleteReminder" class="reminder-delete-form">
+                                <input type="hidden" name="path" value="@reminder.ReminderPath" />
+                                <button type="submit" class="reminder-delete-btn" title="Удалить напоминание">×</button>
+                            </form>
+
+                            <div class="reminder-time-header-container">
+                                <div class="reminder-date">@reminder.GetExpiringDayLabel()</div>
+                                <div class="reminder-time">@reminder.GetExpiringTimeLabel()</div>
+                            </div>
+
+                            <div class="reminder-content-box">
+                                <div class="reminder-main-text">@reminder.ReminderTitle</div>
+                                <div class="reminder-description-text">
+                                    @(string.IsNullOrWhiteSpace(reminder.ReminderDescription) ? "Без описания" : reminder.ReminderDescription)
+                                </div>
+                            </div>
+
+                            <div class="reminder-created-time-container">
+                                <div class="reminder-created-time">
+                                    Создано @reminder.BeatifulCreationDate()@(reminder.IsRepeating ? " • повтор" : "")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="wide-reminder-card reminder-card-enter">
+                    <div class="wide-reminder-bg gradient-border reminder-empty-card">
+                        <div class="reminder-main-text">Пока нет активных напоминаний</div>
+                        <div class="reminder-description-text">Нажми «Добавить напоминание», чтобы создать первое.</div>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 
@@ -346,6 +386,17 @@
             location.reload();
         });
 
+        const remindersForNotifications = @Html.Raw(JsonSerializer.Serialize(
+            Model.Reminders.Select(r => new
+            {
+                path = r.ReminderPath,
+                title = r.ReminderTitle,
+                description = r.ReminderDescription,
+                expiresAt = r.ReminderExpires,
+                isRepeating = r.IsRepeating
+            })
+        ));
+
     @*function openSettings() {
             console.log('Открыть настройки');
             window.location.href = '/Settings';
@@ -356,82 +407,214 @@
                 window.location.href = '/MainScreen';
             }
 
-        //Перехват скролла чтобы скроллить колесиком
-        const cardsContainer = document.querySelector('.cards-container');
+        // Перехват скролла мышью для горизонтальных карточек
+        const cardsContainers = document.querySelectorAll('.cards-container');
+        cardsContainers.forEach((cardsContainerItem) => {
+            cardsContainerItem.addEventListener('wheel', function (e) {
+                if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) {
+                    return;
+                }
 
-        cardsContainer.addEventListener('wheel', function (e) {
-            // Предотвращаем вертикальный скролл страницы
-            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
                 e.preventDefault();
 
-                // Настройки скролла
-                const scrollSpeed = 2; // Скорость скролла
                 const maxScroll = this.scrollWidth - this.clientWidth;
+                const newScrollLeft = Math.max(
+                    0,
+                    Math.min(maxScroll, this.scrollLeft + (e.deltaY * 2))
+                );
 
-                // Рассчитываем новую позицию
-                let newScrollLeft = this.scrollLeft + (e.deltaY * scrollSpeed);
-
-                // Ограничиваем скролл в пределах контейнера
-                newScrollLeft = Math.max(0, Math.min(maxScroll, newScrollLeft));
-
-                // Плавный скролл
                 this.scrollTo({
                     left: newScrollLeft,
                     behavior: 'smooth'
                 });
-            }
-        }, { passive: false });
-
+            }, { passive: false });
+        });
 
         const devModal = document.getElementById('devModal');
+        const reminderModal = document.getElementById('reminderModal');
+        const reminderModalContent = document.getElementById('reminderModalContent');
         const devModalOverlay = document.getElementById('devModalOverlay');
-        // Показать модальное окно "В разработке"
+        const MODAL_ANIMATION_MS = 260;
+        let activeModal = null;
+
         function showDevModal() {
-            devModal.style.display = 'block';
-            devModalOverlay.style.display = 'block';
+            openModal(devModal);
         }
 
-        // Закрытие окна по клику на оверлей
+        function showReminderModal() {
+            openModal(reminderModal);
+        }
+
+        function closeReminderModal() {
+            closeModal(reminderModal);
+        }
+
+        function openModal(modalElement) {
+            if (!modalElement) {
+                return;
+            }
+
+            if (activeModal && activeModal !== modalElement) {
+                closeModal(activeModal, true);
+            }
+
+            activeModal = modalElement;
+            devModalOverlay.classList.add('is-visible');
+            modalElement.classList.remove('is-closing');
+            modalElement.classList.add('is-active');
+            modalElement.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeModal(modalElement, instantly = false) {
+            if (!modalElement) {
+                return;
+            }
+
+            modalElement.setAttribute('aria-hidden', 'true');
+
+            if (instantly) {
+                modalElement.classList.remove('is-active');
+                modalElement.classList.remove('is-closing');
+            } else {
+                modalElement.classList.remove('is-active');
+                modalElement.classList.add('is-closing');
+
+                setTimeout(() => {
+                    modalElement.classList.remove('is-closing');
+                    if (activeModal === modalElement) {
+                        activeModal = null;
+                    }
+
+                    if (!isAnyModalVisible()) {
+                        devModalOverlay.classList.remove('is-visible');
+                    }
+                }, MODAL_ANIMATION_MS);
+            }
+
+            if (activeModal === modalElement) {
+                activeModal = null;
+            }
+
+            if (!isAnyModalVisible()) {
+                devModalOverlay.classList.remove('is-visible');
+            }
+        }
+
+        function isAnyModalVisible() {
+            return devModal.classList.contains('is-active')
+                || devModal.classList.contains('is-closing')
+                || reminderModal.classList.contains('is-active')
+                || reminderModal.classList.contains('is-closing');
+        }
+
         devModalOverlay.addEventListener('click', function () {
-            devModal.style.display = 'none';
-            devModalOverlay.style.display = 'none';
+            if (activeModal) {
+                closeModal(activeModal);
+                return;
+            }
+
+            closeModal(devModal, true);
+            closeModal(reminderModal, true);
         });
 
-        // Закрытие окна по Escape
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
-                devModal.style.display = 'none';
-                devModalOverlay.style.display = 'none';
+                if (activeModal) {
+                    closeModal(activeModal);
+                    return;
+                }
+
+                closeModal(devModal, true);
+                closeModal(reminderModal, true);
             }
         });
 
-        const reminderModal = document.getElementById('reminderModal');
+        if (reminderModalContent) {
+            reminderModalContent.addEventListener('pointermove', (e) => {
+                const rect = reminderModalContent.getBoundingClientRect();
+                reminderModalContent.style.setProperty('--glow-x', `${e.clientX - rect.left}px`);
+                reminderModalContent.style.setProperty('--glow-y', `${e.clientY - rect.top}px`);
+            });
 
-function showReminderModal() {
-    reminderModal.style.display = 'block';
-    devModalOverlay.style.display = 'block';
-}
+            reminderModalContent.addEventListener('pointerleave', () => {
+                reminderModalContent.style.setProperty('--glow-x', '50%');
+                reminderModalContent.style.setProperty('--glow-y', '50%');
+            });
+        }
 
-function closeReminderModal() {
-    reminderModal.style.display = 'none';
-    devModalOverlay.style.display = 'none';
-}
+        const shownReminderNotifications = new Set(
+            JSON.parse(localStorage.getItem('shownReminderNotifications') ?? '[]')
+        );
 
-// Обнови обработчик Escape, чтобы он закрывал и эту модалку тоже
-document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') {
-        devModal.style.display = 'none';
-        reminderModal.style.display = 'none';
-        devModalOverlay.style.display = 'none';
-    }
-});
+        function pad2(value) {
+            return String(value).padStart(2, '0');
+        }
 
-// Обнови закрытие по клику на оверлей
-devModalOverlay.addEventListener('click', function () {
-    devModal.style.display = 'none';
-    reminderModal.style.display = 'none';
-    devModalOverlay.style.display = 'none';
-});
+        function notificationDayKey(date) {
+            return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+        }
+
+        function reminderNotificationKey(reminder, now) {
+            const baseKey = reminder.path || reminder.title || `${reminder.expiresAt}`;
+            return reminder.isRepeating ? `${baseKey}:${notificationDayKey(now)}` : baseKey;
+        }
+
+        function shouldNotifyReminder(reminder, now) {
+            const expiresAt = new Date(reminder.expiresAt);
+            if (Number.isNaN(expiresAt.getTime())) {
+                return false;
+            }
+
+            let scheduledAt = expiresAt;
+            if (reminder.isRepeating) {
+                scheduledAt = new Date(
+                    now.getFullYear(),
+                    now.getMonth(),
+                    now.getDate(),
+                    expiresAt.getHours(),
+                    expiresAt.getMinutes(),
+                    0,
+                    0
+                );
+            }
+
+            const elapsedMs = now.getTime() - scheduledAt.getTime();
+            return elapsedMs >= 0 && elapsedMs <= 60 * 1000;
+        }
+
+        function dispatchReminderNotification(reminder) {
+            const title = reminder.title || 'Напоминание NoteFlow';
+            const body = reminder.description?.trim()
+                ? reminder.description.trim()
+                : 'Пора выполнить запланированное действие.';
+
+            ipcRenderer.send('show-reminder-notification', JSON.stringify({ title, body }));
+        }
+
+        function runReminderNotificationCheck() {
+            const now = new Date();
+
+            remindersForNotifications.forEach((reminder) => {
+                const key = reminderNotificationKey(reminder, now);
+                if (shownReminderNotifications.has(key)) {
+                    return;
+                }
+
+                if (!shouldNotifyReminder(reminder, now)) {
+                    return;
+                }
+
+                dispatchReminderNotification(reminder);
+                shownReminderNotifications.add(key);
+                localStorage.setItem(
+                    'shownReminderNotifications',
+                    JSON.stringify(Array.from(shownReminderNotifications))
+                );
+            });
+        }
+
+        runReminderNotificationCheck();
+        setInterval(runReminderNotificationCheck, 20 * 1000);
 
     </script>
 

@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc;
 using NoteFlow.Models;
 using NoteFlow.Services;
-using System.Text.RegularExpressions;
 
 namespace NoteFlow.Pages
 {
@@ -16,34 +15,67 @@ namespace NoteFlow.Pages
         public void OnGet()
         {
             Notes = CacheService.currNotes;
+            Reminders = CacheService.currReminders.OrderBy(x => x.ReminderExpires).ToList();
             
             if (Notes.Count() != StorageService.CountNotesInDirectory())
             {
                 currentCache.UpdateMissedNotesInDirToCurrentNotes(Notes.Count() < StorageService.CountNotesInDirectory());
                 Notes = CacheService.currNotes;
             }
+
+            if (Reminders.Count() != StorageService.CountRemindersInDirectory())
+            {
+                CacheService.currReminders = Directory
+                    .GetFiles(StorageService._remindersPath, "*.md")
+                    .Select(path => new Reminder(path))
+                    .OrderBy(x => x.ReminderExpires)
+                    .ToList();
+
+                Reminders = CacheService.currReminders;
+            }
         }
 
         public IActionResult OnPostCreateReminder(string Title, string Description, int Day, int Month, int Year, string Time, bool IsRepeating)
-{
-    // Парсим время из строки "HH:mm"
-    TimeSpan parsedTime = TimeSpan.Parse(Time);
-    
-    // Собираем полную дату и время
-    DateTime reminderDate = new DateTime(Year, Month, Day, parsedTime.Hours, parsedTime.Minutes, 0);
+        {
+            if (string.IsNullOrWhiteSpace(Title))
+                return RedirectToPage();
 
-    // Здесь нужно инициализировать твою модель напоминания и сохранить её
-    // var newReminder = new Reminder {
-    //     Title = Title,
-    //     Description = Description,
-    //     Date = reminderDate,
-    //     IsRepeating = IsRepeating
-    // };
-    // Reminders.Add(newReminder);
-    // StorageService.SaveReminder(newReminder); // Твоя логика сохранения
+            if (!TimeSpan.TryParse(Time, out TimeSpan parsedTime))
+                parsedTime = new TimeSpan(12, 0, 0);
 
-    return RedirectToPage(); // Перезагружаем страницу, чтобы обновить список
-}
+            try
+            {
+                int safeDay = Math.Min(Day, DateTime.DaysInMonth(Year, Month));
+                DateTime reminderDate = new DateTime(Year, Month, safeDay, parsedTime.Hours, parsedTime.Minutes, 0);
+
+                var reminder = new Reminder(
+                    Title.Trim(),
+                    Description?.Trim() ?? "",
+                    reminderDate,
+                    IsRepeating
+                );
+
+                string savedReminderPath = StorageService.SaveReminder(reminder);
+                CacheService.AddReminderToCurrentReminders(savedReminderPath);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Reminder creation failed: {e.Message}");
+            }
+
+            return RedirectToPage();
+        }
+
+        public IActionResult OnPostDeleteReminder(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return RedirectToPage();
+
+            StorageService.DeleteReminder(path);
+            CacheService.DeleteReminderFromCurrentReminders(path);
+
+            return RedirectToPage();
+        }
 
         // method for redirecting to NoteScreen to create or edit note
         public IActionResult OnPostToEditorForEditOrCreate(string path)

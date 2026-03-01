@@ -23,7 +23,7 @@ public class CacheService
         {
             currReminders.Add(new Reminder(path));
         }
-        currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
+        currReminders = currReminders.OrderBy(s => s.ReminderExpires).ToList();
     }
 
     public static void UpdateNoteInCurrentNotes(string title, string content, string newPath, string Path)
@@ -65,6 +65,28 @@ public class CacheService
                 Console.WriteLine($"Something went wrong: {eee.Message}");
             }
     }
+
+    public static void AddReminderToCurrentReminders(string path)
+    {
+        if (currReminders.Any(x => x.ReminderPath == path))
+            return;
+
+        try
+        {
+            currReminders.Add(new Reminder(path));
+            currReminders = currReminders.OrderBy(x => x.ReminderExpires).ToList();
+        }
+        catch (IOException e)
+        {
+            Console.WriteLine($"Something went wrong: {e.Message}");
+        }
+    }
+
+    public static void DeleteReminderFromCurrentReminders(string path) =>
+        currReminders = currReminders
+            .Where(x => x.ReminderPath != path)
+            .OrderBy(x => x.ReminderExpires)
+            .ToList();
 
     private static string[] getNotesPaths() =>
         currNotes.Select(x => x.NotePath).ToArray();

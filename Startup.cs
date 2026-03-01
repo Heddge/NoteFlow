@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text.Json;
 
 using Microsoft.AspNetCore.Hosting;
 using ElectronNET.API;
@@ -112,11 +113,36 @@ namespace NoteFlow
                 window.Close();
             });
 
+            await Electron.IpcMain.On("show-reminder-notification", (args) =>
+            {
+                try
+                {
+                    if (args is null)
+                        return;
+
+                    var payload = JsonSerializer.Deserialize<ReminderNotificationPayload>(args.ToString() ?? string.Empty);
+                    if (payload is null || string.IsNullOrWhiteSpace(payload.Title))
+                        return;
+
+                    Electron.Notification.Show(new NotificationOptions(payload.Title, payload.Body ?? string.Empty));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Notification failed: {e.Message}");
+                }
+            });
+
             window.OnClosed += () =>
             {
                 Electron.App.Quit();
                 Electron.App.Exit();
             };
+        }
+
+        private sealed class ReminderNotificationPayload
+        {
+            public string Title { get; set; } = "";
+            public string Body { get; set; } = "";
         }
     }
 
