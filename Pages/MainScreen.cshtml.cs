@@ -24,6 +24,27 @@ namespace NoteFlow.Pages
             }
         }
 
+        public IActionResult OnPostCreateReminder(string Title, string Description, int Day, int Month, int Year, string Time, bool IsRepeating)
+{
+    // Парсим время из строки "HH:mm"
+    TimeSpan parsedTime = TimeSpan.Parse(Time);
+    
+    // Собираем полную дату и время
+    DateTime reminderDate = new DateTime(Year, Month, Day, parsedTime.Hours, parsedTime.Minutes, 0);
+
+    // Здесь нужно инициализировать твою модель напоминания и сохранить её
+    // var newReminder = new Reminder {
+    //     Title = Title,
+    //     Description = Description,
+    //     Date = reminderDate,
+    //     IsRepeating = IsRepeating
+    // };
+    // Reminders.Add(newReminder);
+    // StorageService.SaveReminder(newReminder); // Твоя логика сохранения
+
+    return RedirectToPage(); // Перезагружаем страницу, чтобы обновить список
+}
+
         // method for redirecting to NoteScreen to create or edit note
         public IActionResult OnPostToEditorForEditOrCreate(string path)
         {

@@ -32,6 +32,51 @@
     </div>
     <div id="devModalOverlay" class="dev-modal-overlay"></div>
 
+    <div id="reminderModal" class="dev-modal" style="display: none; z-index: 1001; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <div class="dev-modal-content gradient-border" style="width: 600px; padding: 30px; background: rgba(30, 30, 30, 0.95); border-radius: 16px; text-align: left;">
+        <h2 style="color: white; margin-top: 0; margin-bottom: 20px; font-family: 'Inter', sans-serif;">Новое напоминание</h2>
+        
+        <form method="post" asp-page-handler="CreateReminder" style="display: flex; gap: 30px;">
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
+                <input type="text" name="Title" placeholder="Название" required 
+                       style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: white; font-family: 'Inter';" />
+                
+                <textarea name="Description" placeholder="Описание" rows="5" 
+                          style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: white; font-family: 'Inter'; resize: none;"></textarea>
+                
+                <label style="color: white; font-family: 'Inter'; display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                    <input type="checkbox" name="IsRepeating" style="width: 18px; height: 18px; cursor: pointer;" />
+                    Повторяющееся
+                </label>
+            </div>
+
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 15px;">
+                <label style="color: rgba(255,255,255,0.7); font-family: 'Inter'; font-size: 14px;">Дата</label>
+                <div style="display: flex; gap: 10px;">
+                    <select name="Day" style="flex: 1; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                        @for (int i = 1; i <= 31; i++) { <option value="@i">@i</option> }
+                    </select>
+                    <select name="Month" style="flex: 1; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                        @for (int i = 1; i <= 12; i++) { <option value="@i">@i</option> }
+                    </select>
+                    <select name="Year" style="flex: 1; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.2);">
+                        @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 5; i++) { <option value="@i">@i</option> }
+                    </select>
+                </div>
+
+                <label style="color: rgba(255,255,255,0.7); font-family: 'Inter'; font-size: 14px; margin-top: 10px;">Время</label>
+                <input type="time" name="Time" value="12:00" required 
+                       style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.5); color: white; font-family: 'Inter';" />
+            </div>
+            
+            <div style="position: absolute; bottom: 20px; right: 30px; display: flex; gap: 10px;">
+                <button type="button" onclick="closeReminderModal()" style="padding: 8px 16px; border-radius: 8px; border: none; background: rgba(255,255,255,0.1); color: white; cursor: pointer; font-family: 'Inter';">Отмена</button>
+                <button type="submit" style="padding: 8px 16px; border-radius: 8px; border: none; background: #28CA42; color: white; cursor: pointer; font-family: 'Inter'; font-weight: bold;">Добавить</button>
+            </div>
+        </form>
+    </div>
+</div>
+
     <button id="toggleSidebarBtn" class="toggle-sidebar-btn">
         <div class="toggle-icon">
             <div class="toggle-icon-line"></div>
@@ -171,11 +216,11 @@
 
         <div class="cards-container">
             <!-- Карточка нового напоминания -->
-            <div class="card" onclick="showDevModal()">
-                <div class="card-bg">
-                    <div class="add-note-text">Добавить напоминание</div>
-                </div>
-            </div>
+            <div class="card" onclick="showReminderModal()">
+    <div class="card-bg">
+        <div class="add-note-text">Добавить напоминание</div>
+    </div>
+</div>
 
             <div class="wide-reminder-card">
                 <div class="wide-reminder-bg gradient-border" onclick="showDevModal()">
@@ -359,6 +404,35 @@
                 devModalOverlay.style.display = 'none';
             }
         });
+
+        const reminderModal = document.getElementById('reminderModal');
+
+function showReminderModal() {
+    reminderModal.style.display = 'block';
+    devModalOverlay.style.display = 'block';
+}
+
+function closeReminderModal() {
+    reminderModal.style.display = 'none';
+    devModalOverlay.style.display = 'none';
+}
+
+// Обнови обработчик Escape, чтобы он закрывал и эту модалку тоже
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+        devModal.style.display = 'none';
+        reminderModal.style.display = 'none';
+        devModalOverlay.style.display = 'none';
+    }
+});
+
+// Обнови закрытие по клику на оверлей
+devModalOverlay.addEventListener('click', function () {
+    devModal.style.display = 'none';
+    reminderModal.style.display = 'none';
+    devModalOverlay.style.display = 'none';
+});
+
     </script>
 
 </body>
