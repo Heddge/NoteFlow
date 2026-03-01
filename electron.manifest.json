@@ -5,10 +5,10 @@
   },
   "name": "NoteFlow",
   "author": "",
-  "singleInstance": false,
+  "singleInstance": true,
   "environment": "Production",
-  "electronPort": 53176,
-  "aspCoreBackendPort": 53177,
+  "electronPort": 8001,
+  "aspCoreBackendPort": 8000,
   "build": {
     "appId": "com.NoteFlow.app",
     "productName": "NoteFlow",

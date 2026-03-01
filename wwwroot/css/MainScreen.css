@@ -4,8 +4,9 @@ body {
     background: #191919;
     font-family: 'Inter';
     position: relative;
-    width: 1920px;
-    height: 150vh;
+    width: 100%;
+    min-height: max(1120px, calc(100vh + 220px));
+    height: auto;
     overflow-y: auto;
     overflow-x: hidden;
     scroll-behavior: smooth;
@@ -13,6 +14,121 @@ body {
 
 body::-webkit-scrollbar {
     display: none;
+}
+
+/* Critical overrides: modal + calendar layout stability */
+#reminderModal {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    z-index: 10002 !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, -46%) scale(0.97);
+    transition: opacity 0.26s ease, transform 0.26s ease, visibility 0.26s ease;
+}
+
+#reminderModal[aria-hidden="true"] {
+    display: none !important;
+}
+
+#reminderModal[aria-hidden="false"] {
+    display: block !important;
+}
+
+#reminderModal.is-active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translate(-50%, -50%) scale(1) !important;
+}
+
+#reminderModal.is-closing {
+    display: block !important;
+    opacity: 0 !important;
+    visibility: visible !important;
+    pointer-events: none !important;
+    transform: translate(-50%, -44%) scale(0.97) !important;
+}
+
+#reminderModalContent {
+    width: min(720px, calc(100vw - 48px)) !important;
+    border-radius: 24px !important;
+    padding: 24px 24px 22px !important;
+    background: radial-gradient(140% 120% at 0% 0%, rgba(95, 95, 95, 0.22), rgba(30, 30, 30, 0.98) 58%) !important;
+    box-shadow: 0 22px 46px rgba(0, 0, 0, 0.52) !important;
+    overflow: hidden !important;
+}
+
+#reminderModal .reminder-modal-header h2 {
+    color: #FFFFFF !important;
+}
+
+#reminderModal .reminder-modal-header p,
+#reminderModal .reminder-input-label,
+#reminderModal .reminder-repeat span {
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.calendar-section-wrapper {
+    left: 287px !important;
+    top: 708px !important;
+    width: min(1100px, calc(100vw - 420px)) !important;
+    height: 360px !important;
+    overflow: visible !important;
+}
+
+.calendar-section-title {
+    left: 287px !important;
+    top: 668px !important;
+    width: min(1100px, calc(100vw - 420px)) !important;
+    z-index: 21 !important;
+}
+
+.calendar-section-wrapper .calendar-content {
+    display: flex !important;
+    gap: 20px !important;
+    align-items: stretch !important;
+}
+
+.calendar-section-wrapper .calendar-left {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    max-width: calc(100% - 312px) !important;
+    padding-right: 0 !important;
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+.calendar-section-wrapper .calendar-container {
+    border-radius: 56px !important;
+    padding: 24px 26px !important;
+    overflow: hidden !important;
+}
+
+.calendar-section-wrapper .calendar-reminder-list {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 242px !important;
+}
+
+.calendar-compact {
+    flex: 0 0 292px !important;
+    width: 292px !important;
+    max-width: 292px !important;
+    border-radius: 44px !important;
+    padding: 18px 14px 14px !important;
+    margin: 0 !important;
+    align-self: stretch !important;
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+.calendar-section-wrapper .calendar-reminder-item {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .top-bar {
@@ -86,6 +202,8 @@ body::-webkit-scrollbar {
     left: 287px;
     top: 150px;
     overflow: hidden;
+    isolation: isolate;
+    --scroll-progress: 0;
 }
 
 .cards-container {
@@ -95,14 +213,95 @@ body::-webkit-scrollbar {
     gap: 25px;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 10px 0;
+    padding: 10px 8px 10px 6px;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    mask-image: linear-gradient(to right,
-            transparent 0%,
-            black 5px,
-            black calc(100% - 5px),
-            transparent 100%);
+    mask-image: none;
+    -webkit-mask-image: none;
+    scroll-padding-right: 80px;
+    overscroll-behavior-x: contain;
+    will-change: scroll-position;
+}
+
+.cards-container::after {
+    content: '';
+    flex: 0 0 var(--scroll-end-gap, 96px);
+}
+
+.cards-container-wrapper::before,
+.cards-container-wrapper::after,
+.reminders-container::before,
+.reminders-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 62px;
+    pointer-events: none;
+    z-index: 6;
+    opacity: 0;
+    transition: opacity 0.22s ease;
+}
+
+.cards-container-wrapper::before,
+.reminders-container::before {
+    left: 0;
+    background: linear-gradient(to right, rgba(25, 25, 25, 0.98), rgba(25, 25, 25, 0));
+}
+
+.cards-container-wrapper::after,
+.reminders-container::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(25, 25, 25, 0.98), rgba(25, 25, 25, 0));
+}
+
+.cards-container-wrapper.has-left-overflow::before,
+.reminders-container.has-left-overflow::before {
+    opacity: 1;
+}
+
+.cards-container-wrapper.has-right-overflow::after,
+.reminders-container.has-right-overflow::after {
+    opacity: 1;
+}
+
+.scroll-progress {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 4px;
+    height: 3px;
+    border-radius: 999px;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.09);
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    z-index: 7;
+    overflow: hidden;
+}
+
+.scroll-progress::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    transform-origin: left center;
+    transform: scaleX(var(--scroll-progress, 0));
+    background: linear-gradient(90deg, rgba(152, 249, 255, 0.9), rgba(40, 202, 66, 0.8));
+    box-shadow: 0 0 14px rgba(152, 249, 255, 0.35);
+    transition: transform 0.15s linear;
+}
+
+.cards-container-wrapper.has-horizontal-overflow .scroll-progress,
+.reminders-container.has-horizontal-overflow .scroll-progress {
+    opacity: 0.55;
+    transform: translateY(0);
+}
+
+.cards-container-wrapper.is-scrolling .scroll-progress,
+.reminders-container.is-scrolling .scroll-progress {
+    opacity: 1;
 }
 
 .cards-container::-webkit-scrollbar {
@@ -447,16 +646,17 @@ form {
 /* Секция календаря */
 .calendar-section-wrapper {
     position: absolute;
-    width: 1200px;
+    width: min(1200px, calc(100vw - 327px));
     height: 300px;
     left: 287px;
     top: 650px;
-    z-index: 100;
+    z-index: 20;
+    overflow: hidden;
 }
 
 .calendar-section-title {
     position: absolute;
-    width: 1200px;
+    width: min(1200px, calc(100vw - 327px));
     left: 287px;
     top: 650px;
     font-family: 'Inter';
@@ -469,19 +669,20 @@ form {
 .calendar-section-wrapper .calendar-container {
     width: 100%;
     height: 100%;
-    cursor: pointer;
+    cursor: default;
     background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), rgba(30, 30, 30, 0.98) !important;
     border-radius: 41px;
     position: relative;
-    padding: 25px;
+    padding: 22px 24px;
     box-sizing: border-box;
-    transform: translateY(50px);
+    transform: none;
 }
 
 .calendar-section-wrapper .calendar-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(250px, 320px);
+    gap: 16px;
+    align-items: start;
     height: 100%;
 }
 
@@ -489,8 +690,10 @@ form {
     display: flex;
     align-items: flex-start;
     flex-direction: column;
-    width: 100%;
+    width: auto;
     height: 100%;
+    min-width: 0;
+    padding-right: 0;
 }
 
 .calendar-section-wrapper .calendar-current-date {
@@ -499,39 +702,87 @@ form {
     font-size: 24px;
     line-height: 29px;
     color: #FFFFFF;
-    align-self: center;
-    margin-bottom: 20px;
+    align-self: flex-start;
+    margin-bottom: 14px;
 }
 
-.calendar-section-wrapper .calendar-reminder-card {
-    margin-bottom: 15px;
+.calendar-section-wrapper .calendar-reminder-list {
+    width: 100%;
+    max-height: 202px;
+    overflow-y: auto;
+    padding-right: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
-.calendar-section-wrapper .calendar-reminder-title {
+.calendar-section-wrapper .calendar-reminder-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.calendar-section-wrapper .calendar-reminder-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+}
+
+.calendar-section-wrapper .calendar-reminder-item {
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 10px 12px;
+}
+
+.calendar-section-wrapper .calendar-reminder-item-time {
     font-family: 'Inter';
     font-weight: 600;
-    font-size: 16px;
-    line-height: 19px;
-    color: #FFFFFF;
+    font-size: 12px;
+    line-height: 15px;
+    color: rgba(152, 249, 255, 0.92);
     margin-bottom: 4px;
 }
 
-.calendar-section-wrapper .calendar-reminder-description {
+.calendar-section-wrapper .calendar-reminder-item-title {
+    font-family: 'Inter';
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 18px;
+    color: #FFFFFF;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calendar-section-wrapper .calendar-reminder-item-description {
+    font-family: 'Inter';
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 16px;
+    color: #A9A49C;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calendar-section-wrapper .calendar-reminder-empty {
     font-family: 'Inter';
     font-weight: 500;
     font-size: 14px;
-    line-height: 17px;
-    color: #A9A49C;
+    line-height: 18px;
+    color: rgba(255, 255, 255, 0.58);
+    margin-top: 4px;
 }
 
 .calendar-compact {
-    width: 300px;
+    width: 100%;
+    max-width: 320px;
     background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), rgba(30, 30, 30, 0.98) !important;
     border-radius: 41px;
     padding: 20px;
-    transform: translate(10px, -10px);
+    transform: none;
     font-family: 'Inter';
     position: relative;
+    justify-self: end;
 }
 
 .calendar-header-compact {
@@ -543,8 +794,10 @@ form {
 
 .calendar-month-year {
     font-weight: 700;
-    font-size: 14px;
+    font-size: 15px;
     color: #FFFFFF;
+    text-align: center;
+    min-width: 160px;
     order: 2;
 }
 
@@ -557,15 +810,20 @@ form {
 }
 
 .calendar-nav-btn {
-    background: none;
-    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
     color: #A9A49C;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 0 !important;
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .calendar-nav-btn:first-child {
@@ -577,7 +835,8 @@ form {
 }
 
 .calendar-nav-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.14) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
     color: #FFFFFF;
 }
 
@@ -590,11 +849,13 @@ form {
 
 .calendar-week-day {
     text-align: center;
-    font-weight: 600;
-    font-size: 11px;
-    color: #A9A49C;
+    font-family: 'Inter';
+    font-weight: 450;
+    font-size: 12px;
+    color: rgba(201, 201, 201, 0.72);
     padding: 6px 0;
-    text-transform: uppercase;
+    text-transform: none;
+    letter-spacing: 0;
 }
 
 .calendar-days-grid {
@@ -612,19 +873,40 @@ form {
     font-size: 12px;
     color: #FFFFFF;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 8px;
+    border: 1px solid transparent !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    padding: 0 !important;
     transition: all 0.2s ease;
+    position: relative;
 }
 
 .calendar-day:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.09) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
     color: #FFFFFF;
 }
 
 .calendar-day.current {
-    background: rgba(240, 77, 35);
+    background: rgba(240, 77, 35, 0.95) !important;
     color: #FFFFFF;
     font-weight: 600;
+}
+
+.calendar-day.today {
+    border-color: rgba(152, 249, 255, 0.55) !important;
+}
+
+.calendar-day.has-reminders::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #28CA42;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .calendar-day.other-month {
@@ -664,6 +946,7 @@ form {
     left: 287px;
     top: 420px;
     overflow: hidden;
+    isolation: isolate;
 }
 
 .reminders-container .cards-container {
@@ -672,8 +955,9 @@ form {
     /* Отступ 25px между карточками */
     align-items: flex-start !important;
     /* Выравниваем по верхнему краю */
-    padding-left: 0 !important;
-    /* Убираем лишние отступы */
+    padding-left: 6px !important;
+    padding-right: 8px !important;
+    --scroll-end-gap: 150px;
 }
 
 /* Широкая карточка напоминания */
@@ -1000,54 +1284,6 @@ form {
     letter-spacing: 0.2px;
 }
 
-.reminders-label-row {
-    position: absolute;
-    top: 390px;
-    left: 287px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    z-index: 50;
-}
-
-.reminders-label-row .reminders-label {
-    position: static;
-}
-
-.reminder-test-btn {
-    height: 28px;
-    padding: 0 10px !important;
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    background: rgba(255, 255, 255, 0.08) !important;
-    color: rgba(255, 255, 255, 0.92) !important;
-    font-family: 'Inter';
-    font-size: 12px;
-    cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.reminder-test-btn:hover {
-    background: rgba(255, 255, 255, 0.13) !important;
-    border-color: rgba(255, 255, 255, 0.35) !important;
-}
-
-.notification-support-badge {
-    font-family: 'Inter';
-    font-size: 12px;
-    color: rgba(40, 202, 66, 0.92);
-    background: rgba(40, 202, 66, 0.12);
-    border: 1px solid rgba(40, 202, 66, 0.35);
-    border-radius: 999px;
-    padding: 4px 8px;
-}
-
-.notification-support-badge.is-off {
-    color: rgba(255, 120, 120, 0.95);
-    background: rgba(255, 120, 120, 0.1);
-    border-color: rgba(255, 120, 120, 0.35);
-}
-
 .add-reminder-card .card-bg {
     cursor: pointer;
 }
@@ -1133,7 +1369,7 @@ form {
 
 .dev-modal,
 .reminder-modal {
-    display: block;
+    display: none !important;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -1154,6 +1390,7 @@ form {
 
 .dev-modal.is-active,
 .reminder-modal.is-active {
+    display: block !important;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -1162,6 +1399,7 @@ form {
 
 .dev-modal.is-closing,
 .reminder-modal.is-closing {
+    display: block !important;
     opacity: 0;
     transform: translate(-50%, -44%) scale(0.97);
 }
@@ -1174,7 +1412,7 @@ form {
 }
 
 .dev-modal-overlay {
-    display: block;
+    display: none;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -1183,6 +1421,7 @@ form {
 }
 
 .dev-modal-overlay.is-visible {
+    display: block;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
@@ -1202,7 +1441,7 @@ form {
     border-radius: 24px;
     padding: 24px 24px 22px;
     background: radial-gradient(140% 120% at 0% 0%, rgba(95, 95, 95, 0.22), rgba(30, 30, 30, 0.98) 58%);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55);
+    box-shadow: 0 22px 46px rgba(0, 0, 0, 0.52);
     overflow: hidden;
 }
 
@@ -1210,10 +1449,9 @@ form {
     content: '';
     position: absolute;
     inset: -40%;
-    background: radial-gradient(240px circle at var(--glow-x) var(--glow-y), rgba(152, 249, 255, 0.09), rgba(152, 249, 255, 0) 65%);
+    background: radial-gradient(280px circle at 50% 10%, rgba(152, 249, 255, 0.05), rgba(152, 249, 255, 0) 68%);
     pointer-events: none;
     z-index: 0;
-    transition: background 0.18s ease;
 }
 
 .reminder-modal-glow {
@@ -1221,23 +1459,23 @@ form {
     width: 320px;
     height: 320px;
     border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.2;
+    filter: blur(112px);
+    opacity: 0.12;
     pointer-events: none;
     z-index: 0;
-    animation: modalGlowPulse 4.8s ease-in-out infinite alternate;
+    animation: modalGlowPulse 7s ease-in-out infinite alternate;
 }
 
 .reminder-modal-glow-left {
     top: -190px;
     left: -120px;
-    background: rgba(152, 249, 255, 0.16);
+    background: rgba(152, 249, 255, 0.11);
 }
 
 .reminder-modal-glow-right {
     bottom: -220px;
     right: -130px;
-    background: rgba(40, 202, 66, 0.13);
+    background: rgba(40, 202, 66, 0.1);
 }
 
 .reminder-modal-header,

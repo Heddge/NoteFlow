@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using System.IO;
 
 using Microsoft.AspNetCore.Hosting;
 using ElectronNET.API;
@@ -17,6 +18,8 @@ namespace NoteFlow
         private readonly HashSet<string> _shownReminderNotifications = new HashSet<string>();
         private readonly object _reminderLock = new object();
         private CancellationTokenSource? _reminderNotificationCts;
+        private BrowserWindow? _mainWindow;
+        private bool _isExitRequested;
 
         public Startup(IConfiguration configuration)
         {
@@ -74,8 +77,11 @@ namespace NoteFlow
         private async void CreateWindow()
         {
             Electron.App.SetAppUserModelId("com.NoteFlow.app");
+            Electron.WindowManager.IsQuitOnWindowAllClosed = false;
 
-            var window = await Electron.WindowManager.CreateWindowAsync(new BrowserWindowOptions
+            string? appIconPath = ResolveAppIconPath();
+
+            _mainWindow = await Electron.WindowManager.CreateWindowAsync(new BrowserWindowOptions
             {
                 // Текущий размер окна
                 Width = 1920,
@@ -100,38 +106,46 @@ namespace NoteFlow
                 Show = true,           // Не показывать сразу
                 Title = "NoteFlow",
                 AutoHideMenuBar = true,
-                Frame = false
+                Frame = false,
+                Icon = appIconPath
             });
 
             // Обработчики для кнопок
             await Electron.IpcMain.On("minimize-window", (args) =>
             {
-                window.Minimize();
+                _mainWindow?.Minimize();
             });
 
             await Electron.IpcMain.On("maximize-window", (args) =>
             {
-                window.Maximize();  // Просто максимизируем каждый раз
+                _mainWindow?.Maximize();  // Просто максимизируем каждый раз
             });
 
             await Electron.IpcMain.On("unmaximize-window", (args) =>
             {
-                window.Unmaximize();  // И отдельно для восстановления
+                _mainWindow?.Unmaximize();  // И отдельно для восстановления
             });
             
             await Electron.IpcMain.On("close-window", (args) =>
             {
-                window.Close();
+                _mainWindow?.Hide();
             });
 
             bool notificationsSupported = await Electron.Notification.IsSupportedAsync();
             Console.WriteLine($"Electron notifications supported: {notificationsSupported}");
 
+            SetupTray(appIconPath);
             StartReminderNotificationLoop();
 
-            window.OnClosed += () =>
+            _mainWindow.OnClosed += () =>
             {
+                _mainWindow = null;
+
+                if (!_isExitRequested)
+                    return;
+
                 _reminderNotificationCts?.Cancel();
+                Electron.Tray.Destroy();
                 Electron.App.Quit();
                 Electron.App.Exit();
             };
@@ -145,7 +159,7 @@ namespace NoteFlow
 
             _ = Task.Run(async () =>
             {
-                var timer = new PeriodicTimer(TimeSpan.FromSeconds(20));
+                var timer = new PeriodicTimer(TimeSpan.FromSeconds(5));
 
                 try
                 {
@@ -157,6 +171,10 @@ namespace NoteFlow
                 catch (OperationCanceledException)
                 {
                     // App is closing.
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Reminder loop failed: {e.Message}");
                 }
                 finally
                 {
@@ -175,24 +193,10 @@ namespace NoteFlow
 
             foreach (Reminder reminder in remindersSnapshot)
             {
-                DateTime scheduledAt = reminder.ReminderExpires;
-                if (reminder.IsRepeating)
-                {
-                    scheduledAt = new DateTime(
-                        now.Year,
-                        now.Month,
-                        now.Day,
-                        reminder.ReminderExpires.Hour,
-                        reminder.ReminderExpires.Minute,
-                        0
-                    );
-                }
-
-                TimeSpan elapsed = now - scheduledAt;
-                if (elapsed < TimeSpan.Zero || elapsed > TimeSpan.FromMinutes(1))
+                if (!ShouldNotifyNow(reminder, now, out DateTime scheduledAt))
                     continue;
 
-                string notificationKey = BuildReminderNotificationKey(reminder, now);
+                string notificationKey = BuildReminderNotificationKey(reminder, scheduledAt);
                 bool canNotify;
 
                 lock (_reminderLock)
@@ -211,8 +215,20 @@ namespace NoteFlow
                     ? "Пора выполнить запланированное действие."
                     : reminder.ReminderDescription;
 
-                Electron.Notification.Show(new NotificationOptions(title, body));
-                Console.WriteLine($"Reminder notification sent: {title} at {now:yyyy-MM-dd HH:mm:ss}");
+                try
+                {
+                    var options = new NotificationOptions(title, body);
+                    string? iconPath = ResolveAppIconPath();
+                    if (!string.IsNullOrWhiteSpace(iconPath))
+                        options.Icon = iconPath;
+
+                    Electron.Notification.Show(options);
+                    Console.WriteLine($"Reminder notification sent: {title} at {now:yyyy-MM-dd HH:mm:ss}");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Reminder notification send failed: {e.Message}");
+                }
             }
         }
 
@@ -236,7 +252,7 @@ namespace NoteFlow
             }
         }
 
-        private static string BuildReminderNotificationKey(Reminder reminder, DateTime now)
+        private static string BuildReminderNotificationKey(Reminder reminder, DateTime scheduledAt)
         {
             string baseKey = string.IsNullOrWhiteSpace(reminder.ReminderPath)
                 ? reminder.ReminderTitle
@@ -245,7 +261,95 @@ namespace NoteFlow
             if (!reminder.IsRepeating)
                 return baseKey;
 
-            return $"{baseKey}:{now:yyyyMMdd}";
+            return $"{baseKey}:{scheduledAt:yyyyMMdd}";
+        }
+
+        private static bool ShouldNotifyNow(Reminder reminder, DateTime now, out DateTime scheduledAt)
+        {
+            scheduledAt = reminder.ReminderExpires;
+            TimeSpan maxDelay = TimeSpan.FromHours(18);
+
+            if (reminder.IsRepeating)
+            {
+                if (now.Date < reminder.ReminderExpires.Date)
+                    return false;
+
+                scheduledAt = new DateTime(
+                    now.Year,
+                    now.Month,
+                    now.Day,
+                    reminder.ReminderExpires.Hour,
+                    reminder.ReminderExpires.Minute,
+                    0
+                );
+            }
+
+            if (now < scheduledAt)
+                return false;
+
+            return now - scheduledAt <= maxDelay;
+        }
+
+        private void SetupTray(string? iconPath)
+        {
+            if (string.IsNullOrWhiteSpace(iconPath))
+                return;
+
+            var trayMenu = new[]
+            {
+                new MenuItem
+                {
+                    Label = "Открыть NoteFlow",
+                    Click = () => RestoreMainWindow()
+                },
+                new MenuItem
+                {
+                    Label = "Выход",
+                    Click = () => ExitApplication()
+                }
+            };
+
+            Electron.Tray.Show(iconPath, trayMenu);
+            Electron.Tray.SetToolTip("NoteFlow");
+            Electron.Tray.OnClick += (_, __) => RestoreMainWindow();
+            Electron.Tray.OnDoubleClick += (_, __) => RestoreMainWindow();
+        }
+
+        private void RestoreMainWindow()
+        {
+            if (_mainWindow == null)
+                return;
+
+            _mainWindow.Show();
+            _mainWindow.Focus();
+        }
+
+        private void ExitApplication()
+        {
+            _isExitRequested = true;
+            _reminderNotificationCts?.Cancel();
+
+            if (_mainWindow != null)
+            {
+                _mainWindow.Close();
+                return;
+            }
+
+            Electron.Tray.Destroy();
+            Electron.App.Quit();
+            Electron.App.Exit();
+        }
+
+        private static string? ResolveAppIconPath()
+        {
+            string[] candidates =
+            {
+                Path.Combine(AppContext.BaseDirectory, "wwwroot", "Images", "Logo.png"),
+                Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Logo.png"),
+                Path.Combine(AppContext.BaseDirectory, "Images", "Logo.png")
+            };
+
+            return candidates.FirstOrDefault(File.Exists);
         }
     }
 
