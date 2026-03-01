@@ -14,8 +14,9 @@ namespace NoteFlow.Pages
         public string NoteContent { get; set; } = "";
         [BindProperty]
         public string NoteTitle { get; set; } = "";
-
         public string _path = "";
+        private CacheService cache = new CacheService();
+        private StorageService storage = new StorageService();
         public void OnGet(string notePath)
         {
             this._path = notePath;
@@ -48,10 +49,10 @@ namespace NoteFlow.Pages
             // if user needs to edit note
             if (System.IO.File.Exists(_path))
                 // updating path from old to new (with new filename)
-                _path = StorageService.SaveEditedNote(NoteTitle, NoteContent, _path);
+                _path = storage.SaveEditedNote(NoteTitle, NoteContent, _path);
 
             // if user doesn`t need to edit note => create new note \/
-            StorageService.SaveNewNote(NoteTitle, NoteContent);
+            storage.SaveNewNote(NoteTitle, NoteContent);
 
             return Page();
 
@@ -59,7 +60,7 @@ namespace NoteFlow.Pages
 
         public IActionResult OnPostDeleteNote(string path)
         {
-            CacheService.DeleteNoteFromCurrentNotes(path);
+            cache.DeleteNoteFromCurrentNotes(path);
             System.IO.File.Delete(path);
             return RedirectToPage("/MainScreen");
         }

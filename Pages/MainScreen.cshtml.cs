@@ -12,15 +12,15 @@ namespace NoteFlow.Pages
         public Dictionary<string, Note> NotesDict = new Dictionary<string, Note>();
         public List<Reminder> Reminders = new List<Reminder>();
         public CacheService currentCache = new CacheService();
-
+        public StorageService currentStorage = new StorageService();
         public void OnGet()
         {
-            NotesDict = CacheService.currNotesDict;
+            NotesDict = currentCache.currNotesDict;
             
-            if (NotesDict.Count() != StorageService.CountNotesInDirectory())
+            if (NotesDict.Count() != currentStorage.CountNotesInDirectory())
             {
-                currentCache.UpdateMissedNotesInDirToCurrentNotes(NotesDict.Count() < StorageService.CountNotesInDirectory());
-                NotesDict = CacheService.currNotesDict;
+                currentCache.UpdateMissedNotesInDirToCurrentNotes(NotesDict.Count() < currentStorage.CountNotesInDirectory());
+                NotesDict = currentCache.currNotesDict;
             }
         }
 

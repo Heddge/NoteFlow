@@ -5,14 +5,14 @@ using NoteFlow.Pages;
 namespace NoteFlow.Services;
 public class CacheService
 {
-    public static Dictionary<string, Note> currNotesDict = new Dictionary<string, Note>();
-    public static List<Reminder> currReminders = new List<Reminder>();
-    private static string notesPath = StorageService._notesPath;
+    public Dictionary<string, Note> currNotesDict = new Dictionary<string, Note>();
+    public List<Reminder> currReminders = new List<Reminder>();
+    public StorageService storService = new StorageService();
     // private static string remindersPath = StorageService._remindersPath;
-    static CacheService()
+    public CacheService()
     {
         // parsing notes from path
-        foreach (string path in Directory.GetFiles(notesPath, "*.md"))
+        foreach (string path in Directory.GetFiles(storService._notesPath, "*.md"))
         {
             currNotesDict.Add(path, new Note(path));
         }
@@ -26,7 +26,7 @@ public class CacheService
         // currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
     }
 
-    public static void UpdateNoteInCurrentNotes(string title, string content, string newPath, string Path)
+    public void UpdateNoteInCurrentNotes(string title, string content, string newPath, string Path)
     {
         if (currNotesDict.ContainsKey(Path))
             try
@@ -44,10 +44,10 @@ public class CacheService
             }
     }
 
-    public static void DeleteNoteFromCurrentNotes(string Path) =>
+    public void DeleteNoteFromCurrentNotes(string Path) =>
         currNotesDict.Remove(Path);
 
-    public static void AddNoteToCurrentNotes(string Path)
+    public void AddNoteToCurrentNotes(string Path)
     {
         Console.WriteLine("Entered in Add method");
         if (!currNotesDict.ContainsKey(Path))
@@ -64,20 +64,20 @@ public class CacheService
             }
     }
 
-    private static string[] getNotesPaths() =>
+    private string[] getNotesPaths() =>
         currNotesDict.Keys.ToArray();
 
     public void UpdateMissedNotesInDirToCurrentNotes(bool flag)
     {
         if (flag)
         {
-            string[] addedPaths = Directory.GetFiles(notesPath, "*.md").Where(x => !currNotesDict.ContainsKey(x)).ToArray();
+            string[] addedPaths = Directory.GetFiles(storService._notesPath, "*.md").Where(x => !currNotesDict.ContainsKey(x)).ToArray();
             foreach (string path in addedPaths)
                 AddNoteToCurrentNotes(path);
             return;
         }
 
-        string[] deletedPaths = getNotesPaths().Where(x => !Directory.GetFiles(notesPath, "*.md").Contains(x)).ToArray();
+        string[] deletedPaths = getNotesPaths().Where(x => !Directory.GetFiles(storService._notesPath, "*.md").Contains(x)).ToArray();
         
         foreach (string path in deletedPaths)
             DeleteNoteFromCurrentNotes(path);
