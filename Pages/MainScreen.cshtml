@@ -226,7 +226,11 @@
     </div>
 
     <!-- НАДПИСЬ НАПОМИНАНИЯ -->
-    <div class="reminders-label">Напоминания</div>
+    <div class="reminders-label-row">
+        <div class="reminders-label">Напоминания</div>
+        <span id="notificationSupportBadge" class="notification-support-badge">проверка…</span>
+        <button type="button" class="reminder-test-btn" onclick="triggerTestReminderNotification()">Тест уведомления</button>
+    </div>
 
     <!-- Контейнер для напоминаний -->
     <div class="reminders-container">
@@ -368,7 +372,7 @@
     </div>
 
     <script>
-        const { ipcRenderer } = require('electron');
+        const { ipcRenderer, Notification: ElectronNotification } = require('electron');
 
         document.getElementById('minimizeBtn')?.addEventListener('click', () => {
             ipcRenderer.send('minimize-window');
@@ -396,6 +400,7 @@
                 isRepeating = r.IsRepeating
             })
         ));
+        const notificationSupportBadge = document.getElementById('notificationSupportBadge');
 
     @*function openSettings() {
             console.log('Открыть настройки');
@@ -579,16 +584,67 @@
             }
 
             const elapsedMs = now.getTime() - scheduledAt.getTime();
-            return elapsedMs >= 0 && elapsedMs <= 60 * 1000;
+            return elapsedMs >= 0 && elapsedMs <= 2 * 60 * 1000;
         }
 
-        function dispatchReminderNotification(reminder) {
-            const title = reminder.title || 'Напоминание NoteFlow';
-            const body = reminder.description?.trim()
-                ? reminder.description.trim()
-                : 'Пора выполнить запланированное действие.';
+        function tryShowBrowserNotification(title, body) {
+            try {
+                if (!('Notification' in window)) {
+                    return;
+                }
 
-            ipcRenderer.send('show-reminder-notification', JSON.stringify({ title, body }));
+                if (window.Notification.permission === 'granted') {
+                    new window.Notification(title, { body });
+                    return;
+                }
+
+                if (window.Notification.permission !== 'denied') {
+                    window.Notification.requestPermission().then((permission) => {
+                        if (permission === 'granted') {
+                            new window.Notification(title, { body });
+                        }
+                    });
+                }
+            } catch (error) {
+                console.warn('Browser notification failed', error);
+            }
+        }
+
+        function dispatchReminderNotification(title, body) {
+            let hasLocalSupport = false;
+            try {
+                if (ElectronNotification && ElectronNotification.isSupported && ElectronNotification.isSupported()) {
+                    hasLocalSupport = true;
+                    new ElectronNotification({ title, body }).show();
+                }
+            } catch (error) {
+                console.warn('Electron renderer notification failed', error);
+            }
+
+            try {
+                ipcRenderer.send('show-reminder-notification', JSON.stringify({ title, body }));
+            } catch (error) {
+                console.warn('IPC notification failed', error);
+            }
+
+            tryShowBrowserNotification(title, body);
+            return hasLocalSupport;
+        }
+
+        function updateNotificationSupportBadge() {
+            if (!notificationSupportBadge) {
+                return;
+            }
+
+            let supported = false;
+            try {
+                supported = !!(ElectronNotification && ElectronNotification.isSupported && ElectronNotification.isSupported());
+            } catch {
+                supported = false;
+            }
+
+            notificationSupportBadge.textContent = supported ? 'уведы: ok' : 'уведы: off';
+            notificationSupportBadge.classList.toggle('is-off', !supported);
         }
 
         function runReminderNotificationCheck() {
@@ -604,7 +660,12 @@
                     return;
                 }
 
-                dispatchReminderNotification(reminder);
+                const title = reminder.title || 'Напоминание NoteFlow';
+                const body = reminder.description?.trim()
+                    ? reminder.description.trim()
+                    : 'Пора выполнить запланированное действие.';
+
+                dispatchReminderNotification(title, body);
                 shownReminderNotifications.add(key);
                 localStorage.setItem(
                     'shownReminderNotifications',
@@ -613,8 +674,16 @@
             });
         }
 
+        function triggerTestReminderNotification() {
+            const hasLocalSupport = dispatchReminderNotification('Тест уведомления NoteFlow', 'Если это видно, уведомления работают.');
+            if (!hasLocalSupport) {
+                alert('Системные уведомления в текущем Electron-окружении не поддерживаются или заблокированы ОС.');
+            }
+        }
+
+        updateNotificationSupportBadge();
         runReminderNotificationCheck();
-        setInterval(runReminderNotificationCheck, 20 * 1000);
+        setInterval(runReminderNotificationCheck, 15 * 1000);
 
     </script>
 

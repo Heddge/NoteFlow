@@ -1000,6 +1000,54 @@ form {
     letter-spacing: 0.2px;
 }
 
+.reminders-label-row {
+    position: absolute;
+    top: 390px;
+    left: 287px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 50;
+}
+
+.reminders-label-row .reminders-label {
+    position: static;
+}
+
+.reminder-test-btn {
+    height: 28px;
+    padding: 0 10px !important;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+    font-family: 'Inter';
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.reminder-test-btn:hover {
+    background: rgba(255, 255, 255, 0.13) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.notification-support-badge {
+    font-family: 'Inter';
+    font-size: 12px;
+    color: rgba(40, 202, 66, 0.92);
+    background: rgba(40, 202, 66, 0.12);
+    border: 1px solid rgba(40, 202, 66, 0.35);
+    border-radius: 999px;
+    padding: 4px 8px;
+}
+
+.notification-support-badge.is-off {
+    color: rgba(255, 120, 120, 0.95);
+    background: rgba(255, 120, 120, 0.1);
+    border-color: rgba(255, 120, 120, 0.35);
+}
+
 .add-reminder-card .card-bg {
     cursor: pointer;
 }
