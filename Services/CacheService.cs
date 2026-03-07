@@ -24,6 +24,12 @@ public class CacheService
         //     currReminders.Add(new Reminder(path));
         // }
         // currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
+        // parsing notes from path
+        foreach (string path in Directory.GetFiles(storService._remindersPath, "*.md"))
+        {
+            currReminders.Add(new Reminder(path));
+        }
+        currReminders = currReminders.OrderBy(s => s.ReminderExpires).ToList();
     }
 
     public void UpdateNoteInCurrentNotes(string title, string content, string newPath, string Path)
@@ -66,6 +72,27 @@ public class CacheService
 
     private string[] getNotesPaths() =>
         currNotesDict.Keys.ToArray();
+    public void AddReminderToCurrentReminders(string path)
+    {
+        if (currReminders.Any(x => x.ReminderPath == path))
+            return;
+
+        try
+        {
+            currReminders.Add(new Reminder(path));
+            currReminders = currReminders.OrderBy(x => x.ReminderExpires).ToList();
+        }
+        catch (IOException e)
+        {
+            Console.WriteLine($"Something went wrong: {e.Message}");
+        }
+    }
+
+    public void DeleteReminderFromCurrentReminders(string path) =>
+        currReminders = currReminders
+            .Where(x => x.ReminderPath != path)
+            .OrderBy(x => x.ReminderExpires)
+            .ToList();
 
     public void UpdateMissedNotesInDirToCurrentNotes(bool flag)
     {

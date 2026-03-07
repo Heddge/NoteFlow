@@ -35,6 +35,9 @@ namespace NoteFlow.Services
         }
         public string GetNotePath(string noteTitle)
             => Path.Combine(_notesPath, $"{noteTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
+
+        private string GetReminderPath(string reminderTitle)
+            => Path.Combine(_remindersPath, $"{reminderTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
             
         
         public void SaveNewNote(string title, string content)
@@ -105,5 +108,45 @@ namespace NoteFlow.Services
         //         x => new string(x.GetId() + '?' + x.NoteTitle + '?' + x.NotePath + '?' + x.NoteCreated + '?' + x.NoteEdited + '?' + x.NoteContent.Substring(0,30))).ToArray();
         //     File.WriteAllLines(Path.Combine(_notesPath, "notesdb.txt"), temp);
         // }
+        public int CountRemindersInDirectory()
+            => Directory.GetFiles(_remindersPath, "*.md").Count();
+
+        public string SaveReminder(Reminder reminder)
+        {
+            var reminderPath = GetReminderPath(ToSafetyReminderName(reminder.ReminderTitle));
+            File.WriteAllText(reminderPath, reminder.ToStorageJson());
+
+            return reminderPath;
+        }
+
+        public void DeleteReminder(string path)
+        {
+            try
+            {
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Reminder delete failed: {e.Message}");
+            }
+        }
+
+        // public void GenerateNotesDB()
+        // {
+        //     string[] temp = cache.currNotes.Select(
+        //         x => new string(x.GetId() + '?' + x.NoteTitle + '?' + x.NotePath + '?' + x.NoteCreated + '?' + x.NoteEdited + '?' + x.NoteContent.Substring(0,30))).ToArray();
+        //     File.WriteAllLines(Path.Combine(_notesPath, "notesdb.txt"), temp);
+        // }
+
+        private string ToSafetyReminderName(string oldName)
+        {
+            if (string.IsNullOrWhiteSpace(oldName))
+                return "Новое напоминание";
+
+            var safetyName = new string(oldName.Select(x => _bannedChars.Contains(x) ? ' ' : x).ToArray());
+
+            return string.IsNullOrWhiteSpace(safetyName) ? "Новое напоминание" : safetyName;
+        }
     }
 }

@@ -3,6 +3,7 @@
 @using NoteFlow.Pages;
 @using NoteFlow.Services;
 @using NoteFlow.Helpers;
+@using System.Text.Json;
 @model NoteFlow.Pages.MainScreenModel;
 @{
     Layout = null;
@@ -15,7 +16,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] MainScreen</title>
-    <link rel="stylesheet" href="~/css/MainScreen.css" />
+    <link rel="stylesheet" href="~/css/MainScreen.css" asp-append-version="true" />
 </head>
 
 <body>
@@ -32,6 +33,88 @@
         <div class="dev-modal-content">В разработке...</div>
     </div>
     <div id="devModalOverlay" class="dev-modal-overlay"></div>
+
+    <div id="reminderModal" class="reminder-modal" aria-hidden="true">
+        <div id="reminderModalContent" class="reminder-modal-content gradient-border">
+            <div class="reminder-modal-glow reminder-modal-glow-left"></div>
+            <div class="reminder-modal-glow reminder-modal-glow-right"></div>
+
+            <div class="reminder-modal-header">
+                <h2>Новое напоминание</h2>
+                <p>Запланируй дату и время, чтобы карточка сразу появилась на главном экране.</p>
+            </div>
+
+            <form method="post" asp-page-handler="CreateReminder" class="reminder-form">
+                <div class="reminder-form-column">
+                    <label class="reminder-input-label" for="reminderTitle">Название</label>
+                    <input id="reminderTitle" class="reminder-input" type="text" name="Title" placeholder="Например, позвонить по работе"
+                        required maxlength="120" />
+
+                    <label class="reminder-input-label" for="reminderDescription">Описание</label>
+                    <textarea id="reminderDescription" class="reminder-textarea" name="Description"
+                        placeholder="Коротко: что нужно сделать" rows="5" maxlength="280"></textarea>
+
+                    <label class="reminder-repeat">
+                        <input type="checkbox" name="IsRepeating" />
+                        <span>Повторять ежедневно</span>
+                    </label>
+                </div>
+
+                <div class="reminder-form-column">
+                    <label class="reminder-input-label">Дата</label>
+                    <div class="reminder-date-grid">
+                        <select class="reminder-select" name="Day">
+                            @for (int i = 1; i <= 31; i++)
+                            {
+                                if (i == DateTime.Now.Day)
+                                {
+                                    <option selected value="@i">@i</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            }
+                        </select>
+                        <select class="reminder-select" name="Month">
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                if (i == DateTime.Now.Month)
+                                {
+                                    <option selected value="@i">@i</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            }
+                        </select>
+                        <select class="reminder-select" name="Year">
+                            @for (int i = DateTime.Now.Year; i <= DateTime.Now.Year + 5; i++)
+                            {
+                                if (i == DateTime.Now.Year)
+                                {
+                                    <option selected value="@i">@i</option>
+                                }
+                                else
+                                {
+                                    <option value="@i">@i</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <label class="reminder-input-label" for="reminderTime">Время</label>
+                    <input id="reminderTime" class="reminder-input" type="time" name="Time" value="@DateTime.Now.ToString("HH:mm")" required />
+                </div>
+
+                <div class="reminder-form-actions">
+                    <button type="button" class="reminder-btn reminder-btn-secondary" onclick="closeReminderModal()">Отмена</button>
+                    <button type="submit" class="reminder-btn reminder-btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <button id="toggleSidebarBtn" class="toggle-sidebar-btn">
         <div class="toggle-icon">
@@ -149,7 +232,6 @@
                         <input type="hidden" name="path" value="@Model.Notes[i].NotePath" />
                         <button type="submit" class="note-card">
                             <div class="note-card-bg">
-                                <div class="note-icon">&lt;/&gt;</div>
                                 <div class="note-title">@Model.Notes[i].NoteTitle</div>
                                 <div class="note-description">@Html.Raw(Model.Notes[i].NoteContent)</div>
                                 <div class="note-timestamp">@Model.Notes[i].BeatifulCreationDate()</div>
@@ -161,24 +243,7 @@
     </div>
 
     <!-- НАДПИСЬ НАПОМИНАНИЯ -->
-    <div style="
-    font-family: 'Inter';
-    font-weight: 500;
-    font-size: 20px;
-    line-height: 100%;
-    letter-spacing: 0%;
-    text-align: center;
-    vertical-align: middle;
-    color: rgba(255, 255, 255, 0.7);
-    width: auto;
-    height: auto;
-    justify-content: center;
-    position: absolute;
-    top: 390px;
-    left: 287px;
-">
-        Напоминания
-    </div>
+    <div class="reminders-label">Напоминания</div>
 
     <!-- Контейнер для напоминаний -->
     <div class="reminders-container">
@@ -188,33 +253,53 @@
 
         <div class="cards-container">
             <!-- Карточка нового напоминания -->
-            <div class="card" onclick="showDevModal()">
+            <div class="card add-reminder-card" onclick="showReminderModal()">
                 <div class="card-bg">
                     <div class="add-note-text">Добавить напоминание</div>
                 </div>
             </div>
-            
-            <div class="wide-reminder-card">
-                <div class="wide-reminder-bg gradient-border" onclick="showDevModal()">
-                    <!-- Время и дата посередине сверху -->
-                    <div class="reminder-time-header-container">
-                        <div class="reminder-date">Сегодня</div>
-                        <div class="reminder-time">10:45</div>
-                    </div>
 
-                    <!-- Основной контент (без emoji) -->
-                    <div class="reminder-content-box">
-                        <div class="reminder-main-text">Покормить кота</div>
-                        <div class="reminder-description-text">Купить корм для кота, покормить его</div>
-                    </div>
+            @if (Model.Reminders.Count() > 0)
+            {
+                foreach (var reminder in Model.Reminders)
+                {
+                    <div class="wide-reminder-card reminder-card-enter">
+                        <div class="wide-reminder-bg gradient-border">
+                            <form method="post" asp-page-handler="DeleteReminder" class="reminder-delete-form">
+                                <input type="hidden" name="path" value="@reminder.ReminderPath" />
+                                <button type="submit" class="reminder-delete-btn" title="Удалить напоминание">×</button>
+                            </form>
 
-                    <!-- Линия и время создания внизу -->
-                    <div class="reminder-created-time-container">
-                        <div class="reminder-divider-line"></div>
-                        <div class="reminder-created-time">Вчера 21:45</div>
+                            <div class="reminder-time-header-container">
+                                <div class="reminder-date">@reminder.GetExpiringDayLabel()</div>
+                                <div class="reminder-time">@reminder.GetExpiringTimeLabel()</div>
+                            </div>
+
+                            <div class="reminder-content-box">
+                                <div class="reminder-main-text">@reminder.ReminderTitle</div>
+                                <div class="reminder-description-text">
+                                    @(string.IsNullOrWhiteSpace(reminder.ReminderDescription) ? "Без описания" : reminder.ReminderDescription)
+                                </div>
+                            </div>
+
+                            <div class="reminder-created-time-container">
+                                <div class="reminder-created-time">
+                                    Создано @reminder.BeatifulCreationDate()@(reminder.IsRepeating ? " • повтор" : "")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="wide-reminder-card reminder-card-enter">
+                    <div class="wide-reminder-bg gradient-border reminder-empty-card">
+                        <div class="reminder-main-text">Пока нет активных напоминаний</div>
+                        <div class="reminder-description-text">Нажми «Добавить напоминание», чтобы создать первое.</div>
                     </div>
                 </div>
-            </div>
+            }
         </div>
     </div>
 
@@ -224,76 +309,33 @@
     <!-- Календарь -->
     <div class="calendar-section-title">Календарь</div>
     <div class="calendar-section-wrapper">
-        <div class="calendar-container gradient-border" onclick="showDevModal()">
+        <div class="calendar-container gradient-border">
             <div class="calendar-content">
                 <div class="calendar-left">
-                    <div class="calendar-current-date">Октябрь 31</div>
-                    <div class="calendar-reminder-card">
-                        <div class="calendar-reminder-title">Покормить кота</div>
-                        <div class="calendar-reminder-description">Купить корм для кота, покормить его</div>
-                    </div>
+                    <div id="calendarCurrentDate" class="calendar-current-date"></div>
+                    <div id="calendarReminderList" class="calendar-reminder-list"></div>
                 </div>
 
                 <div class="calendar-compact gradient-border">
                     <div class="calendar-header-compact">
                         <div class="calendar-nav">
-                            <div class="calendar-month-year">October 2025</div>
-                            <button class="calendar-nav-btn">&lt;</button>
-                            <button class="calendar-nav-btn">&gt;</button>
+                            <button type="button" id="calendarPrevBtn" class="calendar-nav-btn">&lt;</button>
+                            <div id="calendarMonthYear" class="calendar-month-year"></div>
+                            <button type="button" id="calendarNextBtn" class="calendar-nav-btn">&gt;</button>
                         </div>
                     </div>
 
                     <div class="calendar-week-days-compact">
-                        <div class="calendar-week-day">SUN</div>
-                        <div class="calendar-week-day">MON</div>
-                        <div class="calendar-week-day">TUE</div>
-                        <div class="calendar-week-day">WED</div>
-                        <div class="calendar-week-day">THU</div>
-                        <div class="calendar-week-day">FRI</div>
-                        <div class="calendar-week-day">SAT</div>
+                        <div class="calendar-week-day">ВС</div>
+                        <div class="calendar-week-day">ПН</div>
+                        <div class="calendar-week-day">ВТ</div>
+                        <div class="calendar-week-day">СР</div>
+                        <div class="calendar-week-day">ЧТ</div>
+                        <div class="calendar-week-day">ПТ</div>
+                        <div class="calendar-week-day">СБ</div>
                     </div>
 
-                    <div class="calendar-days-grid">
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day empty"></div>
-                        <div class="calendar-day">1</div>
-                        <div class="calendar-day">2</div>
-                        <div class="calendar-day">3</div>
-                        <div class="calendar-day">4</div>
-
-                        <div class="calendar-day">5</div>
-                        <div class="calendar-day">6</div>
-                        <div class="calendar-day">7</div>
-                        <div class="calendar-day">8</div>
-                        <div class="calendar-day">9</div>
-                        <div class="calendar-day">10</div>
-                        <div class="calendar-day">11</div>
-
-                        <div class="calendar-day">12</div>
-                        <div class="calendar-day">13</div>
-                        <div class="calendar-day">14</div>
-                        <div class="calendar-day">15</div>
-                        <div class="calendar-day">16</div>
-                        <div class="calendar-day">17</div>
-                        <div class="calendar-day">18</div>
-
-                        <div class="calendar-day">19</div>
-                        <div class="calendar-day">20</div>
-                        <div class="calendar-day">21</div>
-                        <div class="calendar-day">22</div>
-                        <div class="calendar-day">23</div>
-                        <div class="calendar-day">24</div>
-                        <div class="calendar-day">25</div>
-
-                        <div class="calendar-day">26</div>
-                        <div class="calendar-day">27</div>
-                        <div class="calendar-day">28</div>
-                        <div class="calendar-day">29</div>
-                        <div class="calendar-day">30</div>
-                        <div class="calendar-day current">31</div>
-                        <div class="calendar-day empty"></div>
-                    </div>
+                    <div id="calendarDaysGrid" class="calendar-days-grid"></div>
                 </div>
             </div>
         </div>
@@ -318,6 +360,17 @@
             location.reload();
         });
 
+        const remindersData = @Html.Raw(JsonSerializer.Serialize(
+            Model.Reminders.Select(r => new
+            {
+                path = r.ReminderPath,
+                title = r.ReminderTitle,
+                description = r.ReminderDescription,
+                expiresAt = r.ReminderExpires,
+                isRepeating = r.IsRepeating
+            })
+        ));
+
     @*function openSettings() {
             console.log('Открыть настройки');
             window.location.href = '/Settings';
@@ -328,54 +381,384 @@
                 window.location.href = '/MainScreen';
             }
 
-        //Перехват скролла чтобы скроллить колесиком
-        const cardsContainer = document.querySelector('.cards-container');
+        // Горизонтальный скролл карточек + динамические fade/индикатор
+        const cardsContainers = document.querySelectorAll('.cards-container');
+        const horizontalScrollShellSelector = '.cards-container-wrapper, .reminders-container';
+        const SCROLLING_CLASS_TIMEOUT_MS = 190;
 
-        cardsContainer.addEventListener('wheel', function (e) {
-            // Предотвращаем вертикальный скролл страницы
-            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-                e.preventDefault();
-
-                // Настройки скролла
-                const scrollSpeed = 2; // Скорость скролла
-                const maxScroll = this.scrollWidth - this.clientWidth;
-
-                // Рассчитываем новую позицию
-                let newScrollLeft = this.scrollLeft + (e.deltaY * scrollSpeed);
-
-                // Ограничиваем скролл в пределах контейнера
-                newScrollLeft = Math.max(0, Math.min(maxScroll, newScrollLeft));
-
-                // Плавный скролл
-                this.scrollTo({
-                    left: newScrollLeft,
-                    behavior: 'smooth'
-                });
+        function ensureHorizontalScrollIndicator(shell) {
+            if (!shell || shell.querySelector('.scroll-progress')) {
+                return;
             }
-        }, { passive: false });
 
-
-        const devModal = document.getElementById('devModal');
-        const devModalOverlay = document.getElementById('devModalOverlay');
-        // Показать модальное окно "В разработке"
-        function showDevModal() {
-            devModal.style.display = 'block';
-            devModalOverlay.style.display = 'block';
+            const indicator = document.createElement('div');
+            indicator.className = 'scroll-progress';
+            shell.appendChild(indicator);
         }
 
-        // Закрытие окна по клику на оверлей
-        devModalOverlay.addEventListener('click', function () {
-            devModal.style.display = 'none';
-            devModalOverlay.style.display = 'none';
+        function updateHorizontalScrollState(container) {
+            const shell = container.closest(horizontalScrollShellSelector);
+            if (!shell) {
+                return;
+            }
+
+            const maxScroll = Math.max(0, container.scrollWidth - container.clientWidth);
+            const currentScroll = Math.max(0, container.scrollLeft);
+            const hasOverflow = maxScroll > 1;
+
+            shell.classList.toggle('has-horizontal-overflow', hasOverflow);
+            shell.classList.toggle('has-left-overflow', hasOverflow && currentScroll > 2);
+            shell.classList.toggle('has-right-overflow', hasOverflow && currentScroll < (maxScroll - 2));
+
+            const progress = hasOverflow ? Math.min(1, currentScroll / maxScroll) : 0;
+            shell.style.setProperty('--scroll-progress', progress.toFixed(4));
+        }
+
+        cardsContainers.forEach((cardsContainerItem) => {
+            const shell = cardsContainerItem.closest(horizontalScrollShellSelector);
+            let scrollingTimer = null;
+
+            ensureHorizontalScrollIndicator(shell);
+
+            const markScrolling = () => {
+                if (!shell) {
+                    return;
+                }
+
+                shell.classList.add('is-scrolling');
+                if (scrollingTimer) {
+                    clearTimeout(scrollingTimer);
+                }
+
+                scrollingTimer = setTimeout(() => {
+                    shell.classList.remove('is-scrolling');
+                }, SCROLLING_CLASS_TIMEOUT_MS);
+            };
+
+            cardsContainerItem.addEventListener('wheel', function (e) {
+                if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) {
+                    return;
+                }
+
+                const maxScroll = Math.max(0, this.scrollWidth - this.clientWidth);
+                if (maxScroll <= 0) {
+                    return;
+                }
+
+                const targetScroll = Math.max(
+                    0,
+                    Math.min(maxScroll, this.scrollLeft + (e.deltaY * 1.9))
+                );
+
+                // Не блокируем вертикальный скролл страницы, если уткнулись в край.
+                if (Math.abs(targetScroll - this.scrollLeft) < 0.5) {
+                    return;
+                }
+
+                e.preventDefault();
+                this.scrollLeft = targetScroll;
+                updateHorizontalScrollState(this);
+                markScrolling();
+            }, { passive: false });
+
+            cardsContainerItem.addEventListener('scroll', () => {
+                updateHorizontalScrollState(cardsContainerItem);
+                markScrolling();
+            }, { passive: true });
+
+            updateHorizontalScrollState(cardsContainerItem);
         });
 
-        // Закрытие окна по Escape
+        window.addEventListener('resize', () => {
+            cardsContainers.forEach((cardsContainerItem) => updateHorizontalScrollState(cardsContainerItem));
+        });
+
+        const devModal = document.getElementById('devModal');
+        const reminderModal = document.getElementById('reminderModal');
+        const devModalOverlay = document.getElementById('devModalOverlay');
+        const MODAL_ANIMATION_MS = 260;
+        let activeModal = null;
+
+        function showDevModal() {
+            openModal(devModal);
+        }
+
+        function showReminderModal() {
+            openModal(reminderModal);
+        }
+
+        function closeReminderModal() {
+            closeModal(reminderModal);
+        }
+
+        function openModal(modalElement) {
+            if (!modalElement) {
+                return;
+            }
+
+            if (activeModal && activeModal !== modalElement) {
+                closeModal(activeModal, true);
+            }
+
+            activeModal = modalElement;
+            devModalOverlay.classList.add('is-visible');
+            modalElement.classList.remove('is-closing');
+            modalElement.classList.add('is-active');
+            modalElement.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeModal(modalElement, instantly = false) {
+            if (!modalElement) {
+                return;
+            }
+
+            modalElement.setAttribute('aria-hidden', 'true');
+
+            if (instantly) {
+                modalElement.classList.remove('is-active');
+                modalElement.classList.remove('is-closing');
+            } else {
+                modalElement.classList.remove('is-active');
+                modalElement.classList.add('is-closing');
+
+                setTimeout(() => {
+                    modalElement.classList.remove('is-closing');
+                    if (activeModal === modalElement) {
+                        activeModal = null;
+                    }
+
+                    if (!isAnyModalVisible()) {
+                        devModalOverlay.classList.remove('is-visible');
+                    }
+                }, MODAL_ANIMATION_MS);
+            }
+
+            if (activeModal === modalElement) {
+                activeModal = null;
+            }
+
+            if (!isAnyModalVisible()) {
+                devModalOverlay.classList.remove('is-visible');
+            }
+        }
+
+        function isAnyModalVisible() {
+            return devModal.classList.contains('is-active')
+                || devModal.classList.contains('is-closing')
+                || reminderModal.classList.contains('is-active')
+                || reminderModal.classList.contains('is-closing');
+        }
+
+        devModalOverlay.addEventListener('click', function () {
+            if (activeModal) {
+                closeModal(activeModal);
+                return;
+            }
+
+            closeModal(devModal, true);
+            closeModal(reminderModal, true);
+        });
+
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
-                devModal.style.display = 'none';
-                devModalOverlay.style.display = 'none';
+                if (activeModal) {
+                    closeModal(activeModal);
+                    return;
+                }
+
+                closeModal(devModal, true);
+                closeModal(reminderModal, true);
             }
         });
+
+        const calendarCurrentDate = document.getElementById('calendarCurrentDate');
+        const calendarReminderList = document.getElementById('calendarReminderList');
+        const calendarMonthYear = document.getElementById('calendarMonthYear');
+        const calendarDaysGrid = document.getElementById('calendarDaysGrid');
+        const calendarPrevBtn = document.getElementById('calendarPrevBtn');
+        const calendarNextBtn = document.getElementById('calendarNextBtn');
+
+        const today = new Date();
+        const calendarState = {
+            selectedDate: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+            viewYear: today.getFullYear(),
+            viewMonth: today.getMonth()
+        };
+
+        function normalizeDate(date) {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        }
+
+        function isSameDay(a, b) {
+            return a.getFullYear() === b.getFullYear()
+                && a.getMonth() === b.getMonth()
+                && a.getDate() === b.getDate();
+        }
+
+        function formatDateLabel(date) {
+            return date.toLocaleDateString('ru-RU', {
+                day: 'numeric',
+                month: 'long'
+            });
+        }
+
+        function formatMonthYear(date) {
+            const text = date.toLocaleDateString('ru-RU', {
+                month: 'long',
+                year: 'numeric'
+            });
+
+            return text.charAt(0).toUpperCase() + text.slice(1);
+        }
+
+        function parseReminderDate(reminder) {
+            const value = new Date(reminder.expiresAt);
+            return Number.isNaN(value.getTime()) ? null : value;
+        }
+
+        function reminderOccursOnDate(reminder, date) {
+            const expiresAt = parseReminderDate(reminder);
+            if (!expiresAt) {
+                return false;
+            }
+
+            const reminderDay = normalizeDate(expiresAt);
+            if (reminder.isRepeating) {
+                return date >= reminderDay;
+            }
+
+            return isSameDay(reminderDay, date);
+        }
+
+        function getRemindersForDate(date) {
+            return remindersData
+                .map((reminder) => {
+                    const expiresAt = parseReminderDate(reminder);
+                    if (!expiresAt) {
+                        return null;
+                    }
+
+                    return {
+                        ...reminder,
+                        expiresAtDate: expiresAt
+                    };
+                })
+                .filter((reminder) => reminder && reminderOccursOnDate(reminder, date))
+                .sort((a, b) => {
+                    const left = (a.expiresAtDate.getHours() * 60) + a.expiresAtDate.getMinutes();
+                    const right = (b.expiresAtDate.getHours() * 60) + b.expiresAtDate.getMinutes();
+                    return left - right;
+                });
+        }
+
+        function renderCalendarReminderList() {
+            if (!calendarReminderList || !calendarCurrentDate) {
+                return;
+            }
+
+            const reminders = getRemindersForDate(calendarState.selectedDate);
+            calendarCurrentDate.textContent = formatDateLabel(calendarState.selectedDate);
+            calendarReminderList.innerHTML = '';
+
+            if (!reminders.length) {
+                const empty = document.createElement('div');
+                empty.className = 'calendar-reminder-empty';
+                empty.textContent = 'На выбранный день напоминаний нет';
+                calendarReminderList.appendChild(empty);
+                return;
+            }
+
+            reminders.slice(0, 5).forEach((reminder) => {
+                const item = document.createElement('div');
+                item.className = 'calendar-reminder-item';
+
+                const time = document.createElement('div');
+                time.className = 'calendar-reminder-item-time';
+                time.textContent = reminder.expiresAtDate.toLocaleTimeString('ru-RU', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const title = document.createElement('div');
+                title.className = 'calendar-reminder-item-title';
+                title.textContent = reminder.title || 'Без названия';
+
+                const description = document.createElement('div');
+                description.className = 'calendar-reminder-item-description';
+                description.textContent = reminder.description || 'Без описания';
+
+                item.appendChild(time);
+                item.appendChild(title);
+                item.appendChild(description);
+                calendarReminderList.appendChild(item);
+            });
+        }
+
+        function renderCalendarGrid() {
+            if (!calendarDaysGrid || !calendarMonthYear) {
+                return;
+            }
+
+            const monthStart = new Date(calendarState.viewYear, calendarState.viewMonth, 1);
+            const daysInMonth = new Date(calendarState.viewYear, calendarState.viewMonth + 1, 0).getDate();
+            const leadingEmptyDays = monthStart.getDay();
+            const currentToday = normalizeDate(new Date());
+
+            calendarMonthYear.textContent = formatMonthYear(monthStart);
+            calendarDaysGrid.innerHTML = '';
+
+            for (let i = 0; i < leadingEmptyDays; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'calendar-day empty';
+                calendarDaysGrid.appendChild(empty);
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const cellDate = new Date(calendarState.viewYear, calendarState.viewMonth, day);
+                const dayCell = document.createElement('button');
+                dayCell.type = 'button';
+                dayCell.className = 'calendar-day';
+                dayCell.textContent = `${day}`;
+
+                if (isSameDay(cellDate, calendarState.selectedDate)) {
+                    dayCell.classList.add('current');
+                } else if (isSameDay(cellDate, currentToday)) {
+                    dayCell.classList.add('today');
+                }
+
+                if (getRemindersForDate(cellDate).length > 0) {
+                    dayCell.classList.add('has-reminders');
+                }
+
+                dayCell.addEventListener('click', () => {
+                    calendarState.selectedDate = cellDate;
+                    renderCalendarGrid();
+                    renderCalendarReminderList();
+                });
+
+                calendarDaysGrid.appendChild(dayCell);
+            }
+        }
+
+        function switchCalendarMonth(offset) {
+            const target = new Date(calendarState.viewYear, calendarState.viewMonth + offset, 1);
+            calendarState.viewYear = target.getFullYear();
+            calendarState.viewMonth = target.getMonth();
+
+            if (calendarState.selectedDate.getFullYear() !== calendarState.viewYear
+                || calendarState.selectedDate.getMonth() !== calendarState.viewMonth) {
+                calendarState.selectedDate = new Date(calendarState.viewYear, calendarState.viewMonth, 1);
+            }
+
+            renderCalendarGrid();
+            renderCalendarReminderList();
+        }
+
+        calendarPrevBtn?.addEventListener('click', () => switchCalendarMonth(-1));
+        calendarNextBtn?.addEventListener('click', () => switchCalendarMonth(1));
+
+        renderCalendarGrid();
+        renderCalendarReminderList();
     </script>
 
 </body>
