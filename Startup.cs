@@ -19,6 +19,7 @@ namespace NoteFlow
         private readonly object _reminderLock = new object();
         private CancellationTokenSource? _reminderNotificationCts;
         private BrowserWindow? _mainWindow;
+        private StorageService currStorage = new StorageService();
 
         public Startup(IConfiguration configuration)
         {
@@ -226,15 +227,15 @@ namespace NoteFlow
             }
         }
 
-        private static List<Reminder> LoadRemindersFromDisk()
+        private List<Reminder> LoadRemindersFromDisk()
         {
             try
             {
-                if (!Directory.Exists(StorageService._remindersPath))
+                if (!Directory.Exists(currStorage._remindersPath))
                     return new List<Reminder>();
 
                 return Directory
-                    .GetFiles(StorageService._remindersPath, "*.md")
+                    .GetFiles(currStorage._remindersPath, "*.md")
                     .Select(path => new Reminder(path))
                     .OrderBy(x => x.ReminderExpires)
                     .ToList();
