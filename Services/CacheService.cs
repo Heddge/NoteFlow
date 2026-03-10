@@ -7,12 +7,16 @@ public class CacheService
 {
     public Dictionary<string, Note> currNotesDict = new Dictionary<string, Note>();
     public List<Reminder> currReminders = new List<Reminder>();
-    public StorageService storService = new StorageService();
-    // private static string remindersPath = StorageService._remindersPath;
-    public CacheService()
+    private readonly string _notesPath;
+    private readonly string _remindersPath;
+
+    public CacheService(string notesPath, string remindersPath)
     {
+        _notesPath = notesPath;
+        _remindersPath = remindersPath;
+
         // parsing notes from path
-        foreach (string path in Directory.GetFiles(storService._notesPath, "*.md"))
+        foreach (string path in Directory.GetFiles(_notesPath, "*.md"))
         {
             currNotesDict.Add(path, new Note(path));
         }
@@ -25,7 +29,7 @@ public class CacheService
         // }
         // currNotes = currNotes.OrderByDescending(s => s.NoteEdited).ToList();
         // parsing notes from path
-        foreach (string path in Directory.GetFiles(storService._remindersPath, "*.md"))
+        foreach (string path in Directory.GetFiles(_remindersPath, "*.md"))
         {
             currReminders.Add(new Reminder(path));
         }
@@ -98,13 +102,13 @@ public class CacheService
     {
         if (flag)
         {
-            string[] addedPaths = Directory.GetFiles(storService._notesPath, "*.md").Where(x => !currNotesDict.ContainsKey(x)).ToArray();
+            string[] addedPaths = Directory.GetFiles(_notesPath, "*.md").Where(x => !currNotesDict.ContainsKey(x)).ToArray();
             foreach (string path in addedPaths)
                 AddNoteToCurrentNotes(path);
             return;
         }
 
-        string[] deletedPaths = getNotesPaths().Where(x => !Directory.GetFiles(storService._notesPath, "*.md").Contains(x)).ToArray();
+        string[] deletedPaths = getNotesPaths().Where(x => !Directory.GetFiles(_notesPath, "*.md").Contains(x)).ToArray();
         
         foreach (string path in deletedPaths)
             DeleteNoteFromCurrentNotes(path);

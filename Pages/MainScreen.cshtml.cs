@@ -10,8 +10,14 @@ namespace NoteFlow.Pages
         // list of all user`s notes
         public Dictionary<string, Note> NotesDict = new Dictionary<string, Note>();
         public List<Reminder> Reminders = new List<Reminder>();
-        public CacheService currentCache = new CacheService();
-        public StorageService currentStorage = new StorageService();
+        public CacheService currentCache;
+        public StorageService currentStorage;
+
+        public MainScreenModel()
+        {
+            currentStorage = new StorageService();
+            currentCache = new CacheService(currentStorage._notesPath, currentStorage._remindersPath);
+        }
         public void OnGet()
         {
             NotesDict = currentCache.currNotesDict;

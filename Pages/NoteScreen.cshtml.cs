@@ -15,8 +15,14 @@ namespace NoteFlow.Pages
         [BindProperty]
         public string NoteTitle { get; set; } = "";
         public string _path = "";
-        private CacheService cache = new CacheService();
-        private StorageService storage = new StorageService();
+        private readonly CacheService cache;
+        private readonly StorageService storage;
+
+        public NoteScreenModel()
+        {
+            storage = new StorageService();
+            cache = new CacheService(storage._notesPath, storage._remindersPath);
+        }
         public void OnGet(string notePath)
         {
             this._path = notePath;
@@ -48,11 +54,16 @@ namespace NoteFlow.Pages
 
             // if user needs to edit note
             if (System.IO.File.Exists(_path))
+            {
+                string oldPath = _path;
                 // updating path from old to new (with new filename)
                 _path = storage.SaveEditedNote(NoteTitle, NoteContent, _path);
+                cache.UpdateNoteInCurrentNotes(NoteTitle, NoteContent, _path, oldPath);
+            }
 
             // if user doesn`t need to edit note => create new note \/
-            storage.SaveNewNote(NoteTitle, NoteContent);
+            string newNotePath = storage.SaveNewNote(NoteTitle, NoteContent);
+            cache.AddNoteToCurrentNotes(newNotePath);
 
             return Page();
 

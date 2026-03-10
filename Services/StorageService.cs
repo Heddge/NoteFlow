@@ -12,7 +12,6 @@ namespace NoteFlow.Services
         public readonly string _notesPath;
         public readonly string _remindersPath;
         public readonly char[] _bannedChars = { '?', '<', '>', ':', '"', '|', '*', '\\', '/' };
-        private CacheService cache = new CacheService();
 
         public StorageService()
         {
@@ -40,15 +39,15 @@ namespace NoteFlow.Services
             => Path.Combine(_remindersPath, $"{reminderTitle}_{DateTime.Now:yyyyMMdd_HHmmss}.md");
             
         
-        public void SaveNewNote(string title, string content)
+        public string SaveNewNote(string title, string content)
         {
             // creating new filepath
             var filePath = GetNotePath(ToSafetyNoteName(title));
 
             // put content into the current note
             System.IO.File.WriteAllText(filePath, content);
-            cache.AddNoteToCurrentNotes(filePath);
 
+            return filePath;
         }
 
         public string SaveEditedNote(string title, string content, string path)
@@ -60,8 +59,6 @@ namespace NoteFlow.Services
             {
                 // put content into the current note and renaming file
                 System.IO.File.WriteAllText(path, content);
-
-                cache.UpdateNoteInCurrentNotes(title, content, newFilePath, path);
 
                 System.IO.File.Move(path, newFilePath);
             }

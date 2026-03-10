@@ -20,11 +20,41 @@ namespace NoteFlow
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder =>
             {
+                string? electronWebPort = ResolveElectronWebPort(args);
+                if (!string.IsNullOrWhiteSpace(electronWebPort) &&
+                    string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ASPNETCORE_URLS")))
+                {
+                    Console.WriteLine($"Binding ASP.NET Core to http://localhost:{electronWebPort}");
+                    webBuilder.UseUrls($"http://localhost:{electronWebPort}");
+                }
+
                 webBuilder.UseElectron(args);
                 webBuilder.UseEnvironment("Development");
                 webBuilder.UseStartup<Startup>();
             }
         );
+
+        private static string? ResolveElectronWebPort(string[] args)
+        {
+            foreach (string arg in args)
+            {
+                if (!arg.StartsWith("/electronWebPort=", StringComparison.OrdinalIgnoreCase) &&
+                    !arg.StartsWith("--electronWebPort=", StringComparison.OrdinalIgnoreCase) &&
+                    !arg.StartsWith("/electron-web-port=", StringComparison.OrdinalIgnoreCase) &&
+                    !arg.StartsWith("--electron-web-port=", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                int equalsIndex = arg.IndexOf('=');
+                if (equalsIndex <= 0 || equalsIndex == arg.Length - 1)
+                    continue;
+
+                return arg.Substring(equalsIndex + 1);
+            }
+
+            return null;
+        }
     }
 
 }

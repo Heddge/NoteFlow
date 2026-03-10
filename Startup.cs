@@ -19,6 +19,8 @@ namespace NoteFlow
         private readonly object _reminderLock = new object();
         private CancellationTokenSource? _reminderNotificationCts;
         private BrowserWindow? _mainWindow;
+        private readonly object _windowLock = new object();
+        private Task? _windowInitialization;
         private StorageService currStorage = new StorageService();
 
         public Startup(IConfiguration configuration)
@@ -30,10 +32,22 @@ namespace NoteFlow
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+            services.AddElectron();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            bool isElectronRuntime = IsElectronRuntime();
+
+            if (!HybridSupport.IsElectronActive && isElectronRuntime)
+            {
+                Console.WriteLine("Electron runtime detected via CLI args; HybridSupport.IsElectronActive is false.");
+            }
+            else if (!isElectronRuntime)
+            {
+                Console.WriteLine("Electron runtime not detected; window creation is skipped.");
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -42,11 +56,11 @@ namespace NoteFlow
             {
                 app.UseExceptionHandler("/Error");
 
-                if (!HybridSupport.IsElectronActive)
+                if (!isElectronRuntime)
                     app.UseHsts();
             }
 
-            if (!HybridSupport.IsElectronActive)
+            if (!isElectronRuntime)
                 app.UseHttpsRedirection();
 
             app.UseStaticFiles();
@@ -68,18 +82,70 @@ namespace NoteFlow
             }
             );
 
-            if (HybridSupport.IsElectronActive)
+            if (isElectronRuntime)
             {
-                CreateWindow();
+                _ = EnsureElectronWindowAsync();
             }
         }
 
-        private async void CreateWindow()
+        private Task EnsureElectronWindowAsync()
         {
-            Electron.App.SetAppUserModelId("com.NoteFlow.app");
+            lock (_windowLock)
+            {
+                if (_windowInitialization != null)
+                    return _windowInitialization;
+
+                if (Electron.App.IsReady)
+                {
+                    _windowInitialization = CreateWindowAsync();
+                    _windowInitialization.ContinueWith(task =>
+                    {
+                        Console.WriteLine($"Electron window creation failed: {task.Exception?.GetBaseException().Message}");
+                    }, TaskContinuationOptions.OnlyOnFaulted);
+                    return _windowInitialization;
+                }
+
+                var tcs = new TaskCompletionSource<object?>();
+                _windowInitialization = tcs.Task;
+
+                Electron.App.Ready += async () =>
+                {
+                    try
+                    {
+                        await CreateWindowAsync();
+                        tcs.TrySetResult(null);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"Electron window creation failed: {e.Message}");
+                        tcs.TrySetException(e);
+                    }
+                };
+
+                return _windowInitialization;
+            }
+        }
+
+        private async Task CreateWindowAsync()
+        {
+            if (_mainWindow != null)
+                return;
+
+            if (OperatingSystem.IsWindows())
+                Electron.App.SetAppUserModelId("com.NoteFlow.app");
+
             Electron.WindowManager.IsQuitOnWindowAllClosed = true;
 
             string? appIconPath = ResolveAppIconPath();
+            string? loadUrl = ResolveElectronLoadUrl();
+            if (!string.IsNullOrWhiteSpace(loadUrl))
+            {
+                Console.WriteLine($"Electron load URL: {loadUrl}");
+            }
+            else
+            {
+                Console.WriteLine("Electron load URL is empty; falling back to about:blank.");
+            }
 
             _mainWindow = await Electron.WindowManager.CreateWindowAsync(new BrowserWindowOptions
             {
@@ -103,12 +169,18 @@ namespace NoteFlow
                 Center = true,
 
                 // Другие настройки (опционально)
-                Show = true,           // Не показывать сразу
+                Show = true,
                 Title = "NoteFlow",
                 AutoHideMenuBar = true,
                 Frame = false,
                 Icon = appIconPath
-            });
+            }, string.IsNullOrWhiteSpace(loadUrl) ? "about:blank" : loadUrl);
+
+            _mainWindow.OnReadyToShow += () =>
+            {
+                _mainWindow?.Show();
+                _mainWindow?.Focus();
+            };
 
             // Обработчики для кнопок
             await Electron.IpcMain.On("minimize-window", (args) =>
@@ -180,7 +252,7 @@ namespace NoteFlow
 
         private void TryShowDueReminderNotifications()
         {
-            if (!HybridSupport.IsElectronActive)
+            if (!IsElectronRuntime())
                 return;
 
             var now = DateTime.Now;
@@ -295,6 +367,68 @@ namespace NoteFlow
             };
 
             return candidates.FirstOrDefault(File.Exists);
+        }
+
+        private static string? ResolveElectronLoadUrl()
+        {
+            if (TryGetElectronWebPort(out string port))
+                return $"http://localhost:{port}";
+
+            if (!string.IsNullOrWhiteSpace(BridgeSettings.WebPort))
+                return $"http://localhost:{BridgeSettings.WebPort}";
+
+            return null;
+        }
+
+        private static bool TryGetElectronWebPort(out string port)
+        {
+            port = string.Empty;
+            string[] args = Environment.GetCommandLineArgs();
+
+            foreach (string arg in args)
+            {
+                if (!arg.StartsWith("/electronWebPort", StringComparison.OrdinalIgnoreCase) &&
+                    !arg.StartsWith("--electronWebPort", StringComparison.OrdinalIgnoreCase) &&
+                    !arg.StartsWith("/electron-web-port", StringComparison.OrdinalIgnoreCase) &&
+                    !arg.StartsWith("--electron-web-port", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                int equalsIndex = arg.IndexOf('=');
+                if (equalsIndex <= 0 || equalsIndex == arg.Length - 1)
+                    continue;
+
+                string candidate = arg.Substring(equalsIndex + 1);
+                if (candidate.Length == 0)
+                    continue;
+
+                port = candidate;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsElectronRuntime()
+        {
+            if (HybridSupport.IsElectronActive)
+                return true;
+
+            string[] args = Environment.GetCommandLineArgs();
+            return args.Any(arg =>
+                arg.StartsWith("--electronPort", StringComparison.OrdinalIgnoreCase) ||
+                arg.StartsWith("/electronPort", StringComparison.OrdinalIgnoreCase) ||
+                arg.StartsWith("--electronWebPort", StringComparison.OrdinalIgnoreCase) ||
+                arg.StartsWith("/electronWebPort", StringComparison.OrdinalIgnoreCase) ||
+                arg.StartsWith("--electron-port", StringComparison.OrdinalIgnoreCase) ||
+                arg.StartsWith("/electron-port", StringComparison.OrdinalIgnoreCase) ||
+                arg.StartsWith("--electron-web-port", StringComparison.OrdinalIgnoreCase) ||
+                arg.StartsWith("/electron-web-port", StringComparison.OrdinalIgnoreCase) ||
+                arg.StartsWith("--aspCoreBackendPort", StringComparison.OrdinalIgnoreCase) ||
+                arg.StartsWith("/aspCoreBackendPort", StringComparison.OrdinalIgnoreCase) ||
+                arg.StartsWith("--aspCoreBackend-port", StringComparison.OrdinalIgnoreCase) ||
+                arg.StartsWith("/aspCoreBackend-port", StringComparison.OrdinalIgnoreCase));
         }
     }
 
