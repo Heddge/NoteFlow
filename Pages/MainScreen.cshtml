@@ -22,8 +22,12 @@
 <body>
 
 
-    <!-- Кнопка настроек
-    <button class="settings-btn" onclick="openSettings()">Настройки</button> -->
+    <button class="settings-btn" id="openSettingsBtn" type="button" title="Настройки" aria-label="Настройки">
+        <svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3.2" />
+            <path d="M19.4 15a1.8 1.8 0 0 0 .36 2.03l.08.08a2 2 0 1 1-2.83 2.83l-.08-.08a1.8 1.8 0 0 0-2.03-.36 1.8 1.8 0 0 0-1.06 1.64V22a2 2 0 1 1-4 0v-.12a1.8 1.8 0 0 0-1.06-1.64 1.8 1.8 0 0 0-2.03.36l-.08.08a2 2 0 1 1-2.83-2.83l.08-.08A1.8 1.8 0 0 0 4.6 15a1.8 1.8 0 0 0-1.64-1.06H2a2 2 0 1 1 0-4h.96A1.8 1.8 0 0 0 4.6 8.88a1.8 1.8 0 0 0-.36-2.03l-.08-.08a2 2 0 1 1 2.83-2.83l.08.08a1.8 1.8 0 0 0 2.03.36A1.8 1.8 0 0 0 10.16 2.5V2a2 2 0 1 1 4 0v.5a1.8 1.8 0 0 0 1.06 1.64 1.8 1.8 0 0 0 2.03-.36l.08-.08a2 2 0 1 1 2.83 2.83l-.08.08a1.8 1.8 0 0 0-.36 2.03 1.8 1.8 0 0 0 1.64 1.06H22a2 2 0 1 1 0 4h-.96A1.8 1.8 0 0 0 19.4 15z" />
+        </svg>
+    </button>
 
     <!-- Кнопка домой
     <button class="home-btn" onclick="goHome()">Домой</button> -->
@@ -33,6 +37,43 @@
         <div class="dev-modal-content">В разработке...</div>
     </div>
     <div id="devModalOverlay" class="dev-modal-overlay"></div>
+
+    <div id="settingsModal" class="settings-modal" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="settings-modal-content">
+            <div class="settings-modal-header">
+                <div>
+                    <h2>Настройки</h2>
+                    <p>Скоро здесь появятся параметры и персонализация.</p>
+                </div>
+                <button class="settings-close" type="button" id="closeSettingsBtn" aria-label="Закрыть">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <div class="settings-menu">
+                <button type="button" class="settings-menu-item">
+                    <span>Аккаунт</span>
+                    <span class="settings-menu-hint">Профиль, синхронизация</span>
+                </button>
+                <button type="button" class="settings-menu-item">
+                    <span>Внешний вид</span>
+                    <span class="settings-menu-hint">Темы, шрифты</span>
+                </button>
+                <button type="button" class="settings-menu-item">
+                    <span>Уведомления</span>
+                    <span class="settings-menu-hint">Напоминания, звук</span>
+                </button>
+                <button type="button" class="settings-menu-item">
+                    <span>Горячие клавиши</span>
+                    <span class="settings-menu-hint">Навигация, быстрые действия</span>
+                </button>
+                <button type="button" class="settings-menu-item">
+                    <span>О приложении</span>
+                    <span class="settings-menu-hint">Версия, лицензии</span>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div id="reminderModal" class="reminder-modal" aria-hidden="true">
         <div id="reminderModalContent" class="reminder-modal-content gradient-border">
@@ -474,13 +515,20 @@
         });
 
         const devModal = document.getElementById('devModal');
+        const settingsModal = document.getElementById('settingsModal');
         const reminderModal = document.getElementById('reminderModal');
         const devModalOverlay = document.getElementById('devModalOverlay');
+        const openSettingsBtn = document.getElementById('openSettingsBtn');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
         const MODAL_ANIMATION_MS = 260;
         let activeModal = null;
 
         function showDevModal() {
             openModal(devModal);
+        }
+
+        function showSettingsModal() {
+            openModal(settingsModal);
         }
 
         function showReminderModal() {
@@ -545,8 +593,18 @@
         function isAnyModalVisible() {
             return devModal.classList.contains('is-active')
                 || devModal.classList.contains('is-closing')
+                || settingsModal.classList.contains('is-active')
+                || settingsModal.classList.contains('is-closing')
                 || reminderModal.classList.contains('is-active')
                 || reminderModal.classList.contains('is-closing');
+        }
+
+        if (openSettingsBtn) {
+            openSettingsBtn.addEventListener('click', () => showSettingsModal());
+        }
+
+        if (closeSettingsBtn) {
+            closeSettingsBtn.addEventListener('click', () => closeModal(settingsModal));
         }
 
         devModalOverlay.addEventListener('click', function () {
@@ -567,6 +625,7 @@
                 }
 
                 closeModal(devModal, true);
+                closeModal(settingsModal, true);
                 closeModal(reminderModal, true);
             }
         });
