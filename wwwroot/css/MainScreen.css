@@ -246,13 +246,13 @@ body::-webkit-scrollbar {
 .cards-container-wrapper::before,
 .reminders-container::before {
     left: 0;
-    background: linear-gradient(to right, rgba(25, 25, 25, 0.98), rgba(25, 25, 25, 0));
+    background: linear-gradient(to right, var(--app-edge-fade-start), var(--app-edge-fade-end));
 }
 
 .cards-container-wrapper::after,
 .reminders-container::after {
     right: 0;
-    background: linear-gradient(to left, rgba(25, 25, 25, 0.98), rgba(25, 25, 25, 0));
+    background: linear-gradient(to left, var(--app-edge-fade-start), var(--app-edge-fade-end));
 }
 
 .cards-container-wrapper.has-left-overflow::before,
@@ -1487,12 +1487,17 @@ form {
 }
 
 .settings-modal-content {
-    width: min(640px, calc(100vw - 48px));
+    width: min(760px, calc(100vw - 48px));
     border-radius: 24px;
     padding: 24px;
-    background: radial-gradient(140% 120% at 0% 0%, rgba(95, 95, 95, 0.22), rgba(30, 30, 30, 0.98) 58%);
+    background: var(--app-modal-bg);
     box-shadow: 0 22px 46px rgba(0, 0, 0, 0.52);
     color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(18px);
 }
 
 .settings-modal-header {
@@ -1509,13 +1514,6 @@ form {
     font-size: 22px;
     font-weight: 600;
     color: #ffffff;
-}
-
-.settings-modal-header p {
-    margin: 6px 0 0;
-    font-family: 'Inter';
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
 }
 
 .settings-close {
@@ -1535,9 +1533,109 @@ form {
     background: rgba(255, 255, 255, 0.16) !important;
 }
 
+.settings-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(260px, 0.85fr);
+    gap: 14px;
+}
+
+.settings-panel {
+    border-radius: 18px;
+    padding: 18px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.settings-panel-primary {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+}
+
+.settings-panel-heading {
+    margin-bottom: 16px;
+}
+
+.settings-panel-kicker {
+    display: inline-block;
+    margin-bottom: 6px;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.46);
+}
+
+.settings-panel-heading h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #ffffff;
+}
+
+.settings-control-group {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.settings-control-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.68);
+}
+
+.settings-choice-row,
+.settings-choice-grid {
+    display: grid;
+    gap: 10px;
+}
+
+.settings-choice-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.settings-choice-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.settings-choice-btn {
+    min-height: 52px;
+    border-radius: 14px;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: rgba(255, 255, 255, 0.88) !important;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.settings-choice-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.settings-choice-btn.is-active {
+    background: linear-gradient(135deg, rgba(152, 249, 255, 0.18), rgba(135, 38, 183, 0.16)) !important;
+    border-color: rgba(152, 249, 255, 0.38) !important;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+    color: #ffffff !important;
+}
+
+.settings-choice-btn-font[data-value="inter"] {
+    font-family: 'Inter', sans-serif !important;
+}
+
+.settings-choice-btn-font[data-value="manrope"] {
+    font-family: 'Manrope', sans-serif !important;
+}
+
+.settings-choice-btn-font[data-value="plex"] {
+    font-family: 'IBM Plex Sans', sans-serif !important;
+}
+
 .settings-menu {
     display: grid;
     gap: 10px;
+    height: 100%;
+    align-content: start;
 }
 
 .settings-menu-item {
@@ -1550,18 +1648,100 @@ form {
     color: #ffffff;
     font-family: 'Inter';
     font-size: 15px;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.settings-menu-item:hover {
-    background: rgba(255, 255, 255, 0.08) !important;
-    transform: translateY(-1px);
+.settings-sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.settings-sidebar-toggle-copy {
+    display: grid;
+    gap: 4px;
+}
+
+.settings-sidebar-toggle-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.settings-sidebar-toggle-text {
+    font-size: 13px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.62);
 }
 
 .settings-menu-hint {
     font-size: 12px;
+    line-height: 1.5;
     color: rgba(255, 255, 255, 0.6);
+}
+
+.settings-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.settings-switch input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.settings-switch-track {
+    width: 54px;
+    height: 30px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: inline-flex;
+    align-items: center;
+    padding: 3px;
+    box-sizing: border-box;
+    transition: background 0.22s ease, border-color 0.22s ease;
+}
+
+.settings-switch-thumb {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    transition: transform 0.22s ease, background 0.22s ease;
+}
+
+.settings-switch input:checked + .settings-switch-track {
+    background: rgba(40, 202, 66, 0.3);
+    border-color: rgba(40, 202, 66, 0.45);
+}
+
+.settings-switch input:checked + .settings-switch-track .settings-switch-thumb {
+    transform: translateX(24px);
+}
+
+@media (max-width: 760px) {
+    .settings-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-choice-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-sidebar-toggle {
+        align-items: flex-start;
+    }
 }
 
 .reminder-modal-content {
@@ -1815,4 +1995,241 @@ form {
     .reminder-btn {
         width: 100%;
     }
+}
+
+:root {
+    --app-font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --app-bg: #191919;
+    --app-bg-secondary: #191919;
+    --app-panel-bg: radial-gradient(140% 120% at 0% 0%, rgba(95, 95, 95, 0.22), rgba(30, 30, 30, 0.98) 58%);
+    --app-modal-bg: radial-gradient(140% 120% at 0% 0%, rgba(76, 76, 76, 0.14), rgba(24, 24, 24, 0.995) 62%);
+    --app-panel-soft: rgba(255, 255, 255, 0.04);
+    --app-panel-soft-hover: rgba(255, 255, 255, 0.08);
+    --app-panel-shadow: 0 22px 46px rgba(0, 0, 0, 0.52);
+    --app-text-primary: #ffffff;
+    --app-text-secondary: rgba(255, 255, 255, 0.72);
+    --app-text-tertiary: rgba(255, 255, 255, 0.56);
+    --app-line: rgba(255, 255, 255, 0.1);
+    --app-field-bg: rgba(5, 5, 5, 0.42);
+    --app-field-focus: rgba(7, 7, 7, 0.6);
+    --app-nav-text: #aeaeae;
+    --app-settings-trigger: rgba(28, 28, 28, 0.82);
+    --app-edge-fade-start: rgba(25, 25, 25, 0.98);
+    --app-edge-fade-end: rgba(25, 25, 25, 0);
+}
+
+html[data-theme='light'] {
+    --app-bg: #eef2f6;
+    --app-bg-secondary: #f5f7fa;
+    --app-panel-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(246, 248, 252, 1));
+    --app-modal-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.995), rgba(245, 247, 251, 1));
+    --app-panel-soft: rgba(20, 28, 45, 0.045);
+    --app-panel-soft-hover: rgba(20, 28, 45, 0.085);
+    --app-panel-shadow: 0 18px 38px rgba(33, 42, 57, 0.1);
+    --app-text-primary: #18202b;
+    --app-text-secondary: rgba(24, 32, 43, 0.76);
+    --app-text-tertiary: rgba(24, 32, 43, 0.52);
+    --app-line: rgba(24, 32, 43, 0.16);
+    --app-field-bg: rgba(255, 255, 255, 0.88);
+    --app-field-focus: rgba(255, 255, 255, 1);
+    --app-nav-text: #415066;
+    --app-settings-trigger: rgba(255, 255, 255, 0.88);
+    --app-edge-fade-start: rgba(238, 242, 246, 0.98);
+    --app-edge-fade-end: rgba(238, 242, 246, 0);
+}
+
+html[data-font='manrope'] {
+    --app-font-family: 'Manrope', sans-serif;
+}
+
+html[data-font='plex'] {
+    --app-font-family: 'IBM Plex Sans', sans-serif;
+}
+
+html[data-font='manrope'] body,
+html[data-font='manrope'] body *,
+html[data-font='plex'] body,
+html[data-font='plex'] body * {
+    font-family: var(--app-font-family) !important;
+}
+
+body {
+    background: var(--app-bg) !important;
+    color: var(--app-text-primary);
+}
+
+.top-bar {
+    background-color: var(--app-bg-secondary) !important;
+}
+
+.nav-buttons {
+    color: var(--app-nav-text) !important;
+}
+
+.nav-buttons:hover {
+    color: var(--app-text-primary) !important;
+}
+
+.settings-btn {
+    background: var(--app-settings-trigger) !important;
+    color: var(--app-text-primary) !important;
+}
+
+.settings-btn:hover {
+    background: var(--app-panel-soft-hover) !important;
+}
+
+.settings-close {
+    background: var(--app-panel-soft) !important;
+    color: var(--app-text-primary) !important;
+}
+
+.card-bg,
+.note-card-bg,
+.wide-reminder-bg,
+.calendar-section-wrapper .calendar-container,
+.calendar-compact,
+.reminder-modal-content,
+.dev-modal {
+    background: var(--app-panel-bg) !important;
+    box-shadow: var(--app-panel-shadow) !important;
+}
+
+.settings-modal-content {
+    background: var(--app-modal-bg) !important;
+    box-shadow: var(--app-panel-shadow) !important;
+    border: 1px solid var(--app-line) !important;
+    backdrop-filter: blur(12px);
+}
+
+.settings-panel,
+.settings-menu-item,
+.settings-sidebar-toggle,
+.settings-choice-btn {
+    background: var(--app-panel-soft) !important;
+    border-color: var(--app-line) !important;
+}
+
+.settings-choice-btn:hover,
+.settings-close:hover {
+    background: var(--app-panel-soft-hover) !important;
+}
+
+.settings-modal-header h2,
+.settings-panel-heading h3,
+.settings-sidebar-toggle-title,
+.recent-files-label,
+.reminders-label,
+.calendar-section-title,
+.calendar-current-date,
+.calendar-month-year,
+.calendar-nav-btn,
+.calendar-week-day,
+.calendar-reminder-item-time,
+.calendar-reminder-item-title,
+.note-title,
+.reminder-main-text,
+.reminder-date,
+.reminder-time,
+.add-note-text,
+.add-text,
+.note-icon,
+.reminder-modal-header h2,
+.settings-menu-item,
+.settings-choice-btn {
+    color: var(--app-text-primary) !important;
+}
+
+.settings-panel-kicker,
+.settings-control-label,
+.settings-menu-hint,
+.settings-sidebar-toggle-text,
+.note-description,
+.note-timestamp,
+.reminder-description-text,
+.reminder-created-time,
+.calendar-reminder-item-description,
+.calendar-reminder-empty,
+.reminder-modal-header p,
+.reminder-input-label,
+.reminder-repeat span {
+    color: var(--app-text-secondary) !important;
+}
+
+.reminder-input,
+.reminder-select,
+.reminder-textarea {
+    background: var(--app-field-bg) !important;
+    border-color: var(--app-line) !important;
+    color: var(--app-text-primary) !important;
+}
+
+.reminder-input:focus,
+.reminder-select:focus,
+.reminder-textarea:focus {
+    background: var(--app-field-focus) !important;
+}
+
+.reminder-select option {
+    background: var(--app-bg-secondary);
+    color: var(--app-text-primary);
+}
+
+.reminder-btn-secondary {
+    color: var(--app-text-primary) !important;
+    background: var(--app-panel-soft) !important;
+    border-color: var(--app-line) !important;
+}
+
+.reminder-delete-btn {
+    color: var(--app-text-primary) !important;
+    background: var(--app-panel-soft) !important;
+    border-color: var(--app-line) !important;
+}
+
+.settings-switch-track {
+    background: var(--app-panel-soft) !important;
+    border-color: var(--app-line) !important;
+}
+
+.toggle-icon-line {
+    background: var(--app-text-primary) !important;
+}
+
+.scroll-progress {
+    background: var(--app-panel-soft) !important;
+}
+
+.card-bg,
+.note-card-bg,
+.wide-reminder-bg,
+.calendar-section-wrapper .calendar-container,
+.calendar-compact,
+.settings-panel,
+.settings-menu-item,
+.settings-sidebar-toggle,
+.reminder-modal-content,
+.dev-modal {
+    border: 1px solid var(--app-line) !important;
+}
+
+html[data-theme='light'] .top-bar {
+    border-bottom: 1px solid var(--app-line);
+}
+
+html[data-theme='light'] .blur {
+    opacity: 0;
+}
+
+html[data-theme='light'] .card-bg,
+html[data-theme='light'] .note-card-bg,
+html[data-theme='light'] .wide-reminder-bg,
+html[data-theme='light'] .calendar-section-wrapper .calendar-container,
+html[data-theme='light'] .calendar-compact,
+html[data-theme='light'] .settings-panel,
+html[data-theme='light'] .settings-menu-item,
+html[data-theme='light'] .settings-sidebar-toggle,
+html[data-theme='light'] .settings-modal-content,
+html[data-theme='light'] .reminder-modal-content {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78), var(--app-panel-shadow) !important;
 }

@@ -16,7 +16,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] MainScreen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="~/js/ui-settings.js" asp-append-version="true"></script>
+    <script>
+        window.NoteFlowUiSettings?.boot();
+    </script>
     <link rel="stylesheet" href="~/css/MainScreen.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/settings-modal.css" asp-append-version="true" />
 </head>
 
 <body>
@@ -33,49 +41,73 @@
     <button class="home-btn" onclick="goHome()">Домой</button> -->
 
     <!-- Всплывающее окно -->
-    <div id="devModal" class="dev-modal">
+    <div id="devModal" class="dev-modal" hidden>
         <div class="dev-modal-content">В разработке...</div>
     </div>
     <div id="devModalOverlay" class="dev-modal-overlay"></div>
 
-    <div id="settingsModal" class="settings-modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div id="settingsModal" class="settings-modal" aria-hidden="true" role="dialog" aria-modal="true" hidden>
         <div class="settings-modal-content">
             <div class="settings-modal-header">
-                <div>
-                    <h2>Настройки</h2>
-                    <p>Скоро здесь появятся параметры и персонализация.</p>
-                </div>
+                <h2>Настройки</h2>
                 <button class="settings-close" type="button" id="closeSettingsBtn" aria-label="Закрыть">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
 
-            <div class="settings-menu">
-                <button type="button" class="settings-menu-item">
-                    <span>Аккаунт</span>
-                    <span class="settings-menu-hint">Профиль, синхронизация</span>
-                </button>
-                <button type="button" class="settings-menu-item">
-                    <span>Внешний вид</span>
-                    <span class="settings-menu-hint">Темы, шрифты</span>
-                </button>
-                <button type="button" class="settings-menu-item">
-                    <span>Уведомления</span>
-                    <span class="settings-menu-hint">Напоминания, звук</span>
-                </button>
-                <button type="button" class="settings-menu-item">
-                    <span>Горячие клавиши</span>
-                    <span class="settings-menu-hint">Навигация, быстрые действия</span>
-                </button>
-                <button type="button" class="settings-menu-item">
-                    <span>О приложении</span>
-                    <span class="settings-menu-hint">Версия, лицензии</span>
-                </button>
+            <div class="settings-layout">
+                <section class="settings-panel settings-panel-primary">
+                    <div class="settings-panel-heading">
+                        <span class="settings-panel-kicker">Персонализация</span>
+                        <h3>Оформление интерфейса</h3>
+                    </div>
+
+                    <div class="settings-control-group">
+                        <div class="settings-control-label">Тема</div>
+                        <div class="settings-choice-row">
+                            <button type="button" class="settings-choice-btn" data-setting="theme" data-value="dark">Тёмная</button>
+                            <button type="button" class="settings-choice-btn" data-setting="theme" data-value="light">Светлая</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-control-group">
+                        <div class="settings-control-label">Шрифт</div>
+                        <div class="settings-choice-grid">
+                            <button type="button" class="settings-choice-btn settings-choice-btn-font" data-setting="font" data-value="inter">Inter</button>
+                            <button type="button" class="settings-choice-btn settings-choice-btn-font" data-setting="font" data-value="manrope">Manrope</button>
+                            <button type="button" class="settings-choice-btn settings-choice-btn-font" data-setting="font" data-value="plex">IBM Plex Sans</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="settings-panel settings-panel-secondary">
+                    <div class="settings-menu">
+                        <div class="settings-menu-item">
+                            <span>Горячие клавиши</span>
+                        </div>
+                        <div class="settings-menu-item">
+                            <span>О приложении</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="settings-sidebar-toggle">
+                <div class="settings-sidebar-toggle-copy">
+                    <div class="settings-sidebar-toggle-title">Автопоказывать сайдбар редактора</div>
+                    <div class="settings-sidebar-toggle-text">Если выключить, экран редактирования будет открываться уже со скрытым сайдбаром.</div>
+                </div>
+                <label class="settings-switch" for="editorSidebarVisibleToggle">
+                    <input type="checkbox" id="editorSidebarVisibleToggle" />
+                    <span class="settings-switch-track">
+                        <span class="settings-switch-thumb"></span>
+                    </span>
+                </label>
             </div>
         </div>
     </div>
 
-    <div id="reminderModal" class="reminder-modal" aria-hidden="true">
+    <div id="reminderModal" class="reminder-modal" aria-hidden="true" hidden>
         <div id="reminderModalContent" class="reminder-modal-content gradient-border">
             <div class="reminder-modal-glow reminder-modal-glow-left"></div>
             <div class="reminder-modal-glow reminder-modal-glow-right"></div>
@@ -401,6 +433,14 @@
             location.reload();
         });
 
+        const uiSettingsApi = window.NoteFlowUiSettings;
+        const uiSettingsDefaults = uiSettingsApi?.defaults ?? {
+            theme: 'dark',
+            font: 'inter',
+            editorSidebarVisible: true
+        };
+        let uiSettings = uiSettingsApi?.read() ?? { ...uiSettingsDefaults };
+
         const remindersData = @Html.Raw(JsonSerializer.Serialize(
             Model.Reminders.Select(r => new
             {
@@ -520,8 +560,29 @@
         const devModalOverlay = document.getElementById('devModalOverlay');
         const openSettingsBtn = document.getElementById('openSettingsBtn');
         const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+        const editorSidebarVisibleToggle = document.getElementById('editorSidebarVisibleToggle');
+        const settingsChoiceButtons = document.querySelectorAll('.settings-choice-btn');
         const MODAL_ANIMATION_MS = 260;
         let activeModal = null;
+
+        function persistUiSettings(nextSettings) {
+            uiSettings = uiSettingsApi?.write(nextSettings) ?? { ...uiSettings, ...nextSettings };
+            return uiSettings;
+        }
+
+        function syncSettingsControls() {
+            settingsChoiceButtons.forEach((button) => {
+                const isActive = uiSettings[button.dataset.setting] === button.dataset.value;
+                button.classList.toggle('is-active', isActive);
+                button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+            });
+
+            if (editorSidebarVisibleToggle) {
+                editorSidebarVisibleToggle.checked = uiSettings.editorSidebarVisible;
+            }
+        }
+
+        syncSettingsControls();
 
         function showDevModal() {
             openModal(devModal);
@@ -549,10 +610,12 @@
             }
 
             activeModal = modalElement;
+            modalElement.hidden = false;
             devModalOverlay.classList.add('is-visible');
             modalElement.classList.remove('is-closing');
             modalElement.classList.add('is-active');
             modalElement.setAttribute('aria-hidden', 'false');
+            syncModalVisibilityState();
         }
 
         function closeModal(modalElement, instantly = false) {
@@ -565,12 +628,14 @@
             if (instantly) {
                 modalElement.classList.remove('is-active');
                 modalElement.classList.remove('is-closing');
+                modalElement.hidden = true;
             } else {
                 modalElement.classList.remove('is-active');
                 modalElement.classList.add('is-closing');
 
                 setTimeout(() => {
                     modalElement.classList.remove('is-closing');
+                    modalElement.hidden = true;
                     if (activeModal === modalElement) {
                         activeModal = null;
                     }
@@ -578,6 +643,8 @@
                     if (!isAnyModalVisible()) {
                         devModalOverlay.classList.remove('is-visible');
                     }
+
+                    syncModalVisibilityState();
                 }, MODAL_ANIMATION_MS);
             }
 
@@ -588,6 +655,8 @@
             if (!isAnyModalVisible()) {
                 devModalOverlay.classList.remove('is-visible');
             }
+
+            syncModalVisibilityState();
         }
 
         function isAnyModalVisible() {
@@ -599,12 +668,38 @@
                 || reminderModal.classList.contains('is-closing');
         }
 
+        function syncModalVisibilityState() {
+            document.body.classList.toggle('modal-open', isAnyModalVisible());
+        }
+
         if (openSettingsBtn) {
             openSettingsBtn.addEventListener('click', () => showSettingsModal());
         }
 
         if (closeSettingsBtn) {
             closeSettingsBtn.addEventListener('click', () => closeModal(settingsModal));
+        }
+
+        settingsChoiceButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const settingName = button.dataset.setting;
+                const settingValue = button.dataset.value;
+
+                if (!settingName || !settingValue) {
+                    return;
+                }
+
+                persistUiSettings({ [settingName]: settingValue });
+                syncSettingsControls();
+            });
+        });
+
+        if (editorSidebarVisibleToggle) {
+            editorSidebarVisibleToggle.addEventListener('change', (event) => {
+                const nextValue = Boolean(event.target.checked);
+                persistUiSettings({ editorSidebarVisible: nextValue });
+                syncSettingsControls();
+            });
         }
 
         devModalOverlay.addEventListener('click', function () {
@@ -614,6 +709,7 @@
             }
 
             closeModal(devModal, true);
+            closeModal(settingsModal, true);
             closeModal(reminderModal, true);
         });
 
