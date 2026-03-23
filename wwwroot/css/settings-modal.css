@@ -1,0 +1,281 @@
+:root {
+    --settings-surface: rgba(22, 22, 20, 0.96);
+    --settings-panel: rgba(255, 255, 255, 0.03);
+    --settings-panel-muted: rgba(255, 255, 255, 0.045);
+    --settings-border: rgba(255, 255, 255, 0.08);
+    --settings-text: #f3f0ea;
+    --settings-text-muted: rgba(243, 240, 234, 0.58);
+    --settings-text-soft: rgba(243, 240, 234, 0.72);
+    --settings-hover: rgba(255, 255, 255, 0.05);
+    --settings-active: rgba(255, 255, 255, 0.08);
+    --settings-active-border: rgba(255, 255, 255, 0.18);
+    --settings-shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+    --settings-overlay: rgba(7, 7, 8, 0.44);
+    --settings-switch-off: rgba(255, 255, 255, 0.08);
+    --settings-switch-on: #ffffff;
+    --settings-switch-thumb: #ffffff;
+    --settings-switch-thumb-on: #111111;
+}
+
+html[data-theme='light'] {
+    --settings-surface: rgba(244, 241, 235, 0.98);
+    --settings-panel: rgba(23, 27, 34, 0.035);
+    --settings-panel-muted: rgba(23, 27, 34, 0.05);
+    --settings-border: rgba(23, 27, 34, 0.11);
+    --settings-text: #20252d;
+    --settings-text-muted: rgba(32, 37, 45, 0.46);
+    --settings-text-soft: rgba(32, 37, 45, 0.68);
+    --settings-hover: rgba(23, 27, 34, 0.05);
+    --settings-active: rgba(23, 27, 34, 0.07);
+    --settings-active-border: rgba(23, 27, 34, 0.18);
+    --settings-shadow: 0 24px 58px rgba(27, 33, 41, 0.14);
+    --settings-overlay: rgba(20, 22, 28, 0.3);
+    --settings-switch-off: rgba(32, 37, 45, 0.12);
+    --settings-switch-on: #ffffff;
+    --settings-switch-thumb: #ffffff;
+    --settings-switch-thumb-on: #20252d;
+}
+
+.settings-modal[hidden],
+.dev-modal[hidden] {
+    display: none !important;
+}
+
+.dev-modal-overlay {
+    background: var(--settings-overlay) !important;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+.settings-modal {
+    z-index: 10002 !important;
+}
+
+.settings-modal-content {
+    width: min(700px, calc(100vw - 40px)) !important;
+    padding: 24px !important;
+    border-radius: 28px !important;
+    background: var(--settings-surface) !important;
+    border: 1px solid var(--settings-border) !important;
+    box-shadow: var(--settings-shadow) !important;
+    color: var(--settings-text) !important;
+    gap: 16px !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+}
+
+.settings-modal-header {
+    margin-bottom: 6px !important;
+}
+
+.settings-modal-header h2 {
+    font-size: 19px !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.02em;
+    color: var(--settings-text) !important;
+}
+
+.settings-close {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 999px !important;
+    background: var(--settings-panel-muted) !important;
+    border: 1px solid var(--settings-border) !important;
+    color: var(--settings-text) !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.settings-close:hover {
+    background: var(--settings-hover) !important;
+}
+
+.settings-layout {
+    grid-template-columns: minmax(0, 1.18fr) minmax(220px, 0.82fr) !important;
+    gap: 12px !important;
+}
+
+.settings-panel,
+.settings-sidebar-toggle {
+    border-radius: 22px !important;
+    padding: 18px !important;
+    background: var(--settings-panel) !important;
+    border: 1px solid var(--settings-border) !important;
+    box-shadow: none !important;
+}
+
+.settings-panel-primary,
+.settings-panel-secondary {
+    background: var(--settings-panel) !important;
+}
+
+.settings-panel-heading {
+    margin-bottom: 18px !important;
+}
+
+.settings-panel-kicker {
+    margin-bottom: 8px !important;
+    font-size: 11px !important;
+    letter-spacing: 0.14em !important;
+    color: var(--settings-text-muted) !important;
+}
+
+.settings-panel-heading h3 {
+    font-size: 17px !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.02em;
+    color: var(--settings-text) !important;
+}
+
+.settings-control-group {
+    gap: 8px !important;
+    margin-top: 14px !important;
+}
+
+.settings-control-label {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: var(--settings-text-soft) !important;
+}
+
+.settings-choice-row,
+.settings-choice-grid {
+    gap: 8px !important;
+}
+
+.settings-choice-btn {
+    min-height: 48px !important;
+    padding: 12px 14px !important;
+    border-radius: 16px !important;
+    background: transparent !important;
+    border: 1px solid var(--settings-border) !important;
+    color: var(--settings-text) !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease !important;
+}
+
+.settings-choice-btn:hover {
+    background: var(--settings-hover) !important;
+}
+
+.settings-choice-btn.is-active {
+    background: var(--settings-active) !important;
+    border-color: var(--settings-active-border) !important;
+    box-shadow: none !important;
+    color: var(--settings-text) !important;
+}
+
+.settings-choice-btn-font[data-value='inter'] {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+
+.settings-choice-btn-font[data-value='manrope'] {
+    font-family: 'Manrope', sans-serif !important;
+}
+
+.settings-choice-btn-font[data-value='plex'] {
+    font-family: 'IBM Plex Sans', sans-serif !important;
+}
+
+.settings-menu {
+    gap: 8px !important;
+}
+
+.settings-menu-item {
+    min-height: 48px !important;
+    padding: 12px 14px !important;
+    border-radius: 16px !important;
+    background: transparent !important;
+    border: 1px solid var(--settings-border) !important;
+    color: var(--settings-text) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    align-items: center !important;
+}
+
+.settings-menu-hint {
+    display: none !important;
+}
+
+.settings-sidebar-toggle {
+    gap: 16px !important;
+    background: var(--settings-panel-muted) !important;
+}
+
+.settings-sidebar-toggle-copy {
+    gap: 3px !important;
+}
+
+.settings-sidebar-toggle-title {
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    color: var(--settings-text) !important;
+}
+
+.settings-sidebar-toggle-text {
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+    color: var(--settings-text-soft) !important;
+}
+
+.settings-switch-track {
+    width: 52px !important;
+    height: 30px !important;
+    padding: 3px !important;
+    background: var(--settings-switch-off) !important;
+    border: 1px solid var(--settings-border) !important;
+    box-shadow: none !important;
+}
+
+.settings-switch-thumb {
+    width: 22px !important;
+    height: 22px !important;
+    background: var(--settings-switch-thumb) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
+}
+
+.settings-switch input:checked + .settings-switch-track {
+    background: var(--settings-switch-on) !important;
+    border-color: var(--settings-switch-on) !important;
+}
+
+.settings-switch input:checked + .settings-switch-track .settings-switch-thumb {
+    transform: translateX(22px) !important;
+    background: var(--settings-switch-thumb-on) !important;
+}
+
+body.modal-open .settings-btn,
+body.modal-open .save-button,
+body.modal-open .delete-button,
+body.modal-open .toggle-sidebar-btn {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    box-shadow: none !important;
+}
+
+body.modal-open .save-button::before {
+    opacity: 0 !important;
+}
+
+@media (max-width: 760px) {
+    .settings-modal-content {
+        width: min(700px, calc(100vw - 24px)) !important;
+        padding: 18px !important;
+        border-radius: 22px !important;
+    }
+
+    .settings-layout {
+        grid-template-columns: 1fr !important;
+    }
+
+    .settings-choice-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .settings-sidebar-toggle {
+        align-items: flex-start !important;
+    }
+}
