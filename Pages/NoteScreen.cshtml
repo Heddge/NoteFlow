@@ -205,26 +205,35 @@
             <div class="recent-files-title">Недавние файлы</div>
             <div class="file-list" id="recentFilesList">
                 @* Место для цикла из бэкенда *@
-                @* @foreach (var note in CacheService.RecentNotes) 
+                @foreach (var note in @Model.GetNotesDict()) 
                 {
-                    <div class="file-item" onclick="window.location.href='/NoteScreen?notePath=@note.Path'">
-                        <div class="file-icon">N</div>
-                        <div class="file-title">@note.Title</div>
-                        <form method="post" asp-page-handler="DeleteNote" style="margin:0">
-                            <input type="hidden" name="path" value="@note.Path" />
-                            <button type="submit" class="file-remove-btn" onclick="event.stopPropagation();">
+                    <div class="file-item-row">
+                        <form method="post" asp-page-handler="RedirectToNote">
+                            <input type="hidden" name="path" value="@note.Key" />
+                            <button type="submit" class="file-item">
+                                <div class="file-icon">N</div>
+                                <div class="file-title">@note.Value.NoteTitle</div>
+                            </button>
+                        </form>
+                        <form method="post" asp-page-handler="DeleteNoteFromNoteScreen" class="file-remove-form">
+                            <input type="hidden" name="path" value="@note.Key" />
+                            <button type="submit" class="file-remove-btn" aria-label="Delete note">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
                             </button>
                         </form>
                     </div>
-                } *@
+                }
 
-                <div class="file-item" onclick="showDevModal()">
-                    <div class="file-icon">N</div>
-                    <div class="file-title">Пример заметки</div>
-                    <button class="file-remove-btn" onclick="event.stopPropagation();">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                <div class="file-item-row">
+                    <button type="button" class="file-item" onclick="showDevModal()">
+                        <div class="file-icon">N</div>
+                        <div class="file-title">Пример заметки</div>
                     </button>
+                    <div class="file-remove-form">
+                        <button type="button" class="file-remove-btn" onclick="event.stopPropagation(); showDevModal();" aria-label="Delete note">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

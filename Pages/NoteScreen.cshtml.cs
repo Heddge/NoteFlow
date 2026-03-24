@@ -75,5 +75,21 @@ namespace NoteFlow.Pages
             System.IO.File.Delete(path);
             return RedirectToPage("/MainScreen");
         }
+
+        public Dictionary<string, Note> GetNotesDict() =>
+            cache.currNotesDict;
+
+        public IActionResult OnPostRedirectToNote(string path)
+        {
+                return RedirectToPage("NoteScreen", new { notePath = path });
+
+        }
+
+        public IActionResult OnPostDeleteNoteFromNoteScreen(string path)
+        {
+            cache.DeleteNoteFromCurrentNotes(path);
+            System.IO.File.Delete(path);
+            return RedirectToPage("/NoteScreen");
+        }
     }
 }

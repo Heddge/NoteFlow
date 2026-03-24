@@ -358,10 +358,19 @@ body::-webkit-scrollbar {
     width: 100%; 
 }
 
+.file-item-row {
+    position: relative;
+    width: 100%;
+}
+
+.file-item-row form {
+    margin: 0;
+}
+
 .file-item {
     display: flex;
     align-items: center;
-    padding: 10px 12px;
+    padding: 10px 52px 10px 12px;
     cursor: pointer;
     transition: all 0.2s;
     background: rgba(30, 30, 30, 0.35);
@@ -370,7 +379,10 @@ body::-webkit-scrollbar {
     border-radius: 10px;
     border: 0.5px solid transparent;
     box-sizing: border-box;
+    width: 100%;
+    text-align: left;
 }
+
 .file-item:hover { 
     background: rgba(45, 45, 45, 0.45); 
     border: 0.5px solid rgba(255, 255, 255, 0.06); 
@@ -399,26 +411,51 @@ body::-webkit-scrollbar {
     text-overflow: ellipsis; 
     flex: 1; 
     white-space: nowrap;
-    padding-right: 24px;
+    padding-right: 0;
+}
+
+.file-remove-form {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 44px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
 }
 
 .file-remove-btn {
-    position: absolute; 
-    right: 10px; 
+    position: static; 
+    width: 28px;
+    height: 28px;
     background: none; 
     border: none; 
     color: #ff4444;
     cursor: pointer; 
-    opacity: 0; 
-    transition: all 0.2s ease;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateX(6px);
+    pointer-events: none;
     display: flex; 
     align-items: center; 
     justify-content: center; 
-    padding: 4px; 
-    z-index: 10;
+    padding: 4px;
+    border-radius: 8px;
+    z-index: 2;
 }
-.file-item:hover .file-remove-btn { opacity: 0.7; }
-.file-remove-btn:hover { opacity: 1 !important; transform: scale(1.1); }
+.file-item-row:hover .file-remove-btn,
+.file-item-row:focus-within .file-remove-btn {
+    opacity: 0.75;
+    transform: translateX(0);
+    pointer-events: auto;
+}
+.file-remove-btn:hover {
+    opacity: 1 !important;
+    transform: scale(1.1) !important;
+}
 
 .dev-modal,
 .settings-modal {
