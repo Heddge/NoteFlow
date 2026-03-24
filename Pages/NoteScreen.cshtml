@@ -177,7 +177,7 @@
 
     <aside id="sidebar" class="sidebar">
         <div class="sidebar-section">
-            <div class="sidebar-item" onclick="showDevModal()">
+            <div id="sidebarSearchBtn" class="sidebar-item" onclick="toggleSidebarSearch()">
                 <div class="sidebar-icon"><svg width="22" height="22" viewBox="0 0 27 27" fill="none"><circle cx="11" cy="11" r="8" stroke="#A6A6A6" stroke-width="2"/><path d="M18.5 17.5L25 24" stroke="#A6A6A6" stroke-width="2"/></svg></div>
                 <div class="sidebar-title">Поиск</div>
             </div>
@@ -201,13 +201,19 @@
             </div>
         </div>
 
+        <div id="sidebarSearchPanel" class="sidebar-search-panel" aria-hidden="true">
+            <form id="sidebarSearchForm" class="sidebar-search-form">
+                <input id="sidebarSearchInput" class="sidebar-search-input" type="text" placeholder="Search by note title" />
+            </form>
+        </div>
+
         <div class="recent-files-section">
-            <div class="recent-files-title">Недавние файлы</div>
+            <div class="recent-files-title" id="recentFilesTitle">Недавние файлы</div>
             <div class="file-list" id="recentFilesList">
                 @* Место для цикла из бэкенда *@
                 @foreach (var note in @Model.GetNotesDict()) 
                 {
-                    <div class="file-item-row">
+                    <div class="file-item-row searchable-note-row" data-note-title="@note.Value.NoteTitle">
                         <form method="post" asp-page-handler="RedirectToNote">
                             <input type="hidden" name="path" value="@note.Key" />
                             <button type="submit" class="file-item">
@@ -223,19 +229,8 @@
                         </form>
                     </div>
                 }
-
-                <div class="file-item-row">
-                    <button type="button" class="file-item" onclick="showDevModal()">
-                        <div class="file-icon">N</div>
-                        <div class="file-title">Пример заметки</div>
-                    </button>
-                    <div class="file-remove-form">
-                        <button type="button" class="file-remove-btn" onclick="event.stopPropagation(); showDevModal();" aria-label="Delete note">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                        </button>
-                    </div>
-                </div>
             </div>
+            <div id="sidebarSearchEmpty" class="sidebar-search-empty" hidden>No matching notes</div>
         </div>
     </aside>
 
@@ -262,7 +257,17 @@
         const closeSettingsBtn = document.getElementById('closeSettingsBtn');
         const editorSidebarVisibleToggle = document.getElementById('editorSidebarVisibleToggle');
         const settingsChoiceButtons = document.querySelectorAll('.settings-choice-btn');
+        const sidebarSearchBtn = document.getElementById('sidebarSearchBtn');
+        const sidebarSearchPanel = document.getElementById('sidebarSearchPanel');
+        const sidebarSearchForm = document.getElementById('sidebarSearchForm');
+        const sidebarSearchInput = document.getElementById('sidebarSearchInput');
+        const sidebarSearchEmpty = document.getElementById('sidebarSearchEmpty');
+        const recentFilesTitle = document.getElementById('recentFilesTitle');
         const MODAL_ANIMATION_MS = 260;
+        const DEFAULT_RECENT_FILES_TITLE = recentFilesTitle?.textContent ?? 'Recent files';
+        const searchableNoteRows = Array.from(document.querySelectorAll('.searchable-note-row'));
+        const demoNoteRows = Array.from(document.querySelectorAll('.demo-note-row'));
+        let isSidebarSearchOpen = false;
         let activeModal = null;
         
         // Открытие меню
@@ -357,6 +362,81 @@ function changeFontSize(size) { applyStyleToSelection('font-' + size); }
             window.location.href = "/MainScreen";
         }
 
+        function resetSidebarSearchResults() {
+            searchableNoteRows.forEach((row) => {
+                row.hidden = false;
+            });
+
+            demoNoteRows.forEach((row) => {
+                row.hidden = false;
+            });
+
+            if (sidebarSearchEmpty) {
+                sidebarSearchEmpty.hidden = true;
+            }
+
+            if (recentFilesTitle) {
+                recentFilesTitle.textContent = DEFAULT_RECENT_FILES_TITLE;
+            }
+        }
+
+        function runSidebarSearch() {
+            const query = (sidebarSearchInput?.value ?? '').trim().toLowerCase();
+
+            if (!query) {
+                resetSidebarSearchResults();
+                return;
+            }
+
+            let matchedCount = 0;
+
+            searchableNoteRows.forEach((row) => {
+                const noteTitle = (row.dataset.noteTitle ?? '').toLowerCase();
+                const isMatch = noteTitle.includes(query);
+                row.hidden = !isMatch;
+
+                if (isMatch) {
+                    matchedCount += 1;
+                }
+            });
+
+            demoNoteRows.forEach((row) => {
+                row.hidden = true;
+            });
+
+            if (sidebarSearchEmpty) {
+                sidebarSearchEmpty.hidden = matchedCount > 0;
+            }
+
+            if (recentFilesTitle) {
+                recentFilesTitle.textContent = `Search results (${matchedCount})`;
+            }
+        }
+
+        function toggleSidebarSearch(forceOpen) {
+            if (!sidebarSearchPanel) {
+                return;
+            }
+
+            const nextOpenState = typeof forceOpen === 'boolean' ? forceOpen : !isSidebarSearchOpen;
+            isSidebarSearchOpen = nextOpenState;
+
+            sidebarSearchPanel.classList.toggle('is-open', isSidebarSearchOpen);
+            sidebarSearchPanel.setAttribute('aria-hidden', isSidebarSearchOpen ? 'false' : 'true');
+            sidebarSearchBtn?.classList.toggle('is-active', isSidebarSearchOpen);
+
+            if (isSidebarSearchOpen) {
+                requestAnimationFrame(() => sidebarSearchInput?.focus());
+                return;
+            }
+
+            if (sidebarSearchInput) {
+                sidebarSearchInput.value = '';
+            }
+
+            resetSidebarSearchResults();
+        }
+
         function persistUiSettings(nextSettings) {
             uiSettings = uiSettingsApi?.write(nextSettings) ?? { ...uiSettings, ...nextSettings };
             return uiSettings;
@@ -392,6 +472,28 @@ function changeFontSize(size) { applyStyleToSelection('font-' + size); }
         toggleBtn.addEventListener('click', () => {
             setSidebarCollapsed(!isCollapsed);
         });
+
+        if (sidebarSearchForm) {
+            sidebarSearchForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                runSidebarSearch();
+            });
+        }
+
+        if (sidebarSearchInput) {
+            sidebarSearchInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    runSidebarSearch();
+                    return;
+                }
+
+                if (event.key === 'Escape') {
+                    event.preventDefault();
+                    toggleSidebarSearch(false);
+                }
+            });
+        }
 
         function showDevModal() {
             openModal(devModal);
