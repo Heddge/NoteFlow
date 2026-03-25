@@ -461,11 +461,11 @@ body::-webkit-scrollbar {
     width: 150px;
     height: 22px;
     left: 15px;
-    top: 62px;
+    top: 66px;
     font-family: 'Inter';
     font-weight: 600;
     font-size: 18px;
-    line-height: 22px;
+    line-height: 20px;
     display: flex;
     align-items: center;
     color: #DADADA;
@@ -481,16 +481,17 @@ body::-webkit-scrollbar {
 .note-description {
     position: absolute;
     width: 150px;
-    height: 70px;
+    height: 56px;
     left: 15px;
-    top: 85px !important;
+    top: 92px !important;
     font-family: 'Inter';
     font-weight: 500;
-    font-size: 19px;
-    line-height: 1.2;
+    font-size: 15px;
+    line-height: 1.25;
     color: #A9A49C;
     overflow: hidden;
     display: -webkit-box;
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     word-break: break-word;
     text-align: left;
@@ -498,7 +499,7 @@ body::-webkit-scrollbar {
 
 .note-icon {
     position: absolute;
-    top: 35px;
+    top: 30px;
     left: 15px;
     font-family: 'Inter', monospace;
     font-weight: 900;
@@ -1371,11 +1372,11 @@ form {
 }
 
 .note-title {
-    top: 36px;
+    top: 66px;
 }
 
 .note-description {
-    top: 64px !important;
+    top: 92px !important;
 }
 
 .reminder-description-text {
@@ -2238,21 +2239,23 @@ html[data-theme='light'] .reminder-modal-content {
 }
 
 .note-icon {
-    top: 36px !important;
+    top: 30px !important;
     left: 16px !important;
     font-size: 21px !important;
 }
 
 .note-title {
-    top: 40px !important;
-    left: 50px !important;
-    width: 110px !important;
-    max-width: 110px !important;
+    top: 66px !important;
+    left: 16px !important;
+    width: 148px !important;
+    max-width: 148px !important;
     line-height: 20px !important;
 }
 
 .note-description {
-    top: 70px !important;
+    top: 92px !important;
+    left: 16px !important;
+    width: 148px !important;
 }
 
 .reminder-delete-form {
