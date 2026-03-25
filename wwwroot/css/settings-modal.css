@@ -52,12 +52,12 @@ html[data-theme='light'] {
 }
 
 .settings-modal-content {
-    width: min(700px, calc(100vw - 40px)) !important;
+    width: min(580px, calc(100vw - 40px)) !important;
     padding: 24px !important;
-    border-radius: 28px !important;
+    border-radius: 24px !important;
     background: var(--settings-surface) !important;
     border: 1px solid var(--settings-border) !important;
-    box-shadow: var(--settings-shadow) !important;
+    box-shadow: 0 20px 52px rgba(0, 0, 0, 0.24) !important;
     color: var(--settings-text) !important;
     gap: 16px !important;
     backdrop-filter: blur(16px) !important;
@@ -91,13 +91,13 @@ html[data-theme='light'] {
 }
 
 .settings-layout {
-    grid-template-columns: minmax(0, 1.18fr) minmax(220px, 0.82fr) !important;
-    gap: 12px !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
 }
 
 .settings-panel,
 .settings-sidebar-toggle {
-    border-radius: 22px !important;
+    border-radius: 18px !important;
     padding: 18px !important;
     background: var(--settings-panel) !important;
     border: 1px solid var(--settings-border) !important;
@@ -121,7 +121,7 @@ html[data-theme='light'] {
 }
 
 .settings-panel-heading h3 {
-    font-size: 17px !important;
+    font-size: 16px !important;
     font-weight: 600 !important;
     letter-spacing: -0.02em;
     color: var(--settings-text) !important;
@@ -262,7 +262,7 @@ body.modal-open .save-button::before {
 
 @media (max-width: 760px) {
     .settings-modal-content {
-        width: min(700px, calc(100vw - 24px)) !important;
+        width: min(580px, calc(100vw - 24px)) !important;
         padding: 18px !important;
         border-radius: 22px !important;
     }

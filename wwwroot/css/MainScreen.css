@@ -2232,3 +2232,53 @@ html[data-theme='light'] .settings-modal-content,
 html[data-theme='light'] .reminder-modal-content {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78), var(--app-panel-shadow) !important;
 }
+
+.scroll-progress {
+    display: none !important;
+}
+
+.note-icon {
+    top: 36px !important;
+    left: 16px !important;
+    font-size: 21px !important;
+}
+
+.note-title {
+    top: 40px !important;
+    left: 50px !important;
+    width: 110px !important;
+    max-width: 110px !important;
+    line-height: 20px !important;
+}
+
+.note-description {
+    top: 70px !important;
+}
+
+.reminder-delete-form {
+    top: 6px !important;
+    right: 14px !important;
+}
+
+.reminder-delete-btn {
+    width: 24px;
+    height: 24px;
+    line-height: 22px;
+}
+
+.wide-reminder-bg {
+    border: 1px solid var(--app-line) !important;
+}
+
+.wide-reminder-bg::before {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03)) !important;
+    opacity: 0.75;
+}
+
+.wide-reminder-bg::after {
+    display: none !important;
+}
+
+html[data-theme='light'] .wide-reminder-bg::before {
+    background: linear-gradient(180deg, rgba(32, 37, 45, 0.12), rgba(32, 37, 45, 0.02)) !important;
+}
