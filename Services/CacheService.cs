@@ -36,22 +36,32 @@ public class CacheService
         currReminders = currReminders.OrderBy(s => s.ReminderExpires).ToList();
     }
 
-    public void UpdateNoteInCurrentNotes(string title, string content, string newPath, string Path)
+    public void UpdateNoteInCurrentNotes(string title, string content, string newPath, string oldPath)
     {
-        if (currNotesDict.ContainsKey(Path))
-            try
+        if (!currNotesDict.TryGetValue(oldPath, out Note? temp))
+            return;
+
+        try
+        {
+            temp.NoteContent = content;
+            temp.NoteTitle = Note.ExtractTitleFromPath(newPath);
+            temp.NoteEdited = DateTime.Now;
+            temp.NotePath = newPath;
+
+            if (!PathsEqual(oldPath, newPath))
             {
-                Note temp = currNotesDict[Path];
-                temp.NoteContent = content;
-                temp.NoteTitle = title;
-                temp.NoteEdited = DateTime.Now;
-                temp.NotePath = newPath;
-                currNotesDict = currNotesDict.OrderByDescending(s => s.Value.NoteEdited).ToDictionary();
+                currNotesDict.Remove(oldPath);
+                currNotesDict[newPath] = temp;
             }
-            catch (NullReferenceException ee)
-            {
-                Console.WriteLine($"Something went wrong: {ee.Message}");
-            }
+
+            currNotesDict = currNotesDict
+                .OrderByDescending(s => s.Value.NoteEdited)
+                .ToDictionary();
+        }
+        catch (NullReferenceException ee)
+        {
+            Console.WriteLine($"Something went wrong: {ee.Message}");
+        }
     }
 
     public void DeleteNoteFromCurrentNotes(string Path) =>
@@ -112,5 +122,14 @@ public class CacheService
         
         foreach (string path in deletedPaths)
             DeleteNoteFromCurrentNotes(path);
+    }
+
+    private static bool PathsEqual(string left, string right)
+    {
+        StringComparison comparison = OperatingSystem.IsWindows()
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
+
+        return string.Equals(left, right, comparison);
     }
 }

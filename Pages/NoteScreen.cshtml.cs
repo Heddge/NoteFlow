@@ -59,13 +59,14 @@ namespace NoteFlow.Pages
                 // updating path from old to new (with new filename)
                 _path = storage.SaveEditedNote(NoteTitle, NoteContent, _path);
                 cache.UpdateNoteInCurrentNotes(NoteTitle, NoteContent, _path, oldPath);
+                return RedirectToPage("NoteScreen", new { notePath = _path });
             }
 
             // if user doesn`t need to edit note => create new note \/
             string newNotePath = storage.SaveNewNote(NoteTitle, NoteContent);
             cache.AddNoteToCurrentNotes(newNotePath);
 
-            return Page();
+            return RedirectToPage("NoteScreen", new { notePath = newNotePath });
 
         }
 

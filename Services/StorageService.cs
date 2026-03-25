@@ -1,6 +1,7 @@
 // Services/StorageService.cs
 using System;
 using System.IO;
+using System.Text;
 using NoteFlow.Models;
 using NoteFlow.Pages;
 
@@ -8,6 +9,7 @@ namespace NoteFlow.Services
 {
     public class StorageService
     {
+        private static readonly UTF8Encoding Utf8WithoutBom = new UTF8Encoding(false);
         public readonly string _myDocumentsPath;
         public readonly string _notesPath;
         public readonly string _remindersPath;
@@ -45,22 +47,26 @@ namespace NoteFlow.Services
             var filePath = GetNotePath(ToSafetyNoteName(title));
 
             // put content into the current note
-            System.IO.File.WriteAllText(filePath, content);
+            System.IO.File.WriteAllText(filePath, content ?? string.Empty, Utf8WithoutBom);
 
             return filePath;
         }
 
         public string SaveEditedNote(string title, string content, string path)
         {
-            // new path with new (if user changed it) name
-            string newFilePath = GetNotePath(ToSafetyNoteName(title));
+            string safeTitle = ToSafetyNoteName(title);
+            string currentTitle = ToSafetyNoteName(Note.ExtractTitleFromPath(path));
+            string newFilePath = string.Equals(currentTitle, safeTitle, StringComparison.Ordinal)
+                ? path
+                : GetNotePath(safeTitle);
 
             try
             {
-                // put content into the current note and renaming file
-                System.IO.File.WriteAllText(path, content);
+                // write content first to the target path; this is safer across platforms than write+move
+                System.IO.File.WriteAllText(newFilePath, content ?? string.Empty, Utf8WithoutBom);
 
-                System.IO.File.Move(path, newFilePath);
+                if (!PathsEqual(path, newFilePath) && File.Exists(path))
+                    File.Delete(path);
             }
             catch (IOException e)
             {
@@ -84,14 +90,17 @@ namespace NoteFlow.Services
             }
 
             return newFilePath;
-            }
+        }
 
         private string ToSafetyNoteName(string oldName)
         {
             if (string.IsNullOrWhiteSpace(oldName))
                 return "Новая заметка";
 
-            string safetyName = new string(oldName.Select(x => _bannedChars.Contains(x) ? ' ' : x).ToArray());
+            string safetyName = new string(oldName
+                .Normalize(NormalizationForm.FormC)
+                .Select(x => _bannedChars.Contains(x) ? ' ' : x)
+                .ToArray());
 
             return string.IsNullOrWhiteSpace(safetyName) ? "Новая заметка" : safetyName;
         }
@@ -141,9 +150,21 @@ namespace NoteFlow.Services
             if (string.IsNullOrWhiteSpace(oldName))
                 return "Новое напоминание";
 
-            var safetyName = new string(oldName.Select(x => _bannedChars.Contains(x) ? ' ' : x).ToArray());
+            var safetyName = new string(oldName
+                .Normalize(NormalizationForm.FormC)
+                .Select(x => _bannedChars.Contains(x) ? ' ' : x)
+                .ToArray());
 
             return string.IsNullOrWhiteSpace(safetyName) ? "Новое напоминание" : safetyName;
+        }
+
+        private static bool PathsEqual(string left, string right)
+        {
+            StringComparison comparison = OperatingSystem.IsWindows()
+                ? StringComparison.OrdinalIgnoreCase
+                : StringComparison.Ordinal;
+
+            return string.Equals(left, right, comparison);
         }
     }
 }
