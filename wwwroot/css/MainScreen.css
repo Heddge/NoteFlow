@@ -2234,6 +2234,62 @@ html[data-theme='light'] .reminder-modal-content {
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78), var(--app-panel-shadow) !important;
 }
 
+html[data-theme='light'] .calendar-section-wrapper .calendar-reminder-item {
+    background: rgba(20, 28, 45, 0.035) !important;
+    border-color: rgba(24, 32, 43, 0.1) !important;
+}
+
+html[data-theme='light'] .calendar-section-wrapper .calendar-reminder-item-time {
+    color: #d86a3b !important;
+}
+
+html[data-theme='light'] .calendar-nav-btn {
+    background: rgba(20, 28, 45, 0.045) !important;
+    border-color: rgba(24, 32, 43, 0.12) !important;
+    color: #243041 !important;
+}
+
+html[data-theme='light'] .calendar-nav-btn:hover {
+    background: rgba(20, 28, 45, 0.09) !important;
+    border-color: rgba(24, 32, 43, 0.18) !important;
+    color: #18202b !important;
+}
+
+html[data-theme='light'] .calendar-week-day {
+    color: rgba(24, 32, 43, 0.62) !important;
+}
+
+html[data-theme='light'] .calendar-day {
+    color: #243041 !important;
+    background: rgba(20, 28, 45, 0.03) !important;
+    border-color: rgba(24, 32, 43, 0.08) !important;
+}
+
+html[data-theme='light'] .calendar-day:hover {
+    color: #18202b !important;
+    background: rgba(20, 28, 45, 0.085) !important;
+    border-color: rgba(24, 32, 43, 0.14) !important;
+}
+
+html[data-theme='light'] .calendar-day.current {
+    color: #ffffff !important;
+    background: #e0693a !important;
+    border-color: #e0693a !important;
+}
+
+html[data-theme='light'] .calendar-day.today {
+    border-color: rgba(224, 105, 58, 0.42) !important;
+    box-shadow: inset 0 0 0 1px rgba(224, 105, 58, 0.14);
+}
+
+html[data-theme='light'] .calendar-day.has-reminders::after {
+    background: #e0693a;
+}
+
+html[data-theme='light'] .calendar-day.other-month {
+    color: rgba(24, 32, 43, 0.28) !important;
+}
+
 .scroll-progress {
     display: none !important;
 }
