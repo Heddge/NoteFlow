@@ -800,29 +800,34 @@ form {
 
 .calendar-compact {
     width: 100%;
-    max-width: 320px;
+    max-width: 308px;
+    height: 100%;
     background: radial-gradient(90.16% 143.01% at 15.32% 21.04%, rgba(117, 117, 117, 0.2) 0%, rgba(94, 98, 101, 0.0447917) 77.08%, rgba(126, 126, 126, 0) 100%), rgba(30, 30, 30, 0.98) !important;
     border-radius: 41px;
-    padding: 20px;
+    padding: 16px 16px 14px;
     transform: none;
     font-family: 'Inter';
     position: relative;
     justify-self: end;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    min-height: 0;
+    box-sizing: border-box;
 }
 
 .calendar-header-compact {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .calendar-month-year {
     font-weight: 700;
-    font-size: 15px;
+    font-size: 14px;
     color: #FFFFFF;
     text-align: center;
-    min-width: 160px;
+    min-width: 146px;
     order: 2;
 }
 
@@ -831,19 +836,19 @@ form {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    gap: 10px;
+    gap: 8px;
 }
 
 .calendar-nav-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
     background: rgba(255, 255, 255, 0.05) !important;
     border: 1px solid rgba(255, 255, 255, 0.14) !important;
     color: #A9A49C;
     cursor: pointer;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13px;
     padding: 0 !important;
     transition: all 0.2s ease;
     display: flex;
@@ -868,17 +873,17 @@ form {
 .calendar-week-days-compact {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    margin-bottom: 10px;
+    gap: 3px;
+    margin-bottom: 6px;
 }
 
 .calendar-week-day {
     text-align: center;
     font-family: 'Inter';
     font-weight: 450;
-    font-size: 12px;
+    font-size: 11px;
     color: rgba(201, 201, 201, 0.72);
-    padding: 6px 0;
+    padding: 4px 0;
     text-transform: none;
     letter-spacing: 0;
 }
@@ -886,24 +891,30 @@ form {
 .calendar-days-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
+    grid-template-rows: repeat(6, minmax(0, 1fr));
+    gap: 3px;
+    height: 100%;
+    min-height: 0;
 }
 
 .calendar-day {
-    aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 500;
-    font-size: 12px;
+    font-size: 11px;
     color: #FFFFFF;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 7px;
     border: 1px solid transparent !important;
     background: rgba(255, 255, 255, 0.02) !important;
     padding: 0 !important;
     transition: all 0.2s ease;
     position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    line-height: 1;
 }
 
 .calendar-day:hover {
@@ -925,11 +936,11 @@ form {
 .calendar-day.has-reminders::after {
     content: '';
     position: absolute;
-    width: 5px;
-    height: 5px;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
     background: #28CA42;
-    bottom: 5px;
+    bottom: 4px;
     left: 50%;
     transform: translateX(-50%);
 }
