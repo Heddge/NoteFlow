@@ -275,6 +275,7 @@ body {
     line-height: 22px;
     color: #A9A49C;
     overflow: hidden;
+    opacity: 0.8;
 }
 
 .note-timestamp {
