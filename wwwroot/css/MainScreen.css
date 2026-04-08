@@ -505,6 +505,7 @@ body::-webkit-scrollbar {
     font-weight: 900;
     font-size: 25px;
     color: #fffdfd;
+    opacity: 0.8;
 }
 
 .note-timestamp {

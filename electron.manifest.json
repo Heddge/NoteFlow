@@ -1,4 +1,6 @@
 {
+  "electronPort": 38101,
+  "aspCoreBackendPort": 38100,
   "executable": "NoteFlow",
   "splashscreen": {
     "imageFile": ""
