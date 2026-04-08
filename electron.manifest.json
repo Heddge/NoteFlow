@@ -1,37 +1,54 @@
 {
-  "electronPort": 38101,
-  "aspCoreBackendPort": 38100,
+  "electronPort": 8001,
+  "aspCoreBackendPort": 8000,
   "executable": "NoteFlow",
   "splashscreen": {
     "imageFile": ""
   },
   "name": "NoteFlow",
-  "author": "",
+  "author": "NoteFlow",
+  "description": "NoteFlow desktop application",
   "singleInstance": true,
   "environment": "Production",
-  "electronPort": 8001,
-  "aspCoreBackendPort": 8000,
   "build": {
     "appId": "com.NoteFlow.app",
     "productName": "NoteFlow",
-    "copyright": "Copyright © 2020",
+    "copyright": "Copyright (c) 2026 NoteFlow",
     "buildVersion": "1.0.0",
     "compression": "maximum",
     "directories": {
       "output": "../../../bin/Desktop"
     },
+    "win": {
+      "icon": "bin/wwwroot/Images/Logo.ico",
+      "executableName": "NoteFlow",
+      "signAndEditExecutable": true
+    },
+    "nsis": {
+      "shortcutName": "NoteFlow",
+      "uninstallDisplayName": "NoteFlow",
+      "installerIcon": "bin/wwwroot/Images/Logo.ico",
+      "uninstallerIcon": "bin/wwwroot/Images/Logo.ico",
+      "installerHeaderIcon": "bin/wwwroot/Images/Logo.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
     "extraResources": [
       {
         "from": "./bin",
         "to": "bin",
-        "filter": [ "**/*" ]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "files": [
       {
         "from": "./ElectronHostHook/node_modules",
         "to": "ElectronHostHook/node_modules",
-        "filter": [ "**/*" ]
+        "filter": [
+          "**/*"
+        ]
       },
       "**/*"
     ]
