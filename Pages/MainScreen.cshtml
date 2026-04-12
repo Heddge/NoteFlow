@@ -405,6 +405,15 @@
         </div>
     </div>
 
+    <form id="calendarReminderDeleteTemplate" method="post" asp-page-handler="DeleteReminder" hidden aria-hidden="true">
+        <input type="hidden" name="path" value="" />
+        <button type="submit" class="calendar-reminder-delete-btn" title="Удалить напоминание" aria-label="Удалить напоминание">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+        </button>
+    </form>
+
     <script>
         const { ipcRenderer } = require('electron');
 
@@ -456,7 +465,7 @@
         // Горизонтальный скролл карточек + динамические fade/индикатор
         const cardsContainers = document.querySelectorAll('.cards-container');
         const horizontalScrollShellSelector = '.cards-container-wrapper, .reminders-container';
-        const SCROLLING_CLASS_TIMEOUT_MS = 190;
+        const SCROLLING_CLASS_TIMEOUT_MS = 480;
 
         function ensureHorizontalScrollIndicator(shell) {
             if (!shell || shell.querySelector('.scroll-progress')) {
@@ -482,7 +491,7 @@
             shell.classList.toggle('has-left-overflow', hasOverflow && currentScroll > 2);
             shell.classList.toggle('has-right-overflow', hasOverflow && currentScroll < (maxScroll - 2));
 
-            const progress = hasOverflow ? Math.min(1, currentScroll / maxScroll) : 0;
+            const progress = hasOverflow ? Math.max(0.08, Math.min(1, currentScroll / maxScroll)) : 0;
             shell.style.setProperty('--scroll-progress', progress.toFixed(4));
         }
 
@@ -542,6 +551,10 @@
         });
 
         window.addEventListener('resize', () => {
+            cardsContainers.forEach((cardsContainerItem) => updateHorizontalScrollState(cardsContainerItem));
+        });
+
+        window.addEventListener('load', () => {
             cardsContainers.forEach((cardsContainerItem) => updateHorizontalScrollState(cardsContainerItem));
         });
 
@@ -723,6 +736,7 @@
         const calendarDaysGrid = document.getElementById('calendarDaysGrid');
         const calendarPrevBtn = document.getElementById('calendarPrevBtn');
         const calendarNextBtn = document.getElementById('calendarNextBtn');
+        const calendarReminderDeleteTemplate = document.getElementById('calendarReminderDeleteTemplate');
 
         const today = new Date();
         const calendarState = {
@@ -797,6 +811,25 @@
                 });
         }
 
+        function createCalendarReminderDeleteForm(reminder) {
+            if (!calendarReminderDeleteTemplate || !reminder?.path) {
+                return null;
+            }
+
+            const deleteForm = calendarReminderDeleteTemplate.cloneNode(true);
+            deleteForm.removeAttribute('id');
+            deleteForm.hidden = false;
+            deleteForm.removeAttribute('aria-hidden');
+            deleteForm.classList.add('calendar-reminder-delete-form');
+
+            const pathInput = deleteForm.querySelector('input[name="path"]');
+            if (pathInput) {
+                pathInput.value = reminder.path;
+            }
+
+            return deleteForm;
+        }
+
         function renderCalendarReminderList() {
             if (!calendarReminderList || !calendarCurrentDate) {
                 return;
@@ -833,9 +866,14 @@
                 description.className = 'calendar-reminder-item-description';
                 description.textContent = reminder.description || 'Без описания';
 
+                const deleteForm = createCalendarReminderDeleteForm(reminder);
+
                 item.appendChild(time);
                 item.appendChild(title);
                 item.appendChild(description);
+                if (deleteForm) {
+                    item.appendChild(deleteForm);
+                }
                 calendarReminderList.appendChild(item);
             });
         }

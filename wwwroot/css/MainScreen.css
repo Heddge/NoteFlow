@@ -267,16 +267,18 @@ body::-webkit-scrollbar {
 
 .scroll-progress {
     position: absolute;
-    left: 18px;
-    right: 18px;
-    bottom: 4px;
-    height: 3px;
+    left: 20px;
+    right: 20px;
+    bottom: 3px;
+    height: 1.5px;
     border-radius: 999px;
     pointer-events: none;
-    background: rgba(255, 255, 255, 0.09);
+    background: var(--app-scroll-progress-track);
     opacity: 0;
-    transform: translateY(6px);
-    transition: opacity 0.22s ease, transform 0.22s ease;
+    transform: translateY(4px);
+    transition:
+        opacity 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
     z-index: 7;
     overflow: hidden;
 }
@@ -288,14 +290,14 @@ body::-webkit-scrollbar {
     border-radius: inherit;
     transform-origin: left center;
     transform: scaleX(var(--scroll-progress, 0));
-    background: linear-gradient(90deg, rgba(152, 249, 255, 0.9), rgba(40, 202, 66, 0.8));
-    box-shadow: 0 0 8px rgba(152, 249, 255, 0.22);
-    transition: transform 0.15s linear;
+    background: var(--app-scroll-progress-color);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--app-scroll-progress-color) 22%, transparent);
+    transition: transform 0.62s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .cards-container-wrapper.has-horizontal-overflow .scroll-progress,
 .reminders-container.has-horizontal-overflow .scroll-progress {
-    opacity: 0.55;
+    opacity: 0.74;
     transform: translateY(0);
 }
 
@@ -752,10 +754,11 @@ form {
 }
 
 .calendar-section-wrapper .calendar-reminder-item {
+    position: relative;
     border-radius: 14px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.03);
-    padding: 10px 12px;
+    padding: 10px 44px 10px 12px;
 }
 
 .calendar-section-wrapper .calendar-reminder-item-time {
@@ -797,6 +800,36 @@ form {
     line-height: 18px;
     color: rgba(255, 255, 255, 0.58);
     margin-top: 4px;
+}
+
+.calendar-reminder-delete-form {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    margin: 0;
+    z-index: 2;
+}
+
+.calendar-reminder-delete-btn {
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: rgba(255, 255, 255, 0.72);
+    padding: 0 !important;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.calendar-reminder-delete-btn:hover {
+    background: rgba(208, 57, 57, 0.24) !important;
+    border-color: rgba(255, 90, 90, 0.28) !important;
+    color: #ffffff;
+    transform: scale(1.03);
 }
 
 .calendar-compact {
@@ -1350,15 +1383,7 @@ form {
 }
 
 .wide-reminder-bg::after {
-    content: '';
-    position: absolute;
-    left: -25%;
-    right: -25%;
-    bottom: -70px;
-    height: 140px;
-    background: radial-gradient(55% 100% at 50% 100%, rgba(152, 249, 255, 0.1), rgba(152, 249, 255, 0));
-    pointer-events: none;
-    z-index: 0;
+    display: none;
 }
 
 .reminder-time-header-container {
@@ -2028,6 +2053,8 @@ form {
     --app-settings-trigger: rgba(28, 28, 28, 0.82);
     --app-edge-fade-start: rgba(25, 25, 25, 0.98);
     --app-edge-fade-end: rgba(25, 25, 25, 0);
+    --app-scroll-progress-color: rgba(255, 255, 255, 0.98);
+    --app-scroll-progress-track: rgba(255, 255, 255, 0.16);
 }
 
 html[data-theme='light'] {
@@ -2048,6 +2075,8 @@ html[data-theme='light'] {
     --app-settings-trigger: rgba(255, 255, 255, 0.88);
     --app-edge-fade-start: rgba(238, 242, 246, 0.98);
     --app-edge-fade-end: rgba(238, 242, 246, 0);
+    --app-scroll-progress-color: rgba(0, 0, 0, 0.9);
+    --app-scroll-progress-track: rgba(0, 0, 0, 0.14);
 }
 
 html[data-font='manrope'] {
@@ -2209,7 +2238,11 @@ body {
 }
 
 .scroll-progress {
-    background: var(--app-panel-soft) !important;
+    background: var(--app-scroll-progress-track) !important;
+}
+
+.scroll-progress::after {
+    background: var(--app-scroll-progress-color) !important;
 }
 
 .card-bg,
@@ -2249,6 +2282,18 @@ html[data-theme='light'] .reminder-modal-content {
 html[data-theme='light'] .calendar-section-wrapper .calendar-reminder-item {
     background: rgba(20, 28, 45, 0.035) !important;
     border-color: rgba(24, 32, 43, 0.1) !important;
+}
+
+html[data-theme='light'] .calendar-reminder-delete-btn {
+    background: rgba(20, 28, 45, 0.05) !important;
+    border-color: rgba(24, 32, 43, 0.12) !important;
+    color: rgba(24, 32, 43, 0.68) !important;
+}
+
+html[data-theme='light'] .calendar-reminder-delete-btn:hover {
+    background: rgba(208, 57, 57, 0.12) !important;
+    border-color: rgba(208, 57, 57, 0.22) !important;
+    color: #8f1f1f !important;
 }
 
 html[data-theme='light'] .calendar-section-wrapper .calendar-reminder-item-time {
@@ -2300,10 +2345,6 @@ html[data-theme='light'] .calendar-day.has-reminders::after {
 
 html[data-theme='light'] .calendar-day.other-month {
     color: rgba(24, 32, 43, 0.28) !important;
-}
-
-.scroll-progress {
-    display: none !important;
 }
 
 .note-icon {

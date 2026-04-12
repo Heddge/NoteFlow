@@ -343,6 +343,15 @@ body::-webkit-scrollbar {
     border-radius: 8px;
     border: 0.5px solid transparent;
 }
+
+.sidebar-item-button {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    font: inherit;
+}
+
 .sidebar-item:hover { background: rgba(255, 255, 255, 0.04); border: 0.5px solid rgba(255, 255, 255, 0.08); }
 .sidebar-item.is-active { background: rgba(255, 255, 255, 0.06); border: 0.5px solid rgba(255, 255, 255, 0.1); }
 .sidebar-icon { width: 24px; height: 24px; margin-right: 8px; display: flex; align-items: center; justify-content: center; }
