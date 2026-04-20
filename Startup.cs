@@ -147,6 +147,11 @@ namespace NoteFlow
                 Console.WriteLine("Electron load URL is empty; falling back to about:blank.");
             }
 
+            if (OperatingSystem.IsMacOS() && !string.IsNullOrWhiteSpace(appIconPath))
+            {
+                Electron.Dock.SetIcon(appIconPath);
+            }
+
             _mainWindow = await Electron.WindowManager.CreateWindowAsync(new BrowserWindowOptions
             {
                 // Текущий размер окна
@@ -359,12 +364,32 @@ namespace NoteFlow
 
         private static string? ResolveAppIconPath()
         {
-            string[] candidates =
-            {
-                Path.Combine(AppContext.BaseDirectory, "wwwroot", "Images", "Logo.png"),
-                Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Logo.png"),
-                Path.Combine(AppContext.BaseDirectory, "Images", "Logo.png")
-            };
+            string[] candidates = OperatingSystem.IsWindows()
+                ? new[]
+                {
+                    Path.Combine(AppContext.BaseDirectory, "wwwroot", "Images", "Logo.ico"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Logo.ico"),
+                    Path.Combine(AppContext.BaseDirectory, "Images", "Logo.ico"),
+                    Path.Combine(AppContext.BaseDirectory, "wwwroot", "Images", "Logo.png"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Logo.png"),
+                    Path.Combine(AppContext.BaseDirectory, "Images", "Logo.png")
+                }
+                : OperatingSystem.IsMacOS()
+                ? new[]
+                {
+                    Path.Combine(AppContext.BaseDirectory, "wwwroot", "Images", "Logo.png"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Logo.png"),
+                    Path.Combine(AppContext.BaseDirectory, "Images", "Logo.png"),
+                    Path.Combine(AppContext.BaseDirectory, "wwwroot", "Images", "Logo.icns"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Logo.icns"),
+                    Path.Combine(AppContext.BaseDirectory, "Images", "Logo.icns")
+                }
+                : new[]
+                {
+                    Path.Combine(AppContext.BaseDirectory, "wwwroot", "Images", "Logo.png"),
+                    Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Images", "Logo.png"),
+                    Path.Combine(AppContext.BaseDirectory, "Images", "Logo.png")
+                };
 
             return candidates.FirstOrDefault(File.Exists);
         }

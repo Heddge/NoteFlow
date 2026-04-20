@@ -24,6 +24,10 @@
       "executableName": "NoteFlow",
       "signAndEditExecutable": true
     },
+    "mac": {
+      "icon": "bin/wwwroot/Images/Logo.icns",
+      "category": "public.app-category.productivity"
+    },
     "nsis": {
       "shortcutName": "NoteFlow",
       "uninstallDisplayName": "NoteFlow",
