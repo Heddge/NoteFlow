@@ -593,10 +593,10 @@ form {
 
 .calendar-nav {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     width: 100%;
-    gap: 10px;
+    gap: 20px;
 }
 
 .calendar-nav-btn {
