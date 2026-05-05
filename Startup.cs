@@ -8,6 +8,7 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using ElectronNET.API;
 using ElectronNET.API.Entities;
+using NoteFlow.Helpers;
 using NoteFlow.Models;
 using NoteFlow.Services;
 
@@ -397,10 +398,10 @@ namespace NoteFlow
         private static string? ResolveElectronLoadUrl()
         {
             if (TryGetElectronWebPort(out string port))
-                return $"http://localhost:{port}";
+                return ElectronRuntimeUrlHelper.BuildLoopbackUrl(port);
 
             if (!string.IsNullOrWhiteSpace(BridgeSettings.WebPort))
-                return $"http://localhost:{BridgeSettings.WebPort}";
+                return ElectronRuntimeUrlHelper.BuildLoopbackUrl(BridgeSettings.WebPort);
 
             return null;
         }

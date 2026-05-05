@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using NoteFlow.Helpers;
 
 namespace NoteFlow
 {
@@ -24,8 +25,9 @@ namespace NoteFlow
                 if (!string.IsNullOrWhiteSpace(electronWebPort) &&
                     string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("ASPNETCORE_URLS")))
                 {
-                    Console.WriteLine($"Binding ASP.NET Core to http://localhost:{electronWebPort}");
-                    webBuilder.UseUrls($"http://localhost:{electronWebPort}");
+                    string bindingUrls = ElectronRuntimeUrlHelper.BuildBindingUrls(electronWebPort);
+                    Console.WriteLine($"Binding ASP.NET Core to {bindingUrls}");
+                    webBuilder.UseUrls(bindingUrls);
                 }
 
                 webBuilder.UseElectron(args);
