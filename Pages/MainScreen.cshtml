@@ -192,7 +192,7 @@
 
     <div class="add-text">
         <strong>
-            <h1 class="add-text">Greetings</h1>
+            <h1 id="heroGreeting" class="add-text">Greetings</h1>
         </strong>
     </div>
 
@@ -447,6 +447,7 @@
             font: 'inter',
             editorSidebarVisible: true
         };
+        const heroGreeting = document.getElementById('heroGreeting');
         let uiSettings = uiSettingsApi?.read() ?? { ...uiSettingsDefaults };
 
         const remindersData = @Html.Raw(JsonSerializer.Serialize(
@@ -615,6 +616,30 @@
 
         function showSettingsModal() {
             openModal(settingsModal);
+        }
+
+        function getGreetingByHour(hour) {
+            if (hour < 5) {
+                return 'Good night';
+            }
+
+            if (hour < 12) {
+                return 'Good morning';
+            }
+
+            if (hour < 18) {
+                return 'Good afternoon';
+            }
+
+            return 'Good evening';
+        }
+
+        function syncHeroGreeting() {
+            if (!heroGreeting) {
+                return;
+            }
+
+            heroGreeting.textContent = getGreetingByHour(new Date().getHours());
         }
 
         function formatReminderTimeValue(date) {
@@ -823,6 +848,9 @@
                 syncSettingsControls();
             });
         }
+
+        syncHeroGreeting();
+        window.setInterval(syncHeroGreeting, 60000);
 
         reminderEditTriggers.forEach((trigger) => {
             trigger.addEventListener('click', () => showReminderEditModal(trigger));
