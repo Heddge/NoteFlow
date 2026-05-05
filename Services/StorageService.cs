@@ -10,19 +10,20 @@ namespace NoteFlow.Services
     public class StorageService
     {
         private static readonly UTF8Encoding Utf8WithoutBom = new UTF8Encoding(false);
-        public readonly string _myDocumentsPath;
+        public readonly string _storageRootPath;
         public readonly string _notesPath;
         public readonly string _remindersPath;
         public readonly char[] _bannedChars = { '?', '<', '>', ':', '"', '|', '*', '\\', '/' };
 
         public StorageService()
         {
-            _myDocumentsPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                "NoteFlow");
+            _storageRootPath = ResolveStorageRootPath();
 
-            _notesPath = Path.Combine(_myDocumentsPath, "Notes");
-            _remindersPath = Path.Combine(_myDocumentsPath, "Reminders");
+            _notesPath = Path.Combine(_storageRootPath, "Notes");
+            _remindersPath = Path.Combine(_storageRootPath, "Reminders");
+
+            if (!Directory.Exists(_storageRootPath))
+                Directory.CreateDirectory(_storageRootPath);
 
             // Создаем папки при первом использовании
             if (!Directory.Exists(_notesPath))
@@ -30,8 +31,11 @@ namespace NoteFlow.Services
             if (!Directory.Exists(_remindersPath))
                 Directory.CreateDirectory(_remindersPath);
 
-            Console.WriteLine($"Storage initialized: {_notesPath}");
-            Console.WriteLine($"Storage initialized: {_remindersPath}");
+            MigrateLegacyMacStorage();
+
+            Console.WriteLine($"Storage root: {_storageRootPath}");
+            Console.WriteLine($"Notes path: {_notesPath}");
+            Console.WriteLine($"Reminders path: {_remindersPath}");
             // Console.WriteLine($"Count notes in Directory: {CountFilesInDirectory()}");
         }
         public string GetNotePath(string noteTitle)
@@ -120,9 +124,32 @@ namespace NoteFlow.Services
         public string SaveReminder(Reminder reminder)
         {
             var reminderPath = GetReminderPath(ToSafetyReminderName(reminder.ReminderTitle));
-            File.WriteAllText(reminderPath, reminder.ToStorageJson());
+            File.WriteAllText(reminderPath, reminder.ToStorageJson(), Utf8WithoutBom);
 
             return reminderPath;
+        }
+
+        public string SaveEditedReminder(Reminder reminder, string path)
+        {
+            string safeTitle = ToSafetyReminderName(reminder.ReminderTitle);
+            string currentTitle = ToSafetyReminderName(Note.ExtractTitleFromPath(path));
+            string newFilePath = string.Equals(currentTitle, safeTitle, StringComparison.Ordinal)
+                ? path
+                : GetReminderPath(safeTitle);
+
+            try
+            {
+                File.WriteAllText(newFilePath, reminder.ToStorageJson(), Utf8WithoutBom);
+
+                if (!PathsEqual(path, newFilePath) && File.Exists(path))
+                    File.Delete(path);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Reminder save failed: {e.Message}");
+            }
+
+            return newFilePath;
         }
 
         public void DeleteReminder(string path)
@@ -165,6 +192,62 @@ namespace NoteFlow.Services
                 : StringComparison.Ordinal;
 
             return string.Equals(left, right, comparison);
+        }
+
+        private static string ResolveStorageRootPath()
+        {
+            if (OperatingSystem.IsMacOS())
+            {
+                return Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    "Library",
+                    "Application Support",
+                    "NoteFlow");
+            }
+
+            return Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "NoteFlow");
+        }
+
+        private void MigrateLegacyMacStorage()
+        {
+            if (!OperatingSystem.IsMacOS())
+                return;
+
+            string legacyRootPath = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                "NoteFlow");
+
+            if (!Directory.Exists(legacyRootPath) || PathsEqual(legacyRootPath, _storageRootPath))
+                return;
+
+            try
+            {
+                MergeStorageDirectory(Path.Combine(legacyRootPath, "Notes"), _notesPath);
+                MergeStorageDirectory(Path.Combine(legacyRootPath, "Reminders"), _remindersPath);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Legacy macOS storage migration skipped: {e.Message}");
+            }
+        }
+
+        private static void MergeStorageDirectory(string sourceDirectory, string targetDirectory)
+        {
+            if (!Directory.Exists(sourceDirectory))
+                return;
+
+            Directory.CreateDirectory(targetDirectory);
+
+            foreach (string sourcePath in Directory.GetFiles(sourceDirectory, "*.md"))
+            {
+                string targetPath = Path.Combine(targetDirectory, Path.GetFileName(sourcePath));
+                if (!File.Exists(targetPath))
+                {
+                    File.Copy(sourcePath, targetPath);
+                }
+            }
         }
     }
 }

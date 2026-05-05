@@ -34,21 +34,21 @@ public class Note
     }
 
 
-    public string BeatifulCreationDate()
+    public string BeatifulEditedDate()
     {
-        if (NoteCreated.Day == DateTime.Now.Day)
-            return $"сегодня {NoteCreated:HH:mm}";
+        if (NoteEdited.Date == DateTime.Now.Date)
+            return $"сегодня {NoteEdited:HH:mm}";
 
-        if (NoteCreated.Day == DateTime.Now.AddDays(-1).Day)
-            return $"вчера {NoteCreated:HH:mm}";
+        if (NoteEdited.Date == DateTime.Now.AddDays(-1).Date)
+            return $"вчера {NoteEdited:HH:mm}";
 
-        if (NoteCreated.Year == DateTime.Now.Year)
-            return $"{NoteCreated:dd.MM HH:mm}";
+        if (NoteEdited.Year == DateTime.Now.Year)
+            return $"{NoteEdited:dd.MM HH:mm}";
 
-        if (NoteCreated.Year != DateTime.Now.Year)
-            return $"{NoteCreated:dd.MM.yy HH:mm}";
+        if (NoteEdited.Year != DateTime.Now.Year)
+            return $"{NoteEdited:dd.MM.yy HH:mm}";
         
-        return NoteCreated.ToString();
+        return NoteEdited.ToString();
     }
 
     public string GetId()

@@ -269,7 +269,7 @@ body::-webkit-scrollbar {
     position: absolute;
     left: 20px;
     right: 20px;
-    bottom: 3px;
+    bottom: 18px;
     height: 1.5px;
     border-radius: 999px;
     pointer-events: none;
@@ -440,7 +440,7 @@ body::-webkit-scrollbar {
     padding: 20px;
     flex-direction: column;
     align-items: flex-start;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .note-card-bg::before {
@@ -482,11 +482,13 @@ body::-webkit-scrollbar {
     max-width: 150px !important;
     text-align: left !important;
     box-sizing: border-box !important;
+    margin-top: 32px;
+    flex: 0 0 auto;
 }
 
 .note-description {
     width: 150px;
-    height: 56px;
+    min-height: 56px;
     left: 15px;
     top: 92px !important;
     font-family: 'Inter';
@@ -500,6 +502,8 @@ body::-webkit-scrollbar {
     -webkit-box-orient: vertical;
     word-break: break-word;
     text-align: left;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .note-icon {
@@ -514,16 +518,20 @@ body::-webkit-scrollbar {
 }
 
 .note-timestamp {
-    width: 101.99px;
-    height: 17.74px;
+    width: 100%;
+    min-height: 17.74px;
     font-family: 'Inter';
     font-weight: 600;
     font-size: 13px;
     line-height: 16px;
     display: flex;
     align-items: center;
+    justify-content: center;
     text-align: center;
     color: #555554;
+    margin-top: auto;
+    padding-top: 10px;
+    align-self: stretch;
 }
 
 
@@ -1375,6 +1383,15 @@ form {
 
 .wide-reminder-card {
     cursor: default;
+}
+
+.reminder-edit-trigger {
+    cursor: pointer;
+}
+
+.reminder-edit-trigger:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 1px rgba(152, 249, 255, 0.3), 0 0 0 5px rgba(152, 249, 255, 0.08);
 }
 
 .wide-reminder-bg {
@@ -2282,6 +2299,37 @@ html[data-theme='light'] .reminder-modal-content {
 html[data-theme='light'] .calendar-section-wrapper .calendar-reminder-item {
     background: rgba(20, 28, 45, 0.035) !important;
     border-color: rgba(24, 32, 43, 0.1) !important;
+}
+
+html[data-theme='light'] #reminderModalContent {
+    background: var(--app-modal-bg) !important;
+    border: 1px solid var(--app-line) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78), var(--app-panel-shadow) !important;
+}
+
+html[data-theme='light'] #reminderModal .reminder-modal-header h2,
+html[data-theme='light'] #reminderModal .reminder-modal-header p,
+html[data-theme='light'] #reminderModal .reminder-input-label,
+html[data-theme='light'] #reminderModal .reminder-repeat span {
+    color: var(--app-text-primary) !important;
+}
+
+html[data-theme='light'] #reminderModal .reminder-modal-header p,
+html[data-theme='light'] #reminderModal .reminder-input-label,
+html[data-theme='light'] #reminderModal .reminder-repeat span {
+    color: var(--app-text-secondary) !important;
+}
+
+html[data-theme='light'] #reminderModal .reminder-modal-glow {
+    opacity: 0.08;
+}
+
+html[data-theme='light'] #reminderModal .reminder-modal-glow-left {
+    background: rgba(79, 142, 255, 0.08);
+}
+
+html[data-theme='light'] #reminderModal .reminder-modal-glow-right {
+    background: rgba(224, 105, 58, 0.08);
 }
 
 html[data-theme='light'] .calendar-reminder-delete-btn {

@@ -43,9 +43,17 @@ namespace NoteFlow.Pages
         }
 
         public IActionResult OnPostCreateReminder(string Title, string Description, int Day, int Month, int Year, string Time, bool IsRepeating)
+            => SaveReminderInternal(null, Title, Description, Day, Month, Year, Time, IsRepeating);
+
+        public IActionResult OnPostSaveReminder(string OriginalPath, string Title, string Description, int Day, int Month, int Year, string Time, bool IsRepeating)
+            => SaveReminderInternal(OriginalPath, Title, Description, Day, Month, Year, Time, IsRepeating);
+
+        private IActionResult SaveReminderInternal(string? originalPath, string Title, string Description, int Day, int Month, int Year, string Time, bool IsRepeating)
         {
             if (string.IsNullOrWhiteSpace(Title))
-                return RedirectToPage();
+            {
+                Title = "Новое напоминание";
+            }
 
             if (!TimeSpan.TryParse(Time, out TimeSpan parsedTime))
                 parsedTime = new TimeSpan(12, 0, 0);
@@ -55,19 +63,35 @@ namespace NoteFlow.Pages
                 int safeDay = Math.Min(Day, DateTime.DaysInMonth(Year, Month));
                 DateTime reminderDate = new DateTime(Year, Month, safeDay, parsedTime.Hours, parsedTime.Minutes, 0);
 
-                var reminder = new Reminder(
-                    Title.Trim(),
-                    Description?.Trim() ?? "",
-                    reminderDate,
-                    IsRepeating
-                );
+                bool isEditing = !string.IsNullOrWhiteSpace(originalPath) && System.IO.File.Exists(originalPath);
 
-                string savedReminderPath = currentStorage.SaveReminder(reminder);
-                currentCache.AddReminderToCurrentReminders(savedReminderPath);
+                if (isEditing)
+                {
+                    var reminder = new Reminder(originalPath!);
+                    reminder.ReminderTitle = Title.Trim();
+                    reminder.ReminderDescription = Description?.Trim() ?? "";
+                    reminder.ReminderExpires = reminderDate;
+                    reminder.IsRepeating = IsRepeating;
+
+                    string savedReminderPath = currentStorage.SaveEditedReminder(reminder, originalPath!);
+                    currentCache.UpdateReminderInCurrentReminders(savedReminderPath, originalPath!);
+                }
+                else
+                {
+                    var reminder = new Reminder(
+                        Title.Trim(),
+                        Description?.Trim() ?? "",
+                        reminderDate,
+                        IsRepeating
+                    );
+
+                    string savedReminderPath = currentStorage.SaveReminder(reminder);
+                    currentCache.AddReminderToCurrentReminders(savedReminderPath);
+                }
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Reminder creation failed: {e.Message}");
+                Console.WriteLine($"Reminder save failed: {e.Message}");
             }
 
             return RedirectToPage();

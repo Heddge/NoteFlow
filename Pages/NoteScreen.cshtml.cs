@@ -41,33 +41,24 @@ namespace NoteFlow.Pages
         /// <returns></returns>
         public IActionResult OnPostCreateOrEditNote(string path)
         {
-            _path = path;
-
-            // if user tried to save full empty note
-            if (string.IsNullOrWhiteSpace(NoteTitle) && string.IsNullOrWhiteSpace(NoteContent))
+            string? savedNotePath = SaveNoteInternal(path);
+            if (string.IsNullOrWhiteSpace(savedNotePath))
                 return Page();
 
-            if (string.IsNullOrWhiteSpace(NoteTitle))
+            return RedirectToPage("NoteScreen", new { notePath = savedNotePath });
+        }
+
+        public IActionResult OnPostAutosave(string path)
+        {
+            string? savedNotePath = SaveNoteInternal(path);
+
+            return new JsonResult(new
             {
-                NoteTitle = "Новая заметка";
-            }
-
-            // if user needs to edit note
-            if (System.IO.File.Exists(_path))
-            {
-                string oldPath = _path;
-                // updating path from old to new (with new filename)
-                _path = storage.SaveEditedNote(NoteTitle, NoteContent, _path);
-                cache.UpdateNoteInCurrentNotes(NoteTitle, NoteContent, _path, oldPath);
-                return RedirectToPage("NoteScreen", new { notePath = _path });
-            }
-
-            // if user doesn`t need to edit note => create new note \/
-            string newNotePath = storage.SaveNewNote(NoteTitle, NoteContent);
-            cache.AddNoteToCurrentNotes(newNotePath);
-
-            return RedirectToPage("NoteScreen", new { notePath = newNotePath });
-
+                success = true,
+                skipped = string.IsNullOrWhiteSpace(savedNotePath),
+                notePath = savedNotePath ?? path,
+                title = NoteTitle
+            });
         }
 
         public IActionResult OnPostDeleteNote(string path)
@@ -91,6 +82,32 @@ namespace NoteFlow.Pages
             cache.DeleteNoteFromCurrentNotes(path);
             System.IO.File.Delete(path);
             return RedirectToPage("/NoteScreen");
+        }
+
+        private string? SaveNoteInternal(string path)
+        {
+            _path = path;
+
+            if (string.IsNullOrWhiteSpace(NoteTitle) && string.IsNullOrWhiteSpace(NoteContent))
+                return null;
+
+            if (string.IsNullOrWhiteSpace(NoteTitle))
+            {
+                NoteTitle = "Новая заметка";
+            }
+
+            if (System.IO.File.Exists(_path))
+            {
+                string oldPath = _path;
+                _path = storage.SaveEditedNote(NoteTitle, NoteContent, _path);
+                cache.UpdateNoteInCurrentNotes(NoteTitle, NoteContent, _path, oldPath);
+                return _path;
+            }
+
+            string newNotePath = storage.SaveNewNote(NoteTitle, NoteContent);
+            cache.AddNoteToCurrentNotes(newNotePath);
+
+            return newNotePath;
         }
     }
 }

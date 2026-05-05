@@ -1,4 +1,4 @@
-@page "{notePath}"
+@page
 @using NoteFlow.Models
 @using NoteFlow.Pages;
 @using NoteFlow.Helpers;
@@ -78,9 +78,9 @@
     </div>
 
     <div class="main-content" style="overflow-y: visible">
-        <form method="post" asp-page-handler="CreateOrEditNote">
-            <input type="hidden" name="path" value="@Model._path" />
-            <input type="Text" asp-for="NoteTitle" class="note-title-input" placeholder="Новая заметка" maxlength="35" />
+        <form id="noteEditorForm" method="post" asp-page-handler="CreateOrEditNote">
+            <input id="notePathInput" type="hidden" name="path" value="@Model._path" />
+            <input id="noteTitleInput" type="Text" asp-for="NoteTitle" class="note-title-input" placeholder="Новая заметка" maxlength="35" />
             <input asp-for="NoteContent" type="hidden" id="NoteContent" />
 
             <div class="editor-container">
@@ -96,7 +96,7 @@
         </form>
 
         <form method="post">
-            <input type="hidden" name="path" value="@Model._path"/>
+            <input id="deleteNotePathInput" type="hidden" name="path" value="@Model._path"/>
             <button asp-page-handler="DeleteNote" type="submit" class="delete-button" title="Удалить заметку" aria-label="Удалить заметку">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cccccc" stroke-width="1.5">
                     <path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
@@ -217,7 +217,7 @@
                 @foreach (var note in @Model.GetNotesDict()) 
                 {
                     <div class="file-item-row searchable-note-row" data-note-title="@note.Value.NoteTitle">
-                        <form method="post" asp-page-handler="RedirectToNote">
+                        <form method="post" asp-page-handler="RedirectToNote" class="note-redirect-form">
                             <input type="hidden" name="path" value="@note.Key" />
                             <button type="submit" class="file-item">
                                 <div class="file-icon">N</div>
@@ -247,12 +247,18 @@
         };
         let uiSettings = uiSettingsApi?.read() ?? { ...uiSettingsDefaults };
         const newNoteUrl = '@Url.Page("/NoteScreen", new { notePath = "a" })';
+        const noteScreenUrlTemplate = '@Url.Page("/NoteScreen", new { notePath = "__NOTE_PATH__" })';
 
         document.getElementById('minimizeBtn')?.addEventListener('click', () => ipcRenderer.send('minimize-window'));
         document.getElementById('maximizeBtn')?.addEventListener('click', () => ipcRenderer.send('maximize-window'));
         document.getElementById('closeBtn')?.addEventListener('click', () => ipcRenderer.send('close-window'));
         document.getElementById('backBtn')?.addEventListener('click', () => goHome());
 
+        const noteForm = document.getElementById('noteEditorForm');
+        const notePathInput = document.getElementById('notePathInput');
+        const deleteNotePathInput = document.getElementById('deleteNotePathInput');
+        const noteTitleInput = document.getElementById('noteTitleInput');
+        const noteRedirectForms = Array.from(document.querySelectorAll('.note-redirect-form'));
         const editor = document.getElementById('richTextEditor');
         const contextMenu = document.getElementById('contextMenu');
         const devModal = document.getElementById('devModal');
@@ -273,6 +279,112 @@
         const demoNoteRows = Array.from(document.querySelectorAll('.demo-note-row'));
         let isSidebarSearchOpen = false;
         let activeModal = null;
+        let isNoteDirty = false;
+        let autosaveRequest = null;
+        let lastSavedSignature = '';
+
+        function markNoteDirty() {
+            isNoteDirty = true;
+        }
+
+        function getCurrentNoteSignature() {
+            return `${noteTitleInput?.value ?? ''}\n::noteflow::\n${editor?.innerHTML ?? ''}`;
+        }
+
+        function syncEditorDraftToForm() {
+            const noteContentInput = document.getElementById('NoteContent');
+            if (noteContentInput) {
+                noteContentInput.value = editor?.innerHTML ?? '';
+            }
+        }
+
+        function updateCurrentNotePath(nextPath) {
+            if (!nextPath) {
+                return;
+            }
+
+            if (notePathInput) {
+                notePathInput.value = nextPath;
+            }
+
+            if (deleteNotePathInput) {
+                deleteNotePathInput.value = nextPath;
+            }
+
+            const encodedPath = encodeURIComponent(nextPath);
+            const nextUrl = noteScreenUrlTemplate.replace('__NOTE_PATH__', encodedPath);
+            window.history.replaceState({}, '', nextUrl);
+        }
+
+        async function autosaveNote(options = {}) {
+            const { force = false } = options;
+
+            if (!noteForm || !notePathInput || !editor || !noteTitleInput) {
+                return { success: false, skipped: true };
+            }
+
+            const currentSignature = getCurrentNoteSignature();
+            if (!force && !isNoteDirty && currentSignature === lastSavedSignature) {
+                return { success: true, skipped: true, notePath: notePathInput.value };
+            }
+
+            if (autosaveRequest) {
+                return autosaveRequest;
+            }
+
+            autosaveRequest = (async () => {
+                syncEditorDraftToForm();
+
+                const autosaveUrl = new URL(window.location.href);
+                autosaveUrl.searchParams.set('handler', 'Autosave');
+
+                const formData = new FormData(noteForm);
+                formData.set('path', notePathInput.value ?? '');
+                formData.set('NoteTitle', noteTitleInput.value ?? '');
+                formData.set('NoteContent', editor.innerHTML ?? '');
+
+                try
+                {
+                    const response = await fetch(autosaveUrl.toString(), {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'same-origin',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Autosave failed with status ${response.status}`);
+                    }
+
+                    const payload = await response.json();
+
+                    if (payload?.notePath) {
+                        updateCurrentNotePath(payload.notePath);
+                    }
+
+                    lastSavedSignature = getCurrentNoteSignature();
+                    isNoteDirty = false;
+
+                    return payload;
+                }
+                catch (error) {
+                    console.error('Note autosave failed', error);
+                    return { success: false, skipped: false, notePath: notePathInput.value };
+                }
+                finally {
+                    autosaveRequest = null;
+                }
+            })();
+
+            return autosaveRequest;
+        }
+
+        async function navigateWithAutosave(targetUrl) {
+            await autosaveNote({ force: true });
+            window.location.href = targetUrl;
+        }
         
         // Открытие меню
         editor.addEventListener('contextmenu', function (e) {
@@ -352,22 +464,22 @@ function applyStyleToSelection(styleClass) {
 
     // Убираем выделение и прячем меню
     selection.removeAllRanges();
+    markNoteDirty();
 }
 
 function colorText(color) { applyStyleToSelection(color); }
 function changeFontSize(size) { applyStyleToSelection('font-' + size); }
 
-        function saveNote() {
-            document.getElementById('NoteContent').value = editor.innerHTML;
-            document.forms[0].submit();
+        async function saveNote() {
+            await autosaveNote({ force: true });
         }
 
-        function goHome() {
-            window.location.href = "/MainScreen";
+        async function goHome() {
+            await navigateWithAutosave("/MainScreen");
         }
 
-        function goToNewNote() {
-            window.location.href = newNoteUrl;
+        async function goToNewNote() {
+            await navigateWithAutosave(newNoteUrl);
         }
 
         function resetSidebarSearchResults() {
@@ -476,6 +588,22 @@ function changeFontSize(size) { applyStyleToSelection('font-' + size); }
 
         setSidebarCollapsed(isCollapsed);
         syncSettingsControls();
+        lastSavedSignature = getCurrentNoteSignature();
+
+        noteTitleInput?.addEventListener('input', markNoteDirty);
+        editor?.addEventListener('input', markNoteDirty);
+
+        noteRedirectForms.forEach((form) => {
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                await autosaveNote({ force: true });
+                HTMLFormElement.prototype.submit.call(form);
+            });
+        });
+
+        window.setInterval(() => {
+            void autosaveNote();
+        }, 10000);
 
         toggleBtn.addEventListener('click', () => {
             setSidebarCollapsed(!isCollapsed);

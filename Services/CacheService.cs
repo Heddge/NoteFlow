@@ -78,7 +78,7 @@ public class CacheService
                 currNotesDict[Path].NoteEdited = DateTime.Now;
                 currNotesDict = currNotesDict.OrderByDescending(s => s.Value.NoteEdited).ToDictionary();
             }
-            catch (IOException eee)
+            catch (Exception eee)
             {
                 Console.WriteLine($"Something went wrong: {eee.Message}");
             }
@@ -104,9 +104,25 @@ public class CacheService
 
     public void DeleteReminderFromCurrentReminders(string path) =>
         currReminders = currReminders
-            .Where(x => x.ReminderPath != path)
+            .Where(x => !PathsEqual(x.ReminderPath, path))
             .OrderBy(x => x.ReminderExpires)
             .ToList();
+
+    public void UpdateReminderInCurrentReminders(string newPath, string oldPath)
+    {
+        currReminders = currReminders
+            .Where(x => !PathsEqual(x.ReminderPath, oldPath) && !PathsEqual(x.ReminderPath, newPath))
+            .ToList();
+
+        if (File.Exists(newPath))
+        {
+            currReminders.Add(new Reminder(newPath));
+        }
+
+        currReminders = currReminders
+            .OrderBy(x => x.ReminderExpires)
+            .ToList();
+    }
 
     public void UpdateMissedNotesInDirToCurrentNotes(bool flag)
     {
