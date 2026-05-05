@@ -280,10 +280,10 @@
                         <input type="hidden" name="path" value="@pair.Value.NotePath" />
                         <button type="submit" class="note-card">
                             <div class="note-card-bg">
-                                <div class="note-icon">&lt;/&gt;</div>
-                                <div class="note-title">@pair.Value.NoteTitle</div>
-                                <div class="note-description">@Html.Raw(pair.Value.NoteContent)</div>
-                                <div class="note-timestamp">@pair.Value.BeatifulCreationDate()</div>
+                                <span class="note-icon">&lt;/&gt;</span>
+                                <span class="note-title">@pair.Value.NoteTitle</span>
+                                <span class="note-description">@Html.Raw(pair.Value.NoteContent)</span>
+                                <span class="note-timestamp">@pair.Value.BeatifulCreationDate()</span>
                             </div>
                         </button>
                     </form>
